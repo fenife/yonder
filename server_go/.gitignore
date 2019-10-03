@@ -5,6 +5,7 @@ pkg
 config.json
 
 *.log
+server_go
 
 
 
