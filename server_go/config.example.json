@@ -1,0 +1,28 @@
+{
+  "database": {
+    "Host": "localhost",
+    "Port": 3306,
+    "User": "",           // 数据库用户名
+    "Password": "",       // 数据库密码
+    "DbName": "blog",     // 数据库名
+    "Charset": "utf8mb4"
+  },
+  "redis": {
+    "Host": "127.0.0.1",
+    "Port": 6379,
+    "MaxIdle": 3,
+    "MaxActive": 5
+  },
+  "server": {
+    "mode": "dev",   // dev or release
+    "salt": "a secret key",    // 用于加密用户密码和生成HTTP token
+    "LogPath": "/work/logs/yonder/yonder_server_go/server.log",
+  },
+  "admin": {
+    "name": "",               // 网站管理员用户名
+    "password": ""            // 网站管理员密码
+  },
+  "page": {
+    "size": 10          // 分页大小
+  }
+}
