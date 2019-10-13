@@ -12,6 +12,7 @@ from wsgiref.simple_server import ServerHandler
 
 logging.basicConfig(level=logging.DEBUG)
 
+
 __version__ = "0.2"
 
 
@@ -23,24 +24,33 @@ class WSGIRequestHandler(BaseHTTPRequestHandler):
 
     server_version = "WSGIServer/" + __version__
 
-    def default_env(self):
-        # Set up base environment
-        env = {}
-        env['SERVER_NAME'] = self.server.server_name
-        env['GATEWAY_INTERFACE'] = 'CGI/1.1'
-        env['SERVER_PORT'] = str(self.server.server_port)
-        env['REMOTE_HOST'] = ''
-        env['CONTENT_LENGTH'] = ''
-        env['SCRIPT_NAME'] = ''
-        return env
-
     def get_environ(self):
-        env = self.default_env()
-        env['SERVER_PROTOCOL'] = self.request_version
-        env['SERVER_SOFTWARE'] = self.server_version
-        env['REQUEST_METHOD'] = self.command
+        env = {
+            "wsgi.version": (1, 0),
+            "wsgi.url_scheme": 'http',
+            "wsgi.input": self.rfile,
+            "wsgi.errors": sys.stderr,
+            "wsgi.multithread": self.server.multithread,
+            "wsgi.run_once": False,
+
+            "GATEWAY_INTERFACE": 'CGI/1.1',
+            "SERVER_SOFTWARE": self.server_version,
+
+            "SERVER_NAME": self.server.server_address[0],
+            "SERVER_HOST": self.server.server_name,
+            "SERVER_PORT": str(self.server.server_address[1]),
+            "SERVER_PROTOCOL": self.request_version,
+
+            "REMOTE_HOST": self.address_string(),
+            "REMOTE_ADDR": self.address_string(),
+            "REMOTE_PORT": self.client_address[1],
+
+            "SCRIPT_NAME": '',
+            "REQUEST_METHOD": self.command,
+        }
+
         if '?' in self.path:
-            path, query = self.path.split('?',1)
+            path, query = self.path.split('?', 1)
         else:
             path,query = self.path,''
 
@@ -50,7 +60,6 @@ class WSGIRequestHandler(BaseHTTPRequestHandler):
         host = self.address_string()
         if host != self.client_address[0]:
             env['REMOTE_HOST'] = host
-        env['REMOTE_ADDR'] = self.client_address[0]
 
         if self.headers.get('content-type') is None:
             env['CONTENT_TYPE'] = self.headers.get_content_type()
@@ -85,7 +94,8 @@ class WSGIRequestHandler(BaseHTTPRequestHandler):
             self.send_error(414)
             return
 
-        if not self.parse_request(): # An error code has been sent, just exit
+        if not self.parse_request():
+            # An error code has been sent, just exit
             return
 
         handler = ServerHandler(
@@ -100,6 +110,8 @@ class __WSGIRequestHandler(BaseHTTPRequestHandler, object):
 
 
 class BaseWSGIServer(HTTPServer, object):
+    multithread = False
+
     def __init__(self, host, port, app, handler=None):
         if handler is None:
             handler = WSGIRequestHandler
@@ -119,6 +131,7 @@ class BaseWSGIServer(HTTPServer, object):
 
 
 class ThreadedWSGIServer(ThreadingMixIn, BaseWSGIServer):
+    multithread = True
     daemon_threads = True
 
 
