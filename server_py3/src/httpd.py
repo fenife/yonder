@@ -179,6 +179,9 @@ class Yonder(object):
     def dispatch_request(self):
         pass
 
+    def make_response(self):
+        pass
+
     def _load_context(self, environ):
         ctx.env = environ
         ctx.environ = environ
