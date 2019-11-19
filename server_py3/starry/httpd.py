@@ -3,7 +3,6 @@
 import logging
 import sys
 import urllib
-import threading
 from socketserver import ThreadingMixIn
 from http.server import BaseHTTPRequestHandler
 from http.server import HTTPServer
@@ -152,61 +151,4 @@ def run_simple(host, port, app, threaded=False, request_handler=None):
     # logging.info(f"Running on http://{host}:{port}/ {quit_msg}")
     srv.serve_forever()
 
-#
-# 框架
-#
 
-
-context = ctx = threading.local()
-
-_url_map = {
-    # rule: view class
-}
-
-
-class Response(object):
-    pass
-
-
-class Yonder(object):
-    def __init__(self):
-        pass
-
-    def run(self, host='localhost', port=8000, **options):
-        options.setdefault('threaded', True)
-        return run_simple(host, port, self, **options)
-
-    def dispatch_request(self):
-        pass
-
-    def make_response(self):
-        pass
-
-    def _load_context(self, environ):
-        ctx.env = environ
-        ctx.environ = environ
-        print(ctx.env)
-
-    def wsgi_app(self, environ, start_response):
-        self._load_context(environ)
-        start_response('200 OK', [('Content-Type', 'text/html')])
-        return [b'<h1>Hello, web!</h1>']
-
-    def __call__(self, environ, start_response):
-        return self.wsgi_app(environ, start_response)
-
-
-class TestView(object):
-    def get(self, ctx):
-        pass
-
-
-def _test():
-    app = Yonder()
-    host = '0.0.0.0'
-    port = 6070
-    app.run(host=host, port=port)
-
-
-if __name__ == "__main__":
-    _test()
