@@ -9,7 +9,12 @@ app = Application()
 @app.route('/')
 def index(ctx):
     data = {'a': 1, 'b': 2}
-    resp = json.dumps(data)
+    resp = {
+        "status": 200,
+        "data": data
+    }
+    resp = json.dumps(resp).encode()
+    # resp = b"hello yonder"
     return resp
 
 
