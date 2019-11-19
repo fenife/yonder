@@ -1,5 +1,16 @@
 #!/usr/bin/env python3
 
+"""
+todo:
+optimize context
+add:
+request
+response
+NotFound response
+
+db
+"""
+
 import threading
 
 from .httpd import run_simple
