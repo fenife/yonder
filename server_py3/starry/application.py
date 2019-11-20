@@ -2,25 +2,71 @@
 
 """
 todo:
-optimize context
-add:
-request
-response
-NotFound response
-
+json => ujson
 db
 """
 
 import threading
+import json
 
-from .httpd import run_simple
+from .httpserver import run_simple
 from .tree import Tree
+from .exceptions import (HTTP_STATUS_CODES, HttpBaseException, MethodNotAllowed, NotFound)
 
 context = ctx = threading.local()
 
 
 class Response(object):
-    pass
+    charset = "utf-8"
+    default_status_code = 200
+    default_mimetype = "text/json"
+    default_headers = [('Content-Type', 'text/json')]
+
+    def __init__(self, response=None, code=None, headers=None):
+        self.response = response
+        self.status_code = code or self.default_status_code
+        self.status_desc = HTTP_STATUS_CODES.get(self.status_code)
+        self.mimetype = self.default_mimetype
+        self.headers = headers or self.default_headers
+
+    def encode_response(self):
+        if isinstance(self.response, bytes):
+            return
+
+        if isinstance(self.response, str):
+            self.response = self.response.encode(self.charset)
+
+        if isinstance(self.response, HttpBaseException):
+            self.status_code = self.response.code
+            self.status_desc = HTTP_STATUS_CODES.get(self.status_code)
+            resp = {
+                "code": self.status_code,
+                "data": None,
+                "msg": self.status_desc,
+            }
+            self.response = json.dumps(resp).encode(self.charset)
+            return
+
+        self.response = json.dumps(self.response).encode(self.charset)
+
+    def get_status(self):
+        status = str(self.status_code) + " " + self.status_desc
+        return status
+
+    def get_headers(self):
+        return self.headers
+
+    def __call__(self, environ, start_response):
+        self.encode_response()
+
+        status = self.get_status()
+        headers = self.get_headers()
+        start_response(status, headers)
+
+        # todo: the format of response ?
+        # {"code": 200, "data": {}, "msg": "success"}
+
+        return [self.response]
 
 
 class Application(object):
@@ -49,42 +95,51 @@ class Application(object):
         return decorator
 
     def dispatch_request(self):
-        method = ctx.env.get('REQUEST_METHOD')
-        # todo:
-        if not method:
-            raise
+        if not ctx.method:
+            raise MethodNotAllowed
 
-        tree = self._methodTrees.get(method.upper())
-        # todo
+        tree = self._methodTrees.get(ctx.method.upper())
         if not tree:
-            print('method tree not existed')
-            return
+            raise NotFound
 
         path = ctx.env.get('PATH_INFO')
         node, params = tree.search(path)
         ctx.params = params
 
         if not node:
-            print('no handler found')
-            return
+            raise NotFound
 
         resp = node.handler(ctx)
         return resp
 
-    def make_response(self):
-        pass
-
     def _load_context(self, environ):
         ctx.env = environ
         ctx.environ = environ
-        # print(ctx.env)
+        ctx.method = environ.get('REQUEST_METHOD')
+        ctx.path = environ.get('PATH_INFO')
+        # print(ctx)
+
+    def make_response(self, rv):
+        if isinstance(rv, Response):
+            return rv
+        if isinstance(rv, HttpBaseException):
+            return Response(rv)
+        if isinstance(rv, tuple):
+            return Response(*rv)
+
+        return Response(rv)
 
     def wsgi_app(self, environ, start_response):
-        self._load_context(environ)
-        resp = self.dispatch_request()
-        start_response('200 OK', [('Content-Type', 'text/json')])
-        return [resp]
-        # return [b"hello web"]
+        try:
+            self._load_context(environ)
+            rv = self.dispatch_request()
+        except HttpBaseException as e:
+            rv = e
+
+        response = self.make_response(rv)
+        result = response(environ, start_response)      # response.__call__()
+        # print(result)
+        return result
 
     def __call__(self, environ, start_response):
         return self.wsgi_app(environ, start_response)
