@@ -5,8 +5,7 @@ class Node(object):
     def __init__(self, key=None, handler=None):
         self.key = key
         self.path = None
-        if self.is_root_node():
-            self.path = ''
+        self.path = ''
 
         self.handler = handler
         # self._parent = None
@@ -23,17 +22,13 @@ class Node(object):
     def get_handler(self):
         return self.handler
 
-    def is_root_node(self):
-        return self.key == ''
-
     def __repr__(self):
         return f"<{self.key}{'' if not self.handler else ' - ' + self.handler.__name__}>"
 
     def add_child(self, child):
         """添加子节点"""
-
         # 拼接到该节点为止的完整path
-        if self.is_root_node() or self.key == '/' or child.key == '/':
+        if self.key.endswith('/') or child.key.startswith('/'):
             child_path = self.path + child.key
         else:
             child_path = self.path + '/' + child.key
