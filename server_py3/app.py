@@ -19,6 +19,12 @@ def index(ctx):
     return resp
 
 
+@app.route('/user/:id')
+def view_tree(ctx):
+    params = ctx.params
+    return params
+
+
 def _test():
     # app = Application()
     host = '0.0.0.0'

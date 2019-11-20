@@ -154,6 +154,12 @@ class Tree(object):
                     # 如果有通配符，按通配符规则匹配
                     cur = cur.wildcard_child
                     if cur.key.startswith(':'):
+
+                        # todo: 最后是'/'，不能匹配通配符 ？ 还是全部不要后面的 '/' 节点？
+                        # 否则，`/user/` 会匹配： `/user/:id`
+                        if key == '/':
+                            return None, params
+
                         # 匹配单个key的值，把节点中的key作为参数的键，url中的key作为参数值，最后返回给handler
                         # 继续往下匹配
                         params.update({

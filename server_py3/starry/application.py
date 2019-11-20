@@ -106,7 +106,7 @@ class Application(object):
         node, params = tree.search(path)
         ctx.params = params
 
-        if not node:
+        if not (node and node.handler):
             raise NotFound
 
         resp = node.handler(ctx)
