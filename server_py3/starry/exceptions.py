@@ -1,15 +1,34 @@
 #!/usr/bin/env python3
 
 
-from .http import HTTP_STATUS_CODES
+from .response import Response
 
 
-class HttpBaseException(Exception):
+class AppBaseException(Exception):
     code = None
-    desc = HTTP_STATUS_CODES.get(code)
+    desc = None     # 暂时没用到
 
-    def __call__(self, environ=None):
-        pass
+    def __init__(self, desc=None):
+        super(AppBaseException, self).__init__()
+        if desc:
+            self.desc = desc
+
+    def get_response(self):
+        return Response(code=self.code)
+
+    def __call__(self, environ, start_response):
+        response = self.get_response()
+        resp = response(environ, start_response)
+        return resp
+
+
+#
+# HTTP Exceptions
+#
+
+
+class HttpBaseException(AppBaseException):
+    pass
 
 
 class BadRequest(HttpBaseException):
@@ -38,3 +57,15 @@ class RequestTimeout(HttpBaseException):
 
 class InternalServerError(HttpBaseException):
     code = 500
+
+
+#
+# db exceptions
+#
+
+class DBConfigError(AppBaseException):
+    code = -100
+
+
+class DBConnectError(AppBaseException):
+    code = -200

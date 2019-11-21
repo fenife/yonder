@@ -3,6 +3,8 @@
 """
 todo:
 json => ujson
+
+parse query string
 db
 """
 
@@ -10,7 +12,7 @@ import threading
 
 from .httpserver import run_simple
 from .tree import Tree
-from .exceptions import (HTTP_STATUS_CODES, HttpBaseException, MethodNotAllowed, NotFound)
+from .exceptions import (AppBaseException, MethodNotAllowed, NotFound)
 from .response import Response
 
 context = ctx = threading.local()
@@ -19,6 +21,7 @@ context = ctx = threading.local()
 class Application(object):
     def __init__(self):
         self._methodTrees = {}
+        self._allowMethods = set()
 
     def run(self, host='localhost', port=8000, **options):
         options.setdefault('threaded', True)
@@ -42,10 +45,17 @@ class Application(object):
         return decorator
 
     def dispatch_request(self):
-        if not ctx.method:
+        if not self._allowMethods:
+            self._allowMethods = set(self._methodTrees.keys())
+
+        method = ctx.method.upper()
+        if not method:
             raise MethodNotAllowed
 
-        tree = self._methodTrees.get(ctx.method.upper())
+        if method not in self._allowMethods:
+            raise MethodNotAllowed
+
+        tree = self._methodTrees.get(method)
         if not tree:
             raise NotFound
 
@@ -64,13 +74,14 @@ class Application(object):
         ctx.environ = environ
         ctx.method = environ.get('REQUEST_METHOD')
         ctx.path = environ.get('PATH_INFO')
+        ctx.query = environ.get('QUERY_STRING')
         # print(ctx)
 
     def make_response(self, rv):
         if isinstance(rv, Response):
             return rv
-        if isinstance(rv, HttpBaseException):
-            return Response(rv)
+        if isinstance(rv, AppBaseException):
+            return rv
         if isinstance(rv, tuple):
             return Response(*rv)
 
@@ -80,12 +91,12 @@ class Application(object):
         try:
             self._load_context(environ)
             rv = self.dispatch_request()
-        except HttpBaseException as e:
+        except AppBaseException as e:
             rv = e
 
         response = self.make_response(rv)
         result = response(environ, start_response)      # response.__call__()
-        # print(result)
+        print(result)
         return result
 
     def __call__(self, environ, start_response):

@@ -8,21 +8,22 @@ app = Application()
 
 @app.route('/')
 def index(ctx):
-    data = {'a': 1, 'b': 2}
-    resp = {
-        "code": 200,
-        "data": data,
-        "msg": "success"
-    }
+    resp = {'a': 1, 'b': 2}
     # resp = json.dumps(resp).encode()
-    # resp = b"hello yonder"
+    resp = b"hello yonder"
     return resp
 
 
 @app.route('/user/:id')
 def view_tree(ctx):
     params = ctx.params
-    return params
+    query = ctx.query
+    data = {
+        "params": params,
+        "query": query,
+    }
+    print("data:", data)
+    return data
 
 
 def _test():
