@@ -1,59 +1,65 @@
 #!/usr/bin/env python3
 
-import json
+import ujson
 
-from .http import HTTP_STATUS_CODES
-from .exceptions import HttpBaseException
+from .status import code2name, code2status
 
 
 class Response(object):
     charset = "utf-8"
     default_status_code = 200
     default_mimetype = "text/json"
-    default_headers = [('Content-Type', 'text/json')]
 
-    def __init__(self, response=None, code=None, headers=None):
-        self.response = response
+    # todo: why this line cause content-length error ?
+    # default_headers = [('Content-Type', 'text/json')]
+
+    def __init__(self, data=None, code=None, headers=None):
+        self.data = data
         self.status_code = code or self.default_status_code
-        self.status_desc = HTTP_STATUS_CODES.get(self.status_code)
         self.mimetype = self.default_mimetype
-        self.headers = headers or self.default_headers
+        self.headers = headers or [('Content-Type', 'text/json')]
 
-    def encode_response(self):
-        if isinstance(self.response, bytes):
-            return
-
-        if isinstance(self.response, str):
-            self.response = self.response.encode(self.charset)
-
-        if isinstance(self.response, HttpBaseException):
-            self.status_code = self.response.code
-            self.status_desc = HTTP_STATUS_CODES.get(self.status_code)
-            resp = {
-                "code": self.status_code,
-                "data": None,
-                "msg": self.status_desc,
-            }
-            self.response = json.dumps(resp).encode(self.charset)
-            return
-
-        self.response = json.dumps(self.response).encode(self.charset)
+    @property
+    def name(self):
+        n = code2name(self.status_code)
+        return n
 
     def get_status(self):
-        status = str(self.status_code) + " " + self.status_desc
-        return status
+        if self.status_code > 0:
+            # 大于0的是HTTP状态码
+            return code2status(self.status_code)
+        else:
+            # 小于0的为自定义的状态码
+            # HTTP 状态码返回OK，response的data中才是真正的异常原因
+            return "200 OK"
 
     def get_headers(self):
         return self.headers
 
-    def __call__(self, environ, start_response):
-        self.encode_response()
+    def get_body(self):
+        if isinstance(self.data, bytes):
+            # 返回的格式是固定的，bytes需要手动拼接
+            c = b'{"code":' + str(self.status_code).encode(self.charset) + b','
+            d = b'"data":"' + self.data + b'",'
+            m = b'"msg":"' + self.name.encode(self.charset) + b'"}'
+            body = c + d + m
+            return body
 
+        body = {
+            "code": self.status_code,
+            "data": self.data,
+            "msg": self.name,
+        }
+        # self.data = ujson.dumps(self.data).encode(self.charset)
+        body = ujson.dumps(body).encode(self.charset)
+        return body
+
+    def __call__(self, environ, start_response):
+
+        body = self.get_body()
         status = self.get_status()
         headers = self.get_headers()
         start_response(status, headers)
 
-        # todo: the format of response ?
-        # {"code": 200, "data": {}, "msg": "success"}
-
-        return [self.response]
+        print('body len:', len(body))
+        return [body]
