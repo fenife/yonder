@@ -59,13 +59,3 @@ class InternalServerError(HttpBaseException):
     code = 500
 
 
-#
-# db exceptions
-#
-
-class DBConfigError(AppBaseException):
-    code = -100
-
-
-class DBConnectError(AppBaseException):
-    code = -200
