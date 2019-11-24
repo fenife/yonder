@@ -214,9 +214,13 @@ def execute(sql, args=None, autocommit=True):
 
 
 class Field(object):
-    def __init__(self, name, column_type, primary_key=False, default=None, null=True, comment=None):
+    def __init__(self, name=None, column_type=None, primary_key=False, default=None, null=True, comment=None):
         # name, type, size, decimal, allowNULL, isKey, comment,
         self.name = name
+
+        if not column_type:
+            raise Exception("column type is missed")
+
         self.column_type = column_type
         self.primary_key = primary_key
         self.default = default
@@ -224,46 +228,128 @@ class Field(object):
         self.comment = comment
 
     def __str__(self):
-        return f"<{self.__class__.__name__}, {self.column_type}:{self.name}>"
+        return f"<{self.__class__.__name__}, {self.column_type}>"
 
 
 class VarcharField(Field):
-    def __init__(self, name, **kwargs):
-        super().__init__(name, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
 
 class IntField(Field):
-    def __init__(self, name, **kwargs):
-        super().__init__(name, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
 
-class Model(object):
-    pass
+class ModelMetaclass(type):
 
+    def __new__(cls, name, bases, attrs):
+        if name == 'Model':
+            return type.__new__(cls, name, bases, attrs)
+
+        # print(cls)
+        # print("name:", name)
+        # print("bases:", bases)
+        # print("attrs:")
+        # for k, v in attrs.items():
+        #     print(k, ":", v)
+        # print()
+
+        if '__database__' not in attrs:
+            raise Exception('__database__ is missed')
+
+        if '__table__' not in attrs:
+            raise Exception('__table__ is missed')
+
+        mappings = dict()
+        fields = list()
+        primary_key = None
+        for k, v in attrs.items():
+            if isinstance(v, Field):
+                # print(f"    mapping: {k} ==> {v}")
+                mappings[k] = v
+                if v.primary_key:
+                    if primary_key:
+                        raise Exception(f"Duplicate primary key for `{k}`")
+
+                    primary_key = k
+
+                fields.append(k)
+
+        if not primary_key:
+            raise Exception("primary key not found")
+
+        for k in mappings.keys():
+            attrs.pop(k)
+
+        escaped_fields = list(map(lambda f: f"`{f}`", fields))
+        attrs['__mappings__'] = mappings
+        attrs['__fields__'] = fields
+        attrs['__escaped_fields__'] = escaped_fields
+        attrs['__primary_key__'] = primary_key
+
+        print()
+        for k, v in attrs.items():
+            print(k, ":", v)
+
+        return type.__new__(cls, name, bases, attrs)
+
+
+class Model(dict, metaclass=ModelMetaclass):
+    def __init__(self, **kwargs):
+        super(Model, self).__init__(**kwargs)
+
+    @classmethod
+    def migrate(cls):
+        pass
 
 #
 # test
 #
 
 
+def _test_orm():
+    """
+        CREATE TABLE IF NOT EXISTS `users` (
+          `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+          `name` varchar(255) NOT NULL,
+          PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+        insert into users (`name`) values ("u1");
+        """
+
+    class User(Model):
+        id = IntField(column_type='int', primary_key=True)
+        name = VarcharField(column_type='varchar(255)')
+        # name = VarcharField(column_type='varchar(255)', primary_key=True)
+
+        __database__ = 'test'
+        __table__ = 'users'
+
+    User.migrate()
+
+
 def _test():
+    from .pretty import dictList2Table
+
     # c = DbConfig('test')
     # print(c.dbInfo)
 
     # db = Database('test')
     # print(db.dbConf.dbInfo)
 
-    from .pretty import dictList2Table
-
-    sql = "select * from t1"
+    sql = "select * from users"
     # data = db.select(sql)
     data = select(sql)
     print(dictList2Table(data))
 
-    sql = "desc t1"
+    print()
+    sql = "desc users"
     data = select(sql)
     print(dictList2Table(data))
 
 
 if __name__ == "__main__":
-    _test()
+    # _test()
+    _test_orm()
