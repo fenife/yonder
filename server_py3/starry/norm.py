@@ -213,6 +213,19 @@ def execute(sql, args=None, autocommit=True):
 #
 
 
+class DBTest(Database):
+    """
+    database: test
+    """
+    @classmethod
+    def select(cls, sql, *args, **kwargs):
+        return select(sql, *args, **kwargs)
+
+    @classmethod
+    def execute(cls, sql, *args, **kwargs):
+        return execute(sql, *args, **kwargs)
+
+
 class Field(object):
     def __init__(self, name=None, column_type=None, primary_key=False, default=None, null=True, comment=None):
         # name, type, size, decimal, allowNULL, isKey, comment,
@@ -226,6 +239,27 @@ class Field(object):
         self.default = default
         self.null = null
         self.comment = comment
+
+    def sql_for_create(self):
+        sql = ""
+        if not self.column_type:
+            raise Exception("column type is missed")
+
+        if self.column_type:
+            sql += f" {self.column_type}"
+
+        if not self.null:
+            sql += " NOT NULL"
+
+        if self.default:
+            sql += f"  DEFAULT {self.default}"
+        else:
+            sql += f"  DEFAULT NULL"
+
+        if self.comment:
+            sql += f"  COMMENT {self.default}"
+
+        return sql
 
     def __str__(self):
         return f"<{self.__class__.__name__}, {self.column_type}>"
@@ -299,9 +333,39 @@ class Model(dict, metaclass=ModelMetaclass):
     def __init__(self, **kwargs):
         super(Model, self).__init__(**kwargs)
 
+    def __getattr__(self, item):
+        try:
+            return self[item]
+        except KeyError:
+            raise AttributeError(f"`Model` object has no attrbute `{item}`")
+
+    def __setattr__(self, key, value):
+        self[key] = value
+
     @classmethod
     def migrate(cls):
         pass
+
+    @classmethod
+    def create(cls):
+        for name, field in cls.__mappings__.items():
+            assert isinstance(field, Field), f"field: {field}"
+            print(f"`{name}`: '{field.sql_for_create()}'")
+
+    @classmethod
+    def select(cls, sql, *args, **kwargs):
+        db = cls.__database__
+        assert issubclass(db, Database)
+
+        return db.select(sql, *args, **kwargs)
+
+    @classmethod
+    def execute(cls, sql, *args, **kwargs):
+        db = cls.__database__
+        assert issubclass(db, Database)
+
+        return db.select(sql, *args, **kwargs)
+
 
 #
 # test
@@ -318,16 +382,24 @@ def _test_orm():
 
         insert into users (`name`) values ("u1");
         """
+    from .pretty import dictList2Table
 
     class User(Model):
         id = IntField(column_type='int', primary_key=True)
         name = VarcharField(column_type='varchar(255)')
         # name = VarcharField(column_type='varchar(255)', primary_key=True)
 
-        __database__ = 'test'
+        __database__ = DBTest
         __table__ = 'users'
 
-    User.migrate()
+    print(User.__table__)
+    print(User.__mappings__)
+
+    sql = "select * from users"
+    data = User.select(sql)
+    print(dictList2Table(data))
+
+    User.create()
 
 
 def _test():
