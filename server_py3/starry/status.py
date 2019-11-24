@@ -5,7 +5,9 @@ from .http import HTTP_STATUS_CODES
 
 DB_STATUS_CODES = {
     -100: "db config error",
-    -200: "db connect error",
+    -110: "db connect error",
+    -120: "db close error",
+    -130: "db error",       # mysql错误
 }
 
 
