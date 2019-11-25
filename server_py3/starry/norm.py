@@ -227,7 +227,8 @@ class DBTest(Database):
 
 
 class Field(object):
-    def __init__(self, name=None, column_type=None, primary_key=False, default=None, null=True, comment=None):
+    def __init__(self, name=None, column_type=None, primary_key=False,
+                 default=None, null=True, extra=None, comment=None):
         # name, type, size, decimal, allowNULL, isKey, comment,
         self.name = name
 
@@ -238,6 +239,7 @@ class Field(object):
         self.primary_key = primary_key
         self.default = default
         self.null = null
+        self.extra = extra
         self.comment = comment
 
     def sql_for_create(self):
@@ -249,15 +251,19 @@ class Field(object):
             sql += f" {self.column_type}"
 
         if not self.null:
-            sql += " NOT NULL"
+            sql += " not null"
 
         if self.default:
-            sql += f"  DEFAULT {self.default}"
-        else:
-            sql += f"  DEFAULT NULL"
+            sql += f" default {self.default}"
+
+        if self.null and not self.default:
+            sql += f" default null"
+
+        if self.extra:
+            sql += f" {self.extra}"
 
         if self.comment:
-            sql += f"  COMMENT {self.default}"
+            sql += f" comment {self.default}"
 
         return sql
 
@@ -342,15 +348,68 @@ class Model(dict, metaclass=ModelMetaclass):
     def __setattr__(self, key, value):
         self[key] = value
 
+    # defined by user
+    __database__ = None
+    __table__ = None
+    __unique_key__ = tuple()
+    __index_key__ = list()
+    __foreign_key__ = list()    # not support yet
+
+    # filled by norm framework
+    __primary_key__ = None
+    __mappings__ = dict()
+    __fields__ = list()
+
     @classmethod
     def migrate(cls):
         pass
 
     @classmethod
     def create(cls):
+        """
+        CREATE TABLE `users` (
+          `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+          `name` varchar(255) NOT NULL,
+          PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+        :return:
+        """
+        sql = f"create table `{cls.__table__}` ("
+
         for name, field in cls.__mappings__.items():
             assert isinstance(field, Field), f"field: {field}"
-            print(f"`{name}`: '{field.sql_for_create()}'")
+            # print(f"`{name}`: '{field.sql_for_create()}'")
+            sql += f"`{name}`{field.sql_for_create()}, "
+
+        # print(cls.__primary_key__)
+        if not cls.__primary_key__:
+            raise Exception("primary key not found")
+
+        sql += f"primary key (`{cls.__primary_key__}`)"
+
+        if cls.__unique_key__:
+            item = cls.__unique_key__
+            assert isinstance(item, (tuple, list)), "unique key item must be a tuple or list"
+
+            key_fields = ','.join(list(map(lambda x: f"`{x}`", item)))
+            key_name = f"unique_key_{'_'.join(item)}"
+            # sql += f", unique key `{key_name}` ({','.join(escaped_keys)})"
+            sql += f", unique key `{key_name}` ({key_fields})"
+
+        if cls.__index_key__:
+            for item in cls.__index_key__:
+                assert isinstance(item, tuple), "index key item must be a tuple"
+
+                key_fields = ','.join(list(map(lambda x: f"`{x}`", item)))
+                key_name = f"key_{'_'.join(item)}"
+                # sql += f", key `{key_name}` ({','.join(keys)})"
+                sql += f", key `{key_name}` ({key_fields})"
+
+        sql += f") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
+        print(sql)
+
+        return cls.execute(sql)
 
     @classmethod
     def select(cls, sql, *args, **kwargs):
@@ -364,7 +423,7 @@ class Model(dict, metaclass=ModelMetaclass):
         db = cls.__database__
         assert issubclass(db, Database)
 
-        return db.select(sql, *args, **kwargs)
+        return db.execute(sql, *args, **kwargs)
 
 
 #

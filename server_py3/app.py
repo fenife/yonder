@@ -3,15 +3,27 @@
 import json
 from starry.application import Application
 from starry.norm import (DBTest, Model, IntField, VarcharField)
+from starry.response import Response
 
 app = Application()
+
+
+class User(Model):
+    id = IntField(column_type='int', null=False, primary_key=True, extra="auto_increment")
+    name = VarcharField(column_type='varchar(255)')
+    # name = VarcharField(column_type='varchar(255)', primary_key=True)
+
+    __database__ = DBTest
+    __table__ = 'users'
+    __unique_key__ = ('id', 'name')
+    __index_key__ = [('id', 'name'), ('name',)]
 
 
 @app.route('/')
 def index(ctx):
     resp = {'a': 1, 'b': 2}
     # resp = json.dumps(resp).encode()
-    resp = b"hello yonder"
+    resp = Response(data=b"hello yonder")
     return resp
 
 
@@ -24,12 +36,22 @@ def view_tree(ctx):
         "query": query,
     }
     print("data:", data)
-    return data
+    resp = Response(data=data)
+    return resp
+
+
+@app.route('/users/')
+def users():
+    sql = "select * from users"
+    data = User.select(sql)
+    print(data)
+    resp = Response(data=data)
+    return resp
 
 
 def _test_orm():
     """
-    CREATE TABLE IF NOT EXISTS `users` (
+    CREATE TABLE `users` (
       `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
       `name` varchar(255) NOT NULL,
       PRIMARY KEY (`id`)
@@ -39,22 +61,19 @@ def _test_orm():
     """
     from starry.pretty import dictList2Table
 
-    class User(Model):
-        id = IntField(column_type='int', primary_key=True)
-        name = VarcharField(column_type='varchar(255)')
-        # name = VarcharField(column_type='varchar(255)', primary_key=True)
-
-        __database__ = DBTest
-        __table__ = 'users'
-
     print(User.__table__)
     print(User.__mappings__)
 
-    sql = "select * from users"
+    # sql = "select * from users"
+    # data = User.select(sql)
+    # print(dictList2Table(data))
+
+    # User.create()
+
+    print()
+    sql = "desc users"
     data = User.select(sql)
     print(dictList2Table(data))
-
-    User.create()
 
 
 def _test():
@@ -78,5 +97,5 @@ def _test1():
 
 
 if __name__ == "__main__":
-    # _test()
-    _test_orm()
+    _test()
+    # _test_orm()

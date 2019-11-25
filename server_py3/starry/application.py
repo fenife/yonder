@@ -4,8 +4,11 @@
 todo:
 json => ujson
 
-parse query string
 db
+parse query string
+post data
+cookie
+middleware
 """
 
 import threading
@@ -66,7 +69,12 @@ class Application(object):
         if not (node and node.handler):
             raise NotFound
 
-        resp = node.handler(ctx)
+        handler = node.handler
+        if not handler.__code__.co_argcount:    # 参数个数
+            resp = node.handler()
+        else:
+            resp = node.handler(ctx)
+
         return resp
 
     def _load_context(self, environ):
@@ -78,14 +86,18 @@ class Application(object):
         # print(ctx)
 
     def make_response(self, rv):
-        if isinstance(rv, Response):
-            return rv
-        if isinstance(rv, AppBaseException):
-            return rv
-        if isinstance(rv, tuple):
-            return Response(*rv)
+        assert isinstance(rv, (Response, AppBaseException))
 
-        return Response(rv)
+        return rv
+
+        # if isinstance(rv, Response):
+        #     return rv
+        # if isinstance(rv, AppBaseException):
+        #     return rv
+        # if isinstance(rv, tuple):
+        #     return Response(*rv)
+        #
+        # return Response(rv)
 
     def wsgi_app(self, environ, start_response):
         try:
