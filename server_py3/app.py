@@ -22,8 +22,8 @@ class User(Model):
 @app.route('/')
 def index(ctx):
     resp = {'a': 1, 'b': 2}
-    # resp = json.dumps(resp).encode()
-    resp = Response(data=b"hello yonder")
+    resp = json.dumps(resp).encode()
+    # resp = Response(data=b"hello yonder")
     return resp
 
 
@@ -36,8 +36,8 @@ def view_tree(ctx):
         "query": query,
     }
     print("data:", data)
-    resp = Response(data=data)
-    return resp
+    # resp = Response(data=data)
+    return data
 
 
 @app.route('/users/')
@@ -45,8 +45,8 @@ def users():
     sql = "select * from users"
     data = User.select(sql)
     print(data)
-    resp = Response(data=data)
-    return resp
+    # resp = Response(data=data)
+    return data
 
 
 def _test_orm():

@@ -9,6 +9,7 @@ parse query string
 post data
 cookie
 middleware
+logger
 """
 
 import threading
@@ -86,18 +87,16 @@ class Application(object):
         # print(ctx)
 
     def make_response(self, rv):
-        assert isinstance(rv, (Response, AppBaseException))
+        # assert isinstance(rv, (Response, AppBaseException))
+        if isinstance(rv, Response):
+            return rv
+        if isinstance(rv, AppBaseException):
+            return rv
 
-        return rv
-
-        # if isinstance(rv, Response):
-        #     return rv
-        # if isinstance(rv, AppBaseException):
-        #     return rv
         # if isinstance(rv, tuple):
         #     return Response(*rv)
-        #
-        # return Response(rv)
+
+        return Response(rv)
 
     def wsgi_app(self, environ, start_response):
         try:

@@ -6,6 +6,7 @@ import urllib
 from socketserver import ThreadingMixIn
 from http.server import BaseHTTPRequestHandler
 from http.server import HTTPServer
+import io
 
 from wsgiref.simple_server import ServerHandler
 
@@ -51,7 +52,7 @@ class WSGIRequestHandler(BaseHTTPRequestHandler):
         if '?' in self.path:
             path, query = self.path.split('?', 1)
         else:
-            path,query = self.path,''
+            path, query = self.path, ''
 
         env['PATH_INFO'] = urllib.parse.unquote(path, 'iso-8859-1')
         env['QUERY_STRING'] = query
