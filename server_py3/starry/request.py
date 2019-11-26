@@ -10,7 +10,8 @@ class Request(object):
 
         self.method = environ.get('REQUEST_METHOD')
         self.path = environ.get('PATH_INFO')
-        self.query = environ.get('QUERY_STRING')
+        self.query_string = environ.get('QUERY_STRING')
+        self.query = self.parse_query()
 
         self.content_type = environ.get('CONTENT_TYPE')
         self.content_length = environ.get('CONTENT_LENGTH')
@@ -20,7 +21,7 @@ class Request(object):
         self.params = {}
 
     def json(self):
-        """获取http body 中的数据，以JSON格式返回"""
+        """获取 http body 中的数据，以JSON格式返回"""
         if self._json:
             return self._json
 
@@ -33,6 +34,10 @@ class Request(object):
                 self._json = ujson.decode(self.data)
 
         return self._json
+
+    def parse_query(self):
+        if self.query_string:
+            pass
 
     def set_params(self, params):
         self.params = params
