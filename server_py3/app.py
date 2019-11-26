@@ -29,8 +29,8 @@ def index(ctx):
 
 @app.route('/user/:id')
 def view_tree(ctx):
-    params = ctx.params
-    query = ctx.query
+    params = ctx.request.params
+    query = ctx.request.query
     data = {
         "params": params,
         "query": query,
@@ -41,12 +41,18 @@ def view_tree(ctx):
 
 
 @app.route('/users/')
-def users():
+def users(ctx):
     sql = "select * from users"
     data = User.select(sql)
-    print(data)
-    # resp = Response(data=data)
-    return data
+    req_body = ctx.request.json()
+
+    result = {
+        "users": data,
+        "req_body": req_body,
+    }
+    # print(result)
+
+    return result
 
 
 def _test_orm():

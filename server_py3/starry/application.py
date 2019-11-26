@@ -2,22 +2,22 @@
 
 """
 todo:
-json => ujson
 
 db
 parse query string
-post data
 cookie
 middleware
 logger
 """
 
 import threading
+import logging as logger
 
 from .httpserver import run_simple
 from .tree import Tree
-from .exceptions import (AppBaseException, MethodNotAllowed, NotFound)
+from .exceptions import (AppBaseException, MethodNotAllowed, NotFound, InternalServerError)
 from .response import Response
+from .request import Request
 
 context = ctx = threading.local()
 
@@ -65,7 +65,10 @@ class Application(object):
 
         path = ctx.env.get('PATH_INFO')
         node, params = tree.search(path)
+
+        # 路径中的参数
         ctx.params = params
+        ctx.request.set_params(params)
 
         if not (node and node.handler):
             raise NotFound
@@ -83,11 +86,15 @@ class Application(object):
         ctx.environ = environ
         ctx.method = environ.get('REQUEST_METHOD')
         ctx.path = environ.get('PATH_INFO')
-        ctx.query = environ.get('QUERY_STRING')
-        # print(ctx)
+        # ctx.query = environ.get('QUERY_STRING')
+
+        ctx.request = Request(environ)
+        print("request.json:", ctx.request.json())
+
+    def parse_request(self, environ):
+        return self._load_context(environ)
 
     def make_response(self, rv):
-        # assert isinstance(rv, (Response, AppBaseException))
         if isinstance(rv, Response):
             return rv
         if isinstance(rv, AppBaseException):
@@ -99,15 +106,24 @@ class Application(object):
         return Response(rv)
 
     def wsgi_app(self, environ, start_response):
+        print()
+        print('-' * 50)
         try:
-            self._load_context(environ)
+            # self._load_context(environ)
+            self.parse_request(environ)
+
             rv = self.dispatch_request()
         except AppBaseException as e:
+            logger.exception("http error")
             rv = e
+
+        except Exception as e:
+            logger.exception("internal error")
+            rv = InternalServerError()
 
         response = self.make_response(rv)
         result = response(environ, start_response)      # response.__call__()
-        print(result)
+        print('result:', result)
         return result
 
     def __call__(self, environ, start_response):
