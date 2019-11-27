@@ -4,13 +4,14 @@ import logging
 import sys
 from urllib.parse import unquote
 from socketserver import ThreadingMixIn
-from http.server import BaseHTTPRequestHandler
-from http.server import HTTPServer
-import io
+from http.server import HTTPServer, BaseHTTPRequestHandler
 
-from wsgiref.simple_server import ServerHandler
+from platform import python_implementation
+# from wsgiref.simple_server import ServerHandler
+from wsgiref.simple_server import SimpleHandler
 
-logging.basicConfig(level=logging.DEBUG)
+# logging.basicConfig(level=logging.DEBUG)
+from .log import logger
 
 
 __version__ = "0.2"
@@ -19,6 +20,26 @@ __version__ = "0.2"
 #
 # HTTP服务器
 #
+
+
+server_version = "WSGIServer/" + __version__
+sys_version = python_implementation() + "/" + sys.version.split()[0]
+software_version = server_version + ' ' + sys_version
+
+
+class ServerHandler(SimpleHandler):
+    """from wsgiref.simple_server of python lib"""
+
+    server_software = software_version
+
+    def close(self):
+        try:
+            self.request_handler.log_request(
+                self.status.split(' ',1)[0], self.bytes_sent
+            )
+        finally:
+            SimpleHandler.close(self)
+
 
 class WSGIRequestHandler(BaseHTTPRequestHandler):
 
@@ -148,7 +169,7 @@ def run_simple(host, port, app, threaded=False, request_handler=None):
     quit_msg = "(Press CTRL+C to quit)"
     s = f"Running on http://{host}:{port}/ {quit_msg}"
     # print(s)
-    logging.info(s)
+    logger.info(s)
     # logging.info(f"Running on http://{host}:{port}/ {quit_msg}")
     srv.serve_forever()
 
