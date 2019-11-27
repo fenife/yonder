@@ -2,7 +2,7 @@
 
 import logging
 import sys
-import urllib
+from urllib.parse import unquote
 from socketserver import ThreadingMixIn
 from http.server import BaseHTTPRequestHandler
 from http.server import HTTPServer
@@ -54,8 +54,8 @@ class WSGIRequestHandler(BaseHTTPRequestHandler):
         else:
             path, query = self.path, ''
 
-        env['PATH_INFO'] = urllib.parse.unquote(path, 'iso-8859-1')
-        env['QUERY_STRING'] = query
+        env['PATH_INFO'] = unquote(path, 'iso-8859-1')
+        env['QUERY_STRING'] = unquote(query)
 
         host = self.address_string()
         if host != self.client_address[0]:

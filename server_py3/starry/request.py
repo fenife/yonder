@@ -11,7 +11,7 @@ class Request(object):
         self.method = environ.get('REQUEST_METHOD')
         self.path = environ.get('PATH_INFO')
         self.query_string = environ.get('QUERY_STRING')
-        self.query = self.parse_query()
+        self._query = None
 
         self.content_type = environ.get('CONTENT_TYPE')
         self.content_length = environ.get('CONTENT_LENGTH')
@@ -35,16 +35,36 @@ class Request(object):
 
         return self._json
 
-    def parse_query(self):
-        if self.query_string:
-            pass
-
     def set_params(self, params):
         self.params = params
 
     def get_param(self, param):
         return self.params[param]
 
-    def query(self):
-        pass
+    def parse_query(self):
+        # a=1&b=2
+        print('query_string:', self.query_string)
+        if not self.query_string:
+            return
+
+        queries = dict()
+        for q in self.query_string.split('&'):      # ['a=1', 'b=2']
+            item = q.split('=')
+            if len(item) == 2:
+                k, v = item
+                queries[k] = v
+
+        self._query = queries
+
+    def query(self, k):
+        if not self._query:
+            self.parse_query()
+
+        return self._query[k]
+
+    def all_query(self):
+        if not self._query:
+            self.parse_query()
+
+        return self._query
 

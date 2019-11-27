@@ -30,7 +30,7 @@ def index(ctx):
 @app.route('/user/:id')
 def view_tree(ctx):
     params = ctx.request.params
-    query = ctx.request.query
+    query = ctx.request.all_query()
     data = {
         "params": params,
         "query": query,
@@ -45,10 +45,12 @@ def users(ctx):
     sql = "select * from users"
     data = User.select(sql)
     req_body = ctx.request.json()
+    query = ctx.request.all_query()
 
     result = {
         "users": data,
         "req_body": req_body,
+        "query": query,
     }
     # print(result)
 
