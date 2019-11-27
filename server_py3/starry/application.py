@@ -4,20 +4,23 @@
 todo:
 
 db
-parse query string
 cookie
 middleware
 logger
+
+done:
+json data from http body
+parse query string, unquote to utf-8
 """
 
 import threading
-import logging as logger
 
 from .httpserver import run_simple
 from .tree import Tree
 from .exceptions import (AppBaseException, MethodNotAllowed, NotFound, InternalServerError)
 from .response import Response
 from .request import Request
+from .log import logger
 
 context = ctx = threading.local()
 
