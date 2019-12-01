@@ -1,0 +1,14 @@
+argh==0.26.2
+Click==7.0
+Flask==1.1.1
+itsdangerous==1.1.0
+Jinja2==2.10.1
+MarkupSafe==1.1.1
+mysqlclient==1.4.6
+pathtools==0.1.2
+prettytable==0.7.2
+PyMySQL==0.9.3
+PyYAML==5.1.2
+ujson==1.35
+watchdog==0.9.0
+Werkzeug==0.16.0
