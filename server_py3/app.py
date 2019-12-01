@@ -43,16 +43,32 @@ def view_tree(ctx):
 @app.route('/users/')
 def users(ctx):
     sql = "select * from users"
+    req = ctx.request
     data = User.select(sql)
     req_body = ctx.request.json()
     query = ctx.request.all_query()
+    cookies = ctx.request.cookies
 
     result = {
         "users": data,
         "req_body": req_body,
         "query": query,
+        "cookies": cookies,
     }
     # print(result)
+
+    return result
+
+
+@app.route('/test/cookies')
+def test_cookie(ctx):
+    ctx.set_cookie(name='a', value=1)
+    ctx.set_cookie(name='b', value=2)
+
+    result = {}
+    for k, c in ctx.cookies.items():
+        v = c.output()
+        result[k] = v
 
     return result
 

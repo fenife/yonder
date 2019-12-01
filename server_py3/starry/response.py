@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
 import ujson
+from http.cookies import SimpleCookie
 
 from .status import code2name, code2status
+from .log import logger
 
 
 class Response(object):
@@ -18,13 +20,18 @@ class Response(object):
         self.status_code = code or self.default_status_code
         self.mimetype = self.default_mimetype
         self.headers = headers or [('Content-Type', 'text/json')]
+        self._cookies = SimpleCookie()
 
     @property
     def name(self):
+        """
+        http status name
+        :return:
+        """
         n = code2name(self.status_code)
         return n
 
-    def get_status(self):
+    def _get_status(self):
         if self.status_code > 0:
             # 大于0的是HTTP状态码
             return code2status(self.status_code)
@@ -33,10 +40,11 @@ class Response(object):
             # HTTP 状态码返回OK，response的data中才是真正的异常原因
             return "200 OK"
 
-    def get_headers(self):
+    def _get_headers(self):
+
         return self.headers
 
-    def get_body(self):
+    def _get_body(self):
         if isinstance(self.data, bytes):
             # 返回的格式是固定的，bytes需要手动拼接
             c = b'{"code":' + str(self.status_code).encode(self.charset) + b','
@@ -56,9 +64,9 @@ class Response(object):
 
     def __call__(self, environ, start_response):
 
-        body = self.get_body()
-        status = self.get_status()
-        headers = self.get_headers()
+        body = self._get_body()
+        status = self._get_status()
+        headers = self._get_headers()
         start_response(status, headers)
 
         print('body len:', len(body))

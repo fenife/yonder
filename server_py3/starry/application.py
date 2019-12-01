@@ -7,6 +7,7 @@ db
 cookie
 middleware
 logger
+debug loader: auto reload source code in debug mode
 
 done:
 json data from http body
@@ -18,11 +19,11 @@ import threading
 from .httpserver import run_simple
 from .tree import Tree
 from .exceptions import (AppBaseException, MethodNotAllowed, NotFound, InternalServerError)
+from .context import AppRequestContext
 from .response import Response
-from .request import Request
 from .log import logger
 
-context = ctx = threading.local()
+# context = ctx = threading.local()
 
 
 class Application(object):
@@ -35,7 +36,7 @@ class Application(object):
         return run_simple(host, port, self, **options)
 
     def route(self, rule, **options):
-
+        """添加路由"""
         def decorator(f):
             # options.setdefault('methods', ('GET', ))
             methods = options.get('methods', ('GET', ))
@@ -51,11 +52,12 @@ class Application(object):
 
         return decorator
 
-    def dispatch_request(self):
+    def dispatch_request(self, ctx):
+        """根据url分发请求到 handler，获取响应"""
         if not self._allowMethods:
             self._allowMethods = set(self._methodTrees.keys())
 
-        method = ctx.method.upper()
+        method = ctx.request.method.upper()
         if not method:
             raise MethodNotAllowed
 
@@ -66,11 +68,13 @@ class Application(object):
         if not tree:
             raise NotFound
 
-        path = ctx.env.get('PATH_INFO')
+        # path = ctx.env.get('PATH_INFO')
+        path = ctx.request.path
         node, params = tree.search(path)
 
         # 路径中的参数
-        ctx.params = params
+        # todo: remove test
+        # ctx.params = params
         ctx.request.set_params(params)
 
         if not (node and node.handler):
@@ -84,47 +88,39 @@ class Application(object):
 
         return resp
 
-    def _load_context(self, environ):
-        ctx.env = environ
-        ctx.environ = environ
-        ctx.method = environ.get('REQUEST_METHOD')
-        ctx.path = environ.get('PATH_INFO')
-        # ctx.query = environ.get('QUERY_STRING')
+    def load_context(self, environ):
+        ctx = AppRequestContext(self, environ)
+        return ctx
 
-        ctx.request = Request(environ)
-        print("request.json:", ctx.request.json())
+    def process_response(self, ctx, response):
+        """
+        :param ctx:  AppRequestContext
+        :param response:    subclass of Response or AppBaseException
+        :return:
+        """
+        if ctx.cookies:
+            ctx.save_session(response)
 
-    def parse_request(self, environ):
-        return self._load_context(environ)
-
-    def make_response(self, rv):
-        if isinstance(rv, Response):
-            return rv
-        if isinstance(rv, AppBaseException):
-            return rv
-
-        # if isinstance(rv, tuple):
-        #     return Response(*rv)
-
-        return Response(rv)
+        return response
 
     def wsgi_app(self, environ, start_response):
         print()
         print('-' * 50)
+        ctx = self.load_context(environ)
         try:
-            # self._load_context(environ)
-            self.parse_request(environ)
+            rv = self.dispatch_request(ctx)
+            response = Response(rv)
 
-            rv = self.dispatch_request()
         except AppBaseException as e:
             logger.exception("http error")
-            rv = e
+            response = e
 
         except Exception as e:
             logger.exception("internal error")
-            rv = InternalServerError()
+            response = InternalServerError()
 
-        response = self.make_response(rv)
+        response = self.process_response(ctx, response)
+
         result = response(environ, start_response)      # response.__call__()
         print('result:', result)
         return result

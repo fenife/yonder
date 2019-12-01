@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import ujson
+from http.cookies import SimpleCookie
+from .log import logger
 
 
 class Request(object):
@@ -19,6 +21,7 @@ class Request(object):
         self._json = None
 
         self.params = {}
+        self._cookies = None
 
     def json(self):
         """获取 http body 中的数据，以JSON格式返回"""
@@ -36,6 +39,17 @@ class Request(object):
         return self._json
 
     def set_params(self, params):
+        """
+        url params
+
+        eg: /user/:id       # app route
+            /user/100       # http url
+
+        => {'id': '100'}    # params
+
+        :param params:
+        :return:
+        """
         self.params = params
 
     def get_param(self, param):
@@ -68,3 +82,23 @@ class Request(object):
 
         return self._query
 
+    @property
+    def cookies(self):
+        """
+        code from aiohttp.web_request
+
+        http header:
+        ('Cookie': 'a=1;b=2')      # 注：用;分隔不同的值，不支持utf8字符、空格等
+
+        => {'a': '1', 'b': '2'}
+        :return:
+        """
+        if self._cookies is not None:
+            return self._cookies
+
+        raw = self.env.get('HTTP_COOKIE', '')
+        parsed = SimpleCookie(raw)
+        # self._cookies = MappingProxyType({k: v.value for k, v in parsed.items()})
+        self._cookies = {k: v.value for k, v in parsed.items()}
+        logger.debug('cookies: {}'.format(self._cookies))
+        return self._cookies
