@@ -4,14 +4,15 @@
 todo:
 
 db
-middleware
 logger
 debug loader: auto reload source code in debug mode
+del_cookie
 
 done:
 json data from http body
 parse query string, unquote to utf-8
 cookie
+middleware
 """
 
 import threading

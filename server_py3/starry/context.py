@@ -53,6 +53,9 @@ class AppRequestContext(object):
         if version is not None:
             c['version'] = version
 
+    def del_cookie(self, name):
+        pass
+
     def load_session(self):
         # load self.request.cookies
         pass
