@@ -19,6 +19,17 @@ class User(Model):
     __index_key__ = [('id', 'name'), ('name',)]
 
 
+@app.before_request
+def before_req(ctx):
+    print('before_req:', ctx.request.path)
+
+
+@app.after_request
+def after_req(ctx, response):
+    print('after_req:', ctx.request.path, response.status_code)
+    return response
+
+
 @app.route('/')
 def index(ctx):
     resp = {'a': 1, 'b': 2}
