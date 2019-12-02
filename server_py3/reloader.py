@@ -10,7 +10,7 @@ import time
 import subprocess
 
 from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler, PatternMatchingEventHandler
+from watchdog.events import FileSystemEventHandler, FileMovedEvent
 
 
 def log(s):
@@ -24,7 +24,13 @@ class ReloadAppEventHandler(FileSystemEventHandler):
 
     def on_any_event(self, event):
         if event.src_path.endswith('.py'):
-            print('=' * 100)
+            # tmp file of PyCharm if enable "safe write"
+            if getattr(event, 'dest_path', None) and event.dest_path.endswith('py___jb_old___'):
+                return
+
+            print(f"\n{'=' * 130}")
+            # print('\n', '=' * 100)
+            log(f"event: {event}")
             log(f"file changed: {event.src_path}")
             self.restart()
 
@@ -40,13 +46,13 @@ def kill_process():
         log(f"kill process [{process.pid}]")
         process.kill()
         process.wait()
-        log(f"process ended with code {process.returncode}")
+        log(f"process ended with code [{process.returncode}]")
         process = None
 
 
 def start_process():
     global cmd, process
-    log(f"start process {' '.join(cmd)} ...")
+    log(f"start process [{' '.join(cmd)}] ...")
     process = subprocess.Popen(cmd, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr)
 
 
@@ -73,12 +79,20 @@ def start_watch(path):
     observer.join()
 
 
-if __name__ == "__main__":
+def main():
+    global cmd
     argv = sys.argv[1:]
     if not argv:
         print("usage: python reloader.py ./app.py")
         sys.exit(0)
 
+    if argv[0] != 'python3':
+        argv.insert(0, 'python3')
+
     cmd = argv
     path = os.path.abspath('.')
     start_watch(path)
+
+
+if __name__ == "__main__":
+    main()
