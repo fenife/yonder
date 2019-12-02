@@ -4,6 +4,7 @@ import json
 from starry.application import Application
 from starry.norm import (DBTest, Model, IntField, VarcharField)
 from starry.response import Response
+from starry.exceptions import Unauthorized
 from starry.log import logger
 
 app = Application()
@@ -32,6 +33,17 @@ def after_req(ctx, response):
     return response
 
 
+def login_required(func):
+    """login required"""
+    def decorator(ctx):
+        if not getattr(ctx, 'user', None):
+            raise Unauthorized()
+
+        return func(ctx)
+
+    return decorator
+
+
 @app.route('/')
 def index(ctx):
     resp = {'a': 1, 'b': 2}
@@ -42,7 +54,8 @@ def index(ctx):
 
 
 @app.route('/user/:id')
-def view_tree(ctx):
+@login_required
+def get_user(ctx):
     params = ctx.request.params
     query = ctx.request.all_query()
     data = {

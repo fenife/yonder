@@ -41,7 +41,6 @@ class Response(object):
             return "200 OK"
 
     def _get_headers(self):
-
         return self.headers
 
     def _get_body(self):

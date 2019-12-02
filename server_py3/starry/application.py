@@ -148,7 +148,7 @@ class Application(object):
             response = self.process_response(ctx, response)
 
         except AppBaseException as e:
-            logger.exception("http error")
+            logger.exception(f"http error")
             response = e
 
         except Exception as e:
