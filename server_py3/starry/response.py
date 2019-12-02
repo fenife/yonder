@@ -55,7 +55,7 @@ class Response(object):
 
         body = {
             "code": self.status_code,
-            "data": self.data,
+            "data": {} if self.data is None else self.data,
             "msg": self.name,
         }
         # self.data = ujson.dumps(self.data).encode(self.charset)

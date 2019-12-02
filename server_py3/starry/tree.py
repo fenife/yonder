@@ -84,13 +84,13 @@ class Tree(object):
         if path.endswith('/') and path != '/':
             keys.append('/')
 
-        print(f"path: {path}, keys: {keys}")
+        # print(f"path: {path}, keys: {keys}")
         return keys
 
     @staticmethod
     def _insert_remained(node, keys):
         """把路径的剩余部分keys也加入到tree中"""
-        print('cur:', node, 'remain:', keys)
+        # print('cur:', node, 'remain:', keys)
         if not keys:
             return
 
@@ -190,11 +190,6 @@ class Tree(object):
 
     def print_tree(self):
         self.show(self._root, 0)
-
-
-class MethodTrees(dict):
-    def __init__(self):
-        pass
 
 
 ########################################################################

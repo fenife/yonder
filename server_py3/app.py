@@ -4,6 +4,7 @@ import json
 from starry.application import Application
 from starry.norm import (DBTest, Model, IntField, VarcharField)
 from starry.response import Response
+from starry.log import logger
 
 app = Application()
 
@@ -21,7 +22,8 @@ class User(Model):
 
 @app.before_request
 def before_req(ctx):
-    print('before_req:', ctx.request.path)
+    # print('before_req:', ctx.request.path)
+    logger.info(f"before_req: {ctx.request.path}")
 
 
 @app.after_request
@@ -35,7 +37,8 @@ def index(ctx):
     resp = {'a': 1, 'b': 2}
     resp = json.dumps(resp).encode()
     # resp = Response(data=b"hello yonder")
-    return resp
+    # return resp
+    return None
 
 
 @app.route('/user/:id')

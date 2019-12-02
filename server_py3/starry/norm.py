@@ -4,6 +4,7 @@ import MySQLdb
 
 from .exceptions import AppBaseException
 from .settings import app_configs
+from .log import logger
 
 
 #
@@ -328,9 +329,10 @@ class ModelMetaclass(type):
         attrs['__escaped_fields__'] = escaped_fields
         attrs['__primary_key__'] = primary_key
 
-        print()
+        logger.debug(f"show model attrs:")
         for k, v in attrs.items():
-            print(k, ":", v)
+            print(f"{k:>20s} : {v}")
+        print()
 
         return type.__new__(cls, name, bases, attrs)
 

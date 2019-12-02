@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import logging
+import time
 import sys
 from urllib.parse import unquote
 from socketserver import ThreadingMixIn
@@ -104,6 +104,13 @@ class WSGIRequestHandler(BaseHTTPRequestHandler):
 
     def get_stderr(self):
         return sys.stderr
+
+    def log_date_time_string(self):
+        """Return the current time formatted for logging."""
+        now = time.time()
+        year, month, day, hh, mm, ss, x, y, z = time.localtime(now)
+        s = "%04d-%02d-%02d %02d:%02d:%02d" % (year, month, day, hh, mm, ss)
+        return s
 
     def handle(self):
         """Handle a single HTTP request"""
