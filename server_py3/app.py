@@ -37,7 +37,8 @@ def login_required(func):
     """login required"""
     def decorator(ctx):
         if not getattr(ctx, 'user', None):
-            raise Unauthorized()
+            # raise Unauthorized()
+            return Response(code=404, msg="permission denied")
 
         return func(ctx)
 
@@ -132,19 +133,6 @@ def _test():
     host = '0.0.0.0'
     port = 6070
     app.run(host=host, port=port)
-
-
-def _test1():
-    class Response(object):
-        def __init__(self, a=None, b=None):
-            self.a = a or 1
-            self.b = b or 2
-
-        def __call__(self, *args, **kwargs):
-            return self.a + self.b
-
-    resp = Response()
-    print(resp())
 
 
 if __name__ == "__main__":
