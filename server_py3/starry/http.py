@@ -7,6 +7,7 @@
 # :license: BSD-3-Clause
 
 # todo: from http import HTTPStatus
+from http import HTTPStatus
 
 HTTP_STATUS_CODES = {
     100: "Continue",

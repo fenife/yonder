@@ -4,7 +4,7 @@ import sys
 import logging
 
 
-def init_stdout_logger(name, level=logging.DEBUG):
+def init_stdout_logger(name, level=logging.ERROR):
     # 指定logger输出格式
     # fmt = "\n[%(asctime)s]-[%(levelname)-5s]-[%(filename)s:%(funcName)s:%(lineno)d]:: %(message)s"
     fmt = "\n%(asctime)s||lv=%(levelname)-5s||f=%(filename)s||func=%(funcName)s||line=%(lineno)d:: %(message)s"

@@ -135,6 +135,12 @@ class Application(object):
 
         return response
 
+    def make_response(self, rv):
+        if isinstance(rv, Response):
+            return rv
+
+        return Response(rv)
+
     def wsgi_app(self, environ, start_response):
         print()
         print('-' * 50)
@@ -144,11 +150,12 @@ class Application(object):
             if rv is None:
                 rv = self.dispatch_request(ctx)
 
-            response = Response(rv)
+            response = self.make_response(rv)
             response = self.process_response(ctx, response)
 
         except AppBaseException as e:
-            logger.exception(f"http error")
+            # logger.exception(f"http error")
+            logger.debug(f"http error", exc_info=True)
             response = e
 
         except Exception as e:
@@ -156,7 +163,7 @@ class Application(object):
             response = InternalServerError()
 
         result = response(environ, start_response)      # response.__call__()
-        print('result:', result)
+        # print('result:', result)
         return result
 
     def __call__(self, environ, start_response):
