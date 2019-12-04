@@ -42,11 +42,11 @@ class Response(object):
 
     def _get_status(self):
         if 0 < self.status_code < 1000:
-            # 大于0的是HTTP状态码
+            # HTTP状态码一般是3位的十进制数字
             return code2status(self.status_code)
         else:
-            # 小于0的为自定义的状态码
-            # HTTP 状态码返回OK，response的data中才是真正的异常原因
+            # 其他的为自定义的状态码
+            # HTTP 状态码返回OK，response的code才是真正的异常原因
             return "200 OK"
 
     def _get_headers(self):

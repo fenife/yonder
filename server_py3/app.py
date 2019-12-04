@@ -107,6 +107,24 @@ def test_cookie(ctx):
     return result
 
 
+@app.route('/user/info')
+def test_login(ctx):
+    result = {
+        "query": ctx.request.all_query()
+    }
+
+    return result
+
+
+@app.route('/test/login', methods=('POST', ))
+def test_login(ctx):
+    result = {
+        "req_body": ctx.request.json()
+    }
+
+    return result
+
+
 def _test_orm():
     """
     CREATE TABLE `users` (
