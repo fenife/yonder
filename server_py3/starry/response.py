@@ -41,7 +41,7 @@ class Response(object):
         return n
 
     def _get_status(self):
-        if self.status_code > 0:
+        if 0 < self.status_code < 1000:
             # 大于0的是HTTP状态码
             return code2status(self.status_code)
         else:

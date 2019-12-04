@@ -43,7 +43,7 @@ def login_required():
             if not getattr(ctx, 'user', None):
                 # raise Unauthorized()
                 # return Response(code=404, msg="permission denied")
-                abort(code=-1, msg="permission denied")
+                abort(code=1000, msg="permission denied")
 
             return func(ctx, *args, **kwargs)
 
