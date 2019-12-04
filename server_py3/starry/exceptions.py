@@ -2,24 +2,32 @@
 
 
 from .response import Response
+from .status import code2name, code2status
 
 
 class AppBaseException(Exception):
     code = None
-    desc = None     # 暂时没用到
 
-    def __init__(self, desc=None):
+    def __init__(self, code=None, msg=None):
         super(AppBaseException, self).__init__()
-        if desc:
-            self.desc = desc
+        if code is not None:
+            self.code = code        # 覆盖class的code属性
+
+        self.msg = msg
+        if msg is None:
+            self.msg = code2name(self.code)
 
     def get_response(self):
-        return Response(code=self.code)
+        return Response(code=self.code, msg=self.msg)
 
     def __call__(self, environ, start_response):
         response = self.get_response()
         resp = response(environ, start_response)
         return resp
+
+
+def abort(code, msg=None):
+    raise AppBaseException(code, msg)
 
 
 #

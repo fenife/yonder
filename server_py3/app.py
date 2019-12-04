@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
 import json
+from functools import wraps
+
 from starry.application import Application
 from starry.norm import (DBTest, Model, IntField, VarcharField)
 from starry.response import Response
-from starry.exceptions import Unauthorized
+from starry.exceptions import (abort, Unauthorized)
 from starry.log import logger
 
 app = Application()
@@ -33,15 +35,19 @@ def after_req(ctx, response):
     return response
 
 
-def login_required(func):
+def login_required():
     """login required"""
-    def decorator(ctx):
-        if not getattr(ctx, 'user', None):
-            # raise Unauthorized()
-            return Response(code=404, msg="permission denied")
+    def decorator(func):
+        @wraps(func)
+        def wrapper(ctx, *args, **kwargs):
+            if not getattr(ctx, 'user', None):
+                # raise Unauthorized()
+                # return Response(code=404, msg="permission denied")
+                abort(code=-1, msg="permission denied")
 
-        return func(ctx)
+            return func(ctx, *args, **kwargs)
 
+        return wrapper
     return decorator
 
 
@@ -55,7 +61,7 @@ def index(ctx):
 
 
 @app.route('/user/:id')
-@login_required
+@login_required()
 def get_user(ctx):
     params = ctx.request.params
     query = ctx.request.all_query()
@@ -68,7 +74,7 @@ def get_user(ctx):
     return data
 
 
-@app.route('/users/')
+@app.route('/users/', methods=('get', 'post'))
 def users(ctx):
     sql = "select * from users"
     req = ctx.request
@@ -132,7 +138,7 @@ def _test():
     # app = Application()
     host = '0.0.0.0'
     port = 6070
-    app.run(host=host, port=port)
+    app.run(host=host, port=port, debug=True)
 
 
 if __name__ == "__main__":
