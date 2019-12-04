@@ -7,6 +7,7 @@ db
 logger
 del_cookie
 add request id
+config
 
 done:
 json data from http body
@@ -17,20 +18,27 @@ debug loader: auto reload source code in debug mode
 """
 
 import threading
+import logging
 
 from .httpserver import run_simple
 from .tree import Tree
 from .exceptions import (AppBaseException, MethodNotAllowed, NotFound, InternalServerError)
 from .context import AppRequestContext
 from .response import Response
-from .log import logger
+# from .log import logger
 
 # context = ctx = threading.local()
 
 
 class Application(object):
     def __init__(self):
+        # debug mode
+        self.debug = False
+
+        # route trees
         self._methodTrees = {}
+
+        # allow methods
         self._allowMethods = set()
 
         # handler funcs before request
@@ -45,9 +53,40 @@ class Application(object):
         # use `after_request` to add a handler
         self.after_request_funcs = []
 
+        # this logger is for higher application
+        self.logger = None
+
     def run(self, host='localhost', port=8000, **options):
+        # 初始化app的部分属性
+        self._init_app(**options)
+
         options.setdefault('threaded', True)
         return run_simple(host, port, self, **options)
+
+    def _init_app(self, **options):
+        self.debug = options.pop('debug', False)
+        self.logger = self._init_logger(__name__)
+
+    def _init_logger(self, name):
+        # 指定logger输出格式
+        fmt = "\n%(asctime)s||lv=%(levelname)-5s||f=%(filename)s||func=%(funcName)s||line=%(lineno)d:: %(message)s"
+
+        # 获取logger实例，如果参数为空则返回root logger
+        logger = logging.getLogger(name)
+        formatter = logging.Formatter(fmt, datefmt='%Y-%m-%d %H:%M:%S')
+
+        # 控制台日志
+        console_handler = logging.StreamHandler()
+        console_handler.formatter = formatter  # 也可以直接给formatter赋值
+
+        # 为logger添加的日志处理器
+        logger.addHandler(console_handler)
+
+        # 指定日志的最低输出级别
+        level = logging.DEBUG if self.debug else logging.ERROR
+        logger.setLevel(level)
+
+        return logger
 
     def route(self, rule, **options):
         """添加路由"""
@@ -55,10 +94,11 @@ class Application(object):
             # options.setdefault('methods', ('GET', ))
             methods = options.get('methods', ('GET', ))
             for method in methods:
+                method = method.upper()
                 tree = self._methodTrees.get(method)
                 if not tree:
                     tree = Tree()
-                    self._methodTrees[method.upper()] = tree
+                    self._methodTrees[method] = tree
 
                 tree.insert(rule, f)
 
@@ -80,10 +120,7 @@ class Application(object):
             self._allowMethods = set(self._methodTrees.keys())
 
         method = ctx.request.method.upper()
-        if not method:
-            raise MethodNotAllowed
-
-        if method not in self._allowMethods:
+        if not method or method not in self._allowMethods:
             raise MethodNotAllowed
 
         tree = self._methodTrees.get(method)
@@ -130,7 +167,7 @@ class Application(object):
         for handler in self.after_request_funcs:
             response = handler(ctx, response)
             if response is None:
-                logger.error(f"middleware {handler.__name__} return a None response")
+                self.logger.error(f"middleware {handler.__name__} return a None response")
                 raise InternalServerError()
 
         return response
@@ -155,11 +192,11 @@ class Application(object):
 
         except AppBaseException as e:
             # logger.exception(f"http error")
-            logger.debug(f"http error", exc_info=True)
+            self.logger.debug(f"http error", exc_info=True)
             response = e
 
         except Exception as e:
-            logger.exception("internal error")
+            self.logger.exception("internal error")
             response = InternalServerError()
 
         result = response(environ, start_response)      # response.__call__()
