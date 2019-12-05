@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 
+import sys
+import os
 import json
 from functools import wraps
 
-from starry.application import Application
-from starry.norm import (DBTest, Model, IntField, VarcharField)
-from starry.response import Response
-from starry.exceptions import (abort, Unauthorized)
-from starry.log import logger
+sys.path.append(os.path.join(os.path.dirname(__name__), '..', 'sim'))
+
+from sim.application import Application
+from sim.norm import (DBTest, Model, IntField, VarcharField)
+from sim.response import Response
+from sim.exceptions import (abort, Unauthorized)
+from sim.log import logger
 
 app = Application()
 
@@ -109,8 +113,19 @@ def test_cookie(ctx):
 
 @app.route('/user/info')
 def test_login(ctx):
+
+    uid = ctx.request.query('id')
+    try:
+        uid = int(uid)
+    except Exception as e:
+        abort(-1, 'user id is invalid, id must be an integer')
+
+    sql = f"select * from users where id = {uid}"
+    data = User.select(sql)
+    user = data[0] if data else None
     result = {
-        "query": ctx.request.all_query()
+        "query": ctx.request.all_query(),
+        "user": user,
     }
 
     return result
@@ -157,6 +172,7 @@ def _test():
     host = '0.0.0.0'
     port = 6070
     app.run(host=host, port=port, debug=True)
+    # app.run(host=host, port=port, debug=False)
 
 
 if __name__ == "__main__":

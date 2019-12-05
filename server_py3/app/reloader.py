@@ -90,7 +90,7 @@ def main():
         argv.insert(0, 'python3')
 
     cmd = argv
-    path = os.path.abspath('.')
+    path = os.path.abspath('..')
     start_watch(path)
 
 

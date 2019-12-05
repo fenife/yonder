@@ -13,7 +13,7 @@ class Request(object):
         self.method = environ.get('REQUEST_METHOD')
         self.path = environ.get('PATH_INFO')
         self.query_string = environ.get('QUERY_STRING')
-        self._query = None
+        self._query = dict()
 
         self.content_type = environ.get('CONTENT_TYPE')
         self.content_length = environ.get('CONTENT_LENGTH')
@@ -74,7 +74,8 @@ class Request(object):
         if not self._query:
             self.parse_query()
 
-        return self._query[k]
+        v = self._query.get(k)
+        return v
 
     def all_query(self):
         if not self._query:

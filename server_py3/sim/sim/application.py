@@ -2,6 +2,7 @@
 
 """
 todo:
+name: sim, yon, fare
 
 db
 del_cookie
