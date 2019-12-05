@@ -57,6 +57,9 @@ class Application(object):
         # this logger is for higher application
         self.logger = None
 
+        # configs
+        self.config = {}
+
     def run(self, host='localhost', port=8000, **options):
         # 初始化app的部分属性
         self._init_app(**options)
@@ -88,6 +91,10 @@ class Application(object):
         logger.setLevel(level)
 
         return logger
+
+    def update_config(self, configs):
+        assert isinstance(configs, dict), f"configs must be a dict"
+        self.config.update(configs)
 
     def route(self, rule, **options):
         """添加路由"""

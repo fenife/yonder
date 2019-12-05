@@ -13,7 +13,21 @@ from sim.response import Response
 from sim.exceptions import (abort, Unauthorized)
 from sim.log import logger
 
+
+_dev_configs = {
+    # database config
+    "DB_HOST": '127.0.0.1',
+    "DB_PORT": 3306,
+    "DB_USER": "test",
+    "DB_PASSWORD": "test",
+    "DB_NAME": "test",
+    "DB_CHARSET": "utf8",
+}
+
+
 app = Application()
+
+app.update_config(_dev_configs)
 
 
 class User(Model):
