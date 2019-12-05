@@ -2,7 +2,7 @@
 
 """
 todo:
-name: sim, yon, fare
+name: sim, yon
 
 db
 del_cookie

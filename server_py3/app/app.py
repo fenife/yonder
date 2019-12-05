@@ -150,7 +150,7 @@ def _test_orm():
 
     insert into users (`name`) values ("u1");
     """
-    from starry.pretty import dictList2Table
+    from sim.pretty import dictList2Table
 
     print(User.__table__)
     print(User.__mappings__)
