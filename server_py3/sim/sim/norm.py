@@ -1,163 +1,22 @@
 #!/usr/bin/env python3
 
 import MySQLdb
-
-from .exceptions import AppBaseException
-from .settings import app_configs
 from .log import logger
 
 
-#
-# db exceptions
-#
-
-
-class DBConfigError(AppBaseException):
-    code = -100
-
-
-class DBConnectError(AppBaseException):
-    code = -110
-
-
-class DBCloseError(AppBaseException):
-    code = -120
-
-
-class DBError(AppBaseException):
-    code = -130
-
-
-#
-# db config
-#
-
-class DbConfig(object):
-    def __init__(self, name):
-        self.name = name
-        self.dbInfo = self.get_config()
-
-        try:
-            self.host = self.dbInfo['host']
-            self.user = self.dbInfo['user']
-            self.password = self.dbInfo['password']
-            self.database = self.dbInfo['db']
-            self.port = int(self.dbInfo['port']) if 'port' in self.dbInfo else 3306
-            self.charset = self.dbInfo['charset'] if 'charset' in self.dbInfo else "utf8"
-
-        except TypeError:
-            raise DBConfigError
-
-    def get_config(self):
-        conf = app_configs.get("mysql", {}).get(self.name)
-        if not conf:
-            print(f"can not get db config: {self.name}")
-            raise DBConfigError
-
-        return conf
-
-
-#
-# db loader
-#
-
-
-class Database(object):
-    def __init__(self, name):
-        self.name = name
-        self.dbConf = DbConfig(self.name)
-        self.conn = None
-        self.cur = None
-
-    def connect(self):
-        try:
-            self.conn = MySQLdb.connect(
-                host=self.dbConf.host,
-                port=self.dbConf.port,
-                user=self.dbConf.user,
-                password=self.dbConf.password,
-                db=self.dbConf.database,
-                charset=self.dbConf.charset,
-                connect_timeout=10
-            )
-
-            self.conn.autocommit(True)      # 自动提交事务
-
-            self.cur = self.conn.cursor(MySQLdb.cursors.DictCursor)
-
-        except Exception as e:
-            print(e)
-            raise DBConnectError
-
-    def close(self):
-        try:
-            self.cur.close()
-            self.conn.close()
-            self.cur = None
-            self.conn = None
-        except Exception as e:
-            print(e)
-            raise DBConnectError
-
-    def select(self, sql, size=None):
-        if not self.cur:
-            self.connect()
-
-        print(f"SELECT: {sql}")
-
-        try:
-            self.cur.execute(sql)
-            if size:
-                data = self.cur.fetchmany(size)
-            else:
-                data = self.cur.fetchall()
-
-        except Exception as e:
-            print(e)
-            # data = None
-            raise DBError
-
-        print(f"rows returned: {len(data)}")
-        return data
-
-    def execute(self, sql):
-        if not self.cur:
-            self.connect()
-
-        print(f"EXECUTE: {sql}")
-
-        try:
-            ret = self.cur.execute(sql)
-            return ret
-
-        except Exception as e:
-            print(e)
-            return False
-
-
-#
-# db query and execute
-# connect to database everytime
-# todo: connection pool
-#
-
-
 class ConnContextManager(object):
-    default_dbname = 'test'
-
-    def __init__(self, dbname=None):
-        self.dbName = dbname or self.default_dbname
-        self.dbConf = DbConfig(self.dbName)
+    def __init__(self, db):
+        self.db = db
         self.conn = None
 
     def __enter__(self):
         self.conn = MySQLdb.connect(
-            host=self.dbConf.host,
-            port=self.dbConf.port,
-            user=self.dbConf.user,
-            password=self.dbConf.password,
-            db=self.dbConf.database,
-            charset=self.dbConf.charset,
+            host=self.db.host,
+            port=self.db.port,
+            user=self.db.user,
+            password=self.db.password,
+            db=self.db.db_name,        # database name
+            charset=self.db.charset,
             connect_timeout=10
         )
 
@@ -167,64 +26,83 @@ class ConnContextManager(object):
         self.conn.close()
 
 
-def select(sql, size=None):
-    print(f"[SELECT] - {sql}")
+class Database(object):
+    def __init__(self, app=None):
+        self.app = app
+        self.host = None
+        self.port = 3306
+        self.user = None
+        self.password = None
+        self.db_name = None
+        self.charset = "utf8"
 
-    with ConnContextManager() as conn:
-        cur = conn.cursor(MySQLdb.cursors.DictCursor)
-        cur.execute(sql)
-        if size:
-            data = cur.fetchmany(size)
-        else:
-            data = cur.fetchall()
+        if app is not None:
+            self.init_app(app)
 
-        cur.close()
+    def init_app(self, app):
+        from .application import Application
+        assert isinstance(app, Application)
 
-        print(f"rows returned: {len(data)}")
-        return data
+        if self.app is None:
+            self.app = app
 
+        # "DB_HOST": '127.0.0.1',
+        # "DB_PORT": 3306,
+        # "DB_USER": "test",
+        # "DB_PASSWORD": "test",
+        # "DB_NAME": "test",
+        # "DB_CHARSET": "utf8",
+        self.host = self.app.config["DB_HOST"]
+        self.port = self.app.config["DB_PORT"]
+        self.user = self.app.config["DB_USER"]
+        self.password = self.app.config["DB_PASSWORD"]
+        self.db_name = self.app.config["DB_NAME"]
+        self.charset = self.app.config["DB_CHARSET"]
 
-def execute(sql, args=None, autocommit=True):
-    print(f"[EXECUTE] - {sql}")
+    def select(self, sql, size=None):
+        print(f"[SELECT] - {sql}")
 
-    with ConnContextManager() as conn:
-        if not autocommit:
-            conn.begin()
+        with ConnContextManager(self) as conn:
+            cur = conn.cursor(MySQLdb.cursors.DictCursor)
+            cur.execute(sql)
+            if size:
+                data = cur.fetchmany(size)
+            else:
+                data = cur.fetchall()
 
-        try:
-            cur = conn.cursor()
-            cur.execute(sql, args)
-            affected = cur.rowcount
             cur.close()
 
+            print(f"rows returned: {len(data)}")
+            return data
+
+    def execute(self, sql, args=None, autocommit=True):
+        print(f"[EXECUTE] - {sql}")
+
+        with ConnContextManager(self) as conn:
             if not autocommit:
-                conn.commit()
+                conn.begin()
 
-        except Exception as e:
-            if not autocommit:
-                conn.rollback()
+            try:
+                cur = conn.cursor()
+                cur.execute(sql, args)
+                affected = cur.rowcount
+                cur.close()
 
-            raise
+                if not autocommit:
+                    conn.commit()
 
-        return affected
+            except Exception as e:
+                if not autocommit:
+                    conn.rollback()
+
+                raise
+
+            return affected
 
 
 #
 # orm
 #
-
-
-class DBTest(Database):
-    """
-    database: test
-    """
-    @classmethod
-    def select(cls, sql, *args, **kwargs):
-        return select(sql, *args, **kwargs)
-
-    @classmethod
-    def execute(cls, sql, *args, **kwargs):
-        return execute(sql, *args, **kwargs)
 
 
 class Field(object):
@@ -427,62 +305,3 @@ class Model(dict, metaclass=ModelMetaclass):
 
         return db.execute(sql, *args, **kwargs)
 
-
-#
-# test
-#
-
-
-def _test_orm():
-    """
-        CREATE TABLE IF NOT EXISTS `users` (
-          `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-          `name` varchar(255) NOT NULL,
-          PRIMARY KEY (`id`)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-        insert into users (`name`) values ("u1");
-        """
-    from .pretty import dictList2Table
-
-    class User(Model):
-        id = IntField(column_type='int', primary_key=True)
-        name = VarcharField(column_type='varchar(255)')
-        # name = VarcharField(column_type='varchar(255)', primary_key=True)
-
-        __database__ = DBTest
-        __table__ = 'users'
-
-    print(User.__table__)
-    print(User.__mappings__)
-
-    sql = "select * from users"
-    data = User.select(sql)
-    print(dictList2Table(data))
-
-    User.create()
-
-
-def _test():
-    from .pretty import dictList2Table
-
-    # c = DbConfig('test')
-    # print(c.dbInfo)
-
-    # db = Database('test')
-    # print(db.dbConf.dbInfo)
-
-    sql = "select * from users"
-    # data = db.select(sql)
-    data = select(sql)
-    print(dictList2Table(data))
-
-    print()
-    sql = "desc users"
-    data = select(sql)
-    print(dictList2Table(data))
-
-
-if __name__ == "__main__":
-    # _test()
-    _test_orm()
