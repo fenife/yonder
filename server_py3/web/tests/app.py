@@ -5,14 +5,13 @@ import os
 import json
 from functools import wraps
 
-sys.path.append(os.path.join(os.path.dirname(__name__), '..', 'sim'))
+sys.path.append(os.path.join(os.path.dirname(__name__), '..', '..', 'sim'))
 
 from sim.application import Application
-from sim.norm import (DBTest, Model, IntField, VarcharField)
+from sim._norm import (DBTest, Model, IntField, VarcharField)
 from sim.response import Response
 from sim.exceptions import (abort, Unauthorized)
 from sim.log import logger
-
 
 _dev_configs = {
     # database config

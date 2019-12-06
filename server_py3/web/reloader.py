@@ -83,14 +83,15 @@ def main():
     global cmd
     argv = sys.argv[1:]
     if not argv:
-        print("usage: python reloader.py ./app.py")
+        print("usage: python reloader.py ./main.py")
         sys.exit(0)
 
     if argv[0] != 'python3':
         argv.insert(0, 'python3')
 
     cmd = argv
-    path = os.path.abspath('..')
+    # path = os.path.abspath('..', '..')
+    path = os.path.abspath(os.path.join(os.path.dirname(__name__), '..'))
     start_watch(path)
 
 
