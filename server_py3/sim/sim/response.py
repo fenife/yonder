@@ -56,10 +56,18 @@ class Response(object):
         if isinstance(self.data, bytes):
             # 返回的格式是固定的，bytes需要手动拼接
             c = b'{"code":' + str(self.status_code).encode(self.charset) + b','
-            d = b'"data":"' + self.data + b'",'
+            d = b'"data":' + self.data + b','
             m = b'"msg":"' + self.msg.encode(self.charset) + b'"}'
             body = c + d + m
             return body
+
+        # object final result:
+        # b'{"code":200,"data":{"a":1,"b":2},"msg":"OK"}'
+
+        # bytes resp:
+        # b'{"a": 1, "b": 2}'
+        # final result:
+        # b'{"code":200,"data":"{"a": 1, "b": 2}","msg":"OK"}'
 
         body = {
             "code": self.status_code,
@@ -78,4 +86,5 @@ class Response(object):
         start_response(status, headers)
 
         # print('body len:', len(body))
+        # print('body:', body)
         return [body]

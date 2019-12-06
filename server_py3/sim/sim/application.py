@@ -76,7 +76,7 @@ class Application(object):
         fmt = "\n%(asctime)s||lv=%(levelname)-5s||f=%(filename)s||func=%(funcName)s||line=%(lineno)d:: %(message)s"
 
         # 获取logger实例，如果参数为空则返回root logger
-        logger = logging.getLogger(name)
+        _logger = logging.getLogger(name)
         formatter = logging.Formatter(fmt, datefmt='%Y-%m-%d %H:%M:%S')
 
         # 控制台日志
@@ -84,13 +84,13 @@ class Application(object):
         console_handler.formatter = formatter  # 也可以直接给formatter赋值
 
         # 为logger添加的日志处理器
-        logger.addHandler(console_handler)
+        _logger.addHandler(console_handler)
 
         # 指定日志的最低输出级别
         level = logging.DEBUG if self.debug else logging.ERROR
-        logger.setLevel(level)
+        _logger.setLevel(level)
 
-        return logger
+        return _logger
 
     def update_config(self, configs):
         assert isinstance(configs, dict), f"configs must be a dict"
@@ -187,8 +187,8 @@ class Application(object):
         return Response(rv)
 
     def wsgi_app(self, environ, start_response):
-        print()
-        print('-' * 50)
+        # print()
+        # print('-' * 50)
         ctx = self.load_context(environ)
         try:
             rv = self.preprocess_request(ctx)
