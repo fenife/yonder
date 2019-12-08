@@ -1,7 +1,15 @@
 #!/usr/bin/env python3
 
+import datetime
 import MySQLdb
+
+from .pretty import dictList2Table
 from .log import logger
+
+
+def gen_now():
+    dt = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    return dt
 
 
 class ConnContextManager(object):
@@ -126,20 +134,25 @@ class Database(object):
 
 
 class Field(object):
+    default_column_type = None
+
     def __init__(self, name=None, column_type=None, primary_key=False,
-                 default=None, null=True, extra=None, comment=None):
+                 default=None, null=True, auto_now=False, extra=None, comment=None,
+                 update=None):
         # name, type, size, decimal, allowNULL, isKey, comment,
         self.name = name
 
-        if not column_type:
-            raise Exception("column type is missed")
+        # if not column_type:
+        #     raise Exception("column type is missed")
 
-        self.column_type = column_type
+        self.column_type = column_type or self.default_column_type
         self.primary_key = primary_key
         self.default = default
         self.null = null
+        self.auto_now = auto_now
         self.extra = extra
         self.comment = comment
+        self.update = update        # 更新时插入的值
 
     def sql_for_create(self):
         sql = ""
@@ -149,7 +162,9 @@ class Field(object):
         if self.column_type:
             sql += f" {self.column_type}"
 
-        if not self.null:
+        if self.null:
+            sql += " null"
+        else:
             sql += " not null"
 
         if self.default and not callable(self.default):
@@ -171,12 +186,47 @@ class Field(object):
         return f"<{self.__class__.__name__}, {self.column_type}>"
 
 
-class VarcharField(Field):
+class StringField(Field):
+    default_column_type = "varchar(100)"
+
+    def __init__(self, **kwargs):
+
+        super().__init__(**kwargs)
+
+    # def __init__(self, name=None, column_type=None, primary_key=False,
+    #              default=None, null=True, extra=None, comment=None):
+    #
+    #     if not column_type:
+    #         column_type = "varchar(100)"
+    #
+    #     super().__init__(name=name, column_type=column_type, primary_key=primary_key,
+    #                      default=default, null=null, extra=extra, comment=comment)
+
+
+class IntField(Field):
+    default_column_type = "int(11)"
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
 
-class IntField(Field):
+class DatetimeField(Field):
+    default_column_type = "timestamp"
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+
+class FloatField(Field):
+    default_column_type = "float"
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+
+class TextField(Field):
+    default_column_type = "text"
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -184,7 +234,7 @@ class IntField(Field):
 class ModelMetaclass(type):
 
     def __new__(cls, name, bases, attrs):
-        if name == 'Model':
+        if name in ('Model', ):
             return type.__new__(cls, name, bases, attrs)
 
         # print(cls)
@@ -205,6 +255,7 @@ class ModelMetaclass(type):
         mappings = dict()
         fields = list()
         primary_key = None
+        auto_now_key = None
 
         # 主键是否是自增id
         # 如果是，后面insert时生成的sql就不必带有primary_key
@@ -221,6 +272,13 @@ class ModelMetaclass(type):
                     primary_key = k
                     if v.extra == 'auto_increment':
                         pk_auto_increment = True            # 主键是自增id
+
+                elif v.auto_now:
+                    if auto_now_key:
+                        raise Exception(f"Duplicate current_timestamp key for `{k}`")
+
+                    auto_now_key = k
+
                 else:
                     fields.append(k)
 
@@ -235,9 +293,14 @@ class ModelMetaclass(type):
         attrs['__fields__'] = fields                # 除主键外的属性名
         attrs['__primary_key__'] = primary_key      # 主键的属性名
         attrs['__pk_auto_increment__'] = pk_auto_increment      # 主键是否是自增id
+        attrs['__auto_now_key__'] = auto_now_key
         # attrs['__escaped_fields__'] = escaped_fields
 
-        attrs['__select__'] = 'select `%s`, %s from `%s`' % (primary_key, ', '.join(escaped_fields), table_name)
+        attrs['__select__'] = 'select `%s`, %s from `%s`' % (
+            primary_key,
+            ', '.join(escaped_fields),
+            table_name,
+        )
 
         if pk_auto_increment:
             # 主键是自增id，insert时不必带上主键
@@ -347,12 +410,35 @@ class Model(dict, metaclass=ModelMetaclass):
         return cls.__database__.execute(sql)
 
     @classmethod
+    def select(cls, *args, **kwargs):
+        return cls.__database__.select(*args, **kwargs)
+
+    @classmethod
+    def execute(cls, *args, **kwargs):
+        return cls.__database__.execute(*args, **kwargs)
+
+    @classmethod
     def table_drop(cls):
-        sql = f"drop table {cls.__table__}"
+        sql = f"drop table if exists {cls.__table__}"
         print(sql)
 
         assert isinstance(cls.__database__, Database)
         return cls.__database__.execute(sql)
+
+    @classmethod
+    def table_show(cls):
+        sql = f"desc {cls.__table__}"
+        data = cls.select(sql)
+        if data:
+            print(dictList2Table(data))
+        else:
+            print(f"can not show table: {cls.__table__}")
+
+    @classmethod
+    def print_all(cls):
+        sql = f"select * from {cls.__table__}"
+        data = cls.select(sql)
+        print(dictList2Table(data))
 
     @classmethod
     def find(cls, pk):
@@ -377,19 +463,70 @@ class Model(dict, metaclass=ModelMetaclass):
 
         return val
 
+    def get_value_or_update(self, key):
+        field = self.__mappings__[key]
+        assert isinstance(field, Field)
+        if field.update is not None:
+            val = field.update() if callable(field.update) else field.update
+            logger.debug(f"using update value for {key}: {str(val)}")
+            setattr(self, key, val)
+        else:
+            val = getattr(self, key, None)
+
+        return val
+
     def save(self):
+        """插入"""
         args = list(map(self.get_value_or_default, self.__fields__))
         if not self.__pk_auto_increment__:
             args.append(self.get_value_or_default(self.__primary_key__))
 
-        print(f"args: {args}")
-        rows = self.__database__.execute(self.__insert__, args)
-        print(f"rows: {rows}")
-        if rows != 1:
-            logger.error(f"failed to insert record, affected rows: {rows}")
+        try:
+            # print(f"args: {args}")
+            rows = self.__database__.execute(self.__insert__, args)
+            # print(f"rows: {rows}")
+            if rows != 1:
+                logger.error(f"failed to insert record, affected rows: {rows}")
 
-    def update(self):
-        pass
+        except Exception as e:
+            logger.exception(f"failed to insert")
+            logger.error(f"args: {args}")
+
+    def modify(self):
+        """更新"""
+        args = list(map(self.get_value_or_update, self.__fields__))
+        args.append(self.get_value(self.__primary_key__))
+
+        try:
+            rows = self.__database__.execute(self.__update__, args)
+            if rows != 1:
+                logger.error(f"failed to update by primary key: {self.__primary_key__}, "
+                             f"affected rows: {rows}")
+
+        except Exception as e:
+            logger.exception(f"failed to update")
+            logger.error(f"args: {args}")
 
     def remove(self):
-        pass
+        """真正删除数据"""
+        args = [self.get_value(self.__primary_key__)]
+        rows = self.__database__.execute(self.__delete__, args)
+        if rows != 1:
+            logger.error(f"failed to remove by primary key: {self.__primary_key__}, "
+                         f"affected rows: {rows}")
+
+    def fake_remove(self):
+        """假的删除，改变某个字段的值，不会真正删除数据"""
+        delete_field = "deleted_at"
+
+        if delete_field in self:
+            # update `users` set `name`=%s, `password`=%s, `role`=%s where `id`=%s
+            # sql = """update `%s` set `%s`=? where `%s`=?""" % (self.__table__, delete_field, self.__primary_key__)
+            sql = f"update `{self.__table__}` set `{delete_field}`=? where `{self.__primary_key__}`=?"
+            args = [gen_now(), self.get_value(self.__primary_key__)]
+            rows = self.__database__.execute(sql, args)
+            if rows != 1:
+                logger.error(f"failed to delete by primary key: {self.__primary_key__}, "
+                             f"affected rows: {rows}")
+        else:
+            logger.warning(f"failed to delete, field `{delete_field}` not existed")

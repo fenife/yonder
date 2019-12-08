@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from test_app import db
-from sim.norm import (IntField, VarcharField, Model)
+from sim.norm import (Model, gen_now, IntField, StringField, DatetimeField, )
 from sim.pretty import dictList2Table
 
 
@@ -47,10 +47,15 @@ insert into u1(id) values(1);
 
 
 class User(Model):
-    id = IntField(column_type='int(11)', null=False, primary_key=True, extra="auto_increment")
-    name = VarcharField(column_type='varchar(255)', null=False)
-    password = VarcharField(column_type='varchar(255)', null=False)
-    role = IntField(column_type='int(11)', null=False)
+    id = IntField(null=False, primary_key=True, extra="auto_increment")
+    deleted_at = DatetimeField(null=True)
+    created_at = DatetimeField(null=True, default=gen_now)
+    # updated_at = DatetimeField(null=False, auto_now=True, extra="on update current_timestamp")
+    updated_at = DatetimeField(null=True, default=gen_now, update=gen_now)
+
+    name = StringField(column_type='varchar(255)', null=False)
+    password = StringField(null=False)
+    role = IntField(null=False)
     # status = IntField(column_type='int(11)')
     # name = VarcharField(column_type='varchar(255)', primary_key=True)
 
@@ -67,24 +72,49 @@ class User(Model):
         return user
 
 
-def _test():
-    # User.table_drop()
-    # User.table_create()
+def _test_create():
+    User.table_drop()
+    User.table_create()
 
-    sql = "desc users"
-    data = db.select(sql)
-    print(dictList2Table(data))
+    User.table_show()
 
+
+def _test_insert():
     # create, insert
-    # user = User(name='u1', password="p1", role=1)
-    # user.save()
+    user = User(name='u1', password="p1", role=1)
+    user.save()
+
+    User.print_all()
+
+
+def _test_update():
+    u1 = User.find(1)
+    if u1:
+        print(dictList2Table([u1]))
+
+    u1.name = 'user1'
+    u1.role = 2
+    u1.modify()
+
+    User.print_all()
+
+
+def _test():
+    # _test_create()
+    # _test_insert()
+    _test_update()
+
+
+def _test_bak():
+
+    # print([User.find(16)])
+
+    u2 = User(id=15, name='user2', password='password2', role=3)
+    u2.update()
 
     sql = "select * from users"
     data = db.select(sql)
     print(dictList2Table(data))
-
-    # u1 = User.find(16)
-    # print(dictList2Table([u1]))
 
 
 if __name__ == "__main__":
