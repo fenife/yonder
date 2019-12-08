@@ -19,6 +19,7 @@ class ConnContextManager(object):
             charset=self.db.charset,
             connect_timeout=10
         )
+        # self.conn.autocommit(True)  # 自动提交事务
 
         return self.conn
 
@@ -59,12 +60,24 @@ class Database(object):
         self.db_name = self.app.config["DB_NAME"]
         self.charset = self.app.config["DB_CHARSET"]
 
-    def select(self, sql, size=None):
-        print(f"[SELECT] - {sql}")
+    def select(self, sql, args=None, size=None):
+        has_args = False
+        if sql.find('?') > 0:
+            has_args = True
+
+        if has_args:
+            sql = sql.replace('?', '%s')
+
+        print(f"[SELECT] - {sql}, {args}")
 
         with ConnContextManager(self) as conn:
             cur = conn.cursor(MySQLdb.cursors.DictCursor)
-            cur.execute(sql)
+
+            if has_args:
+                cur.execute(sql, args)
+            else:
+                cur.execute(sql)
+
             if size:
                 data = cur.fetchmany(size)
             else:
@@ -76,15 +89,22 @@ class Database(object):
             return data
 
     def execute(self, sql, args=None, autocommit=True):
+        if sql.find('?') > 0:
+            sql = sql.replace('?', '%s')
+
         print(f"[EXECUTE] - {sql}")
 
         with ConnContextManager(self) as conn:
             if not autocommit:
+                conn.autocommit(False)
                 conn.begin()
+            else:
+                conn.autocommit(True)  # 自动提交事务
 
             try:
                 cur = conn.cursor()
                 cur.execute(sql, args)
+
                 affected = cur.rowcount
                 cur.close()
 
@@ -132,7 +152,8 @@ class Field(object):
         if not self.null:
             sql += " not null"
 
-        if self.default:
+        if self.default and not callable(self.default):
+            # 如果default是可调用的函数，则后面保存时会自动调用此函数生成值
             sql += f" default {self.default}"
 
         if self.null and not self.default:
@@ -180,9 +201,15 @@ class ModelMetaclass(type):
         if '__table__' not in attrs:
             raise Exception('__table__ is missed')
 
+        table_name = attrs['__table__']
         mappings = dict()
         fields = list()
         primary_key = None
+
+        # 主键是否是自增id
+        # 如果是，后面insert时生成的sql就不必带有primary_key
+        pk_auto_increment = False
+
         for k, v in attrs.items():
             if isinstance(v, Field):
                 # print(f"    mapping: {k} ==> {v}")
@@ -192,8 +219,10 @@ class ModelMetaclass(type):
                         raise Exception(f"Duplicate primary key for `{k}`")
 
                     primary_key = k
-
-                fields.append(k)
+                    if v.extra == 'auto_increment':
+                        pk_auto_increment = True            # 主键是自增id
+                else:
+                    fields.append(k)
 
         if not primary_key:
             raise Exception("primary key not found")
@@ -202,14 +231,38 @@ class ModelMetaclass(type):
             attrs.pop(k)
 
         escaped_fields = list(map(lambda f: f"`{f}`", fields))
-        attrs['__mappings__'] = mappings
-        attrs['__fields__'] = fields
-        attrs['__escaped_fields__'] = escaped_fields
-        attrs['__primary_key__'] = primary_key
+        attrs['__mappings__'] = mappings            # 保存属性和列的映射关系
+        attrs['__fields__'] = fields                # 除主键外的属性名
+        attrs['__primary_key__'] = primary_key      # 主键的属性名
+        attrs['__pk_auto_increment__'] = pk_auto_increment      # 主键是否是自增id
+        # attrs['__escaped_fields__'] = escaped_fields
+
+        attrs['__select__'] = 'select `%s`, %s from `%s`' % (primary_key, ', '.join(escaped_fields), table_name)
+
+        if pk_auto_increment:
+            # 主键是自增id，insert时不必带上主键
+            attrs['__insert__'] = 'insert into `%s` (%s) values (%s)' % (
+                table_name, ', '.join(escaped_fields),
+                ','.join(['?'] * len(escaped_fields)),        # eg: ?,?,?
+            )
+        else:
+            # 主键是非自增id，insert时要带上主键
+            attrs['__insert__'] = 'insert into `%s` (%s, `%s`) values (%s)' % (
+                table_name, ', '.join(escaped_fields), primary_key,
+                ','.join(['?'] * (len(escaped_fields) + 1)),        # eg: ?,?,?
+            )
+
+        attrs['__update__'] = 'update `%s` set %s where `%s`=?' % (
+            table_name,
+            ', '.join(map(lambda f: '`%s`=?' % f, fields)),     # eg: `name`=?, `password`=?, `role`=?
+            primary_key,
+        )
+
+        attrs['__delete__'] = 'delete from `%s` where `%s`=?' % (table_name, primary_key)
 
         logger.debug(f"show model attrs:")
         for k, v in attrs.items():
-            print(f"{k:>20s} : {v}")
+            print(f"{k:>24s} : {v}")
         print()
 
         return type.__new__(cls, name, bases, attrs)
@@ -223,7 +276,7 @@ class Model(dict, metaclass=ModelMetaclass):
         try:
             return self[item]
         except KeyError:
-            raise AttributeError(f"`Model` object has no attrbute `{item}`")
+            raise AttributeError(f"`Model` object has no attribute `{item}`")
 
     def __setattr__(self, key, value):
         self[key] = value
@@ -237,6 +290,7 @@ class Model(dict, metaclass=ModelMetaclass):
 
     # filled by norm framework
     __primary_key__ = None
+    __pk_auto_increment__ = False
     __mappings__ = dict()
     __fields__ = list()
 
@@ -245,7 +299,7 @@ class Model(dict, metaclass=ModelMetaclass):
         pass
 
     @classmethod
-    def create(cls):
+    def table_create(cls):
         """
         CREATE TABLE `users` (
           `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -289,19 +343,53 @@ class Model(dict, metaclass=ModelMetaclass):
         sql += f") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
         print(sql)
 
-        return cls.execute(sql)
+        assert isinstance(cls.__database__, Database)
+        return cls.__database__.execute(sql)
 
     @classmethod
-    def select(cls, sql, *args, **kwargs):
-        db = cls.__database__
-        assert issubclass(db, Database)
+    def table_drop(cls):
+        sql = f"drop table {cls.__table__}"
+        print(sql)
 
-        return db.select(sql, *args, **kwargs)
+        assert isinstance(cls.__database__, Database)
+        return cls.__database__.execute(sql)
 
     @classmethod
-    def execute(cls, sql, *args, **kwargs):
-        db = cls.__database__
-        assert issubclass(db, Database)
+    def find(cls, pk):
+        sql = f"{cls.__select__} where `{cls.__primary_key__}`=?"
+        data = cls.__database__.select(sql, [pk], 1)
+        if not data:
+            return None
+        return cls(**data[0])
 
-        return db.execute(sql, *args, **kwargs)
+    def get_value(self, key):
+        return getattr(self, key, None)
 
+    def get_value_or_default(self, key):
+        val = getattr(self, key, None)
+        if val is None:
+            field = self.__mappings__[key]
+            assert isinstance(field, Field)
+            if field.default is not None:
+                val = field.default() if callable(field.default) else field.default
+                logger.debug(f"using default value for {key}: {str(val)}")
+                setattr(self, key, val)
+
+        return val
+
+    def save(self):
+        args = list(map(self.get_value_or_default, self.__fields__))
+        if not self.__pk_auto_increment__:
+            args.append(self.get_value_or_default(self.__primary_key__))
+
+        print(f"args: {args}")
+        rows = self.__database__.execute(self.__insert__, args)
+        print(f"rows: {rows}")
+        if rows != 1:
+            logger.error(f"failed to insert record, affected rows: {rows}")
+
+    def update(self):
+        pass
+
+    def remove(self):
+        pass
