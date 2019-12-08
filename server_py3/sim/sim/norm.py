@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+"""
+todo:
+support current_timestamp
+"""
+
 import datetime
 import MySQLdb
 
@@ -452,6 +457,7 @@ class Model(dict, metaclass=ModelMetaclass):
         return getattr(self, key, None)
 
     def get_value_or_default(self, key):
+        """本函数获取的值用于创建（insert）操作"""
         val = getattr(self, key, None)
         if val is None:
             field = self.__mappings__[key]
@@ -464,6 +470,7 @@ class Model(dict, metaclass=ModelMetaclass):
         return val
 
     def get_value_or_update(self, key):
+        """本函数获取的值用于更新（update）操作"""
         field = self.__mappings__[key]
         assert isinstance(field, Field)
         if field.update is not None:
