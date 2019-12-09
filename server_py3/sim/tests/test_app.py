@@ -12,6 +12,7 @@ sys.path.append(sim_path)
 from sim.application import Application
 from sim.norm import Database
 from sim.log import logger
+from sim.cache import AppCachePool
 
 
 logger.setLevel(logging.DEBUG)
@@ -25,6 +26,9 @@ dev_configs = {
     "DB_PASSWORD": "test",
     "DB_NAME": "test",
     "DB_CHARSET": "utf8",
+
+    "REDIS_HOST": '127.0.0.1',
+    "REDIS_PORT": 6379,
 }
 
 
@@ -32,3 +36,6 @@ app = Application()
 app.update_config(dev_configs)
 db = Database()
 db.init_app(app)
+
+cache_pool = AppCachePool()
+cache_pool.init_app(app)
