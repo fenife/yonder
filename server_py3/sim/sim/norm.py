@@ -74,23 +74,19 @@ class Database(object):
         self.charset = self.app.config["DB_CHARSET"]
 
     def select(self, sql, args=None, size=None):
-        has_args = False
-        if sql.find('?') > 0:
-            has_args = True
-
-        if has_args:
-            sql = sql.replace('?', '%s')
+        sql = sql.replace('?', '%s')
 
         print(f"[SELECT] - {sql}, {args}")
 
         with ConnContextManager(self) as conn:
             cur = conn.cursor(MySQLdb.cursors.DictCursor)
 
-            if has_args:
-                cur.execute(sql, args)
-            else:
-                cur.execute(sql)
+            # if has_args:
+            #     cur.execute(sql, args)
+            # else:
+            #     cur.execute(sql)
 
+            cur.execute(sql, args or ())
             if size:
                 data = cur.fetchmany(size)
             else:
@@ -105,7 +101,7 @@ class Database(object):
         if sql.find('?') > 0:
             sql = sql.replace('?', '%s')
 
-        print(f"[EXECUTE] - {sql}")
+        print(f"\n[EXECUTE] - {sql}")
 
         with ConnContextManager(self) as conn:
             if not autocommit:
@@ -183,7 +179,7 @@ class Field(object):
             sql += f" {self.extra}"
 
         if self.comment:
-            sql += f" comment {self.default}"
+            sql += f" comment '{self.comment}'"
 
         return sql
 
@@ -409,7 +405,7 @@ class Model(dict, metaclass=ModelMetaclass):
                 sql += f", key `{key_name}` ({key_fields})"
 
         sql += f") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
-        print(sql)
+        # print(sql)
 
         assert isinstance(cls.__database__, Database)
         return cls.__database__.execute(sql)
@@ -425,8 +421,6 @@ class Model(dict, metaclass=ModelMetaclass):
     @classmethod
     def table_drop(cls):
         sql = f"drop table if exists {cls.__table__}"
-        print(sql)
-
         assert isinstance(cls.__database__, Database)
         return cls.__database__.execute(sql)
 
