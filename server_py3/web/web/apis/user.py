@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
 from sim.exceptions import abort
-from . import app, db, cache_pool
-from .models import User
-from .consts import RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
-from .utils import (valid_username, valid_password, save_user_to_redis_by_token)
-from .decorators import login_required
+from .. import app, db, cache_pool
+from ..models import User
+from ..consts import RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
+from ..utils import (valid_username, valid_password, save_user_to_redis_by_token)
+from ..decorators import login_required
 
 ERROR_CODE = -1
 
