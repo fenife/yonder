@@ -3,7 +3,7 @@
 import hashlib
 from sim.norm import (Model, gen_now, IntField, StringField, DatetimeField, TextField)
 from . import app, db, cache_pool
-from .consts import RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
+from .consts import Permission, RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
 
 
 """
@@ -91,12 +91,15 @@ class User(Model):
 
         return None
 
-    def is_admin(self, permissions):
+    def can(self, permissions):
         if not self.role:
             return False
 
         r = self.role.permissions & permissions == permissions
         return r
+
+    def is_admin(self):
+        return self.can(Permission.admin)
 
     @staticmethod
     def gen_password_hash(password):
