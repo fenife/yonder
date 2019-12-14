@@ -9,6 +9,11 @@ _dev_configs = {
     "DB_PASSWORD": "test",
     "DB_NAME": "test",
     "DB_CHARSET": "utf8",
+
+    "REDIS_HOST": '127.0.0.1',
+    "REDIS_PORT": 6379,
+
+    "SECRET_KEY": "a key hard to guess",
 }
 
 
