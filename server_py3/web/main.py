@@ -15,6 +15,21 @@ import sys
 import os
 
 from web import app
+from web.models import User, Category, Article
+
+
+def table_migrate():
+    User.table_drop()
+    User.table_create()
+    User.table_show()
+
+    Category.table_drop()
+    Category.table_create()
+    User.table_show()
+
+    Article.table_drop()
+    Article.table_create()
+    User.table_show()
 
 
 def main():
@@ -25,4 +40,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    argv = sys.argv
+    if argv[-1] == 'migrate':
+        table_migrate()
+    else:
+        main()

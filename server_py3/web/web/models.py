@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
-from sim.norm import (IntField, VarcharField, Model)
-from . import db
+import hashlib
+from sim.norm import (Model, gen_now, IntField, StringField, DatetimeField, TextField)
+from . import app, db
+from .consts import RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
 
 
 """
@@ -45,22 +47,108 @@ insert into u1(id) values(1);
 """
 
 
+class Dict(dict):
+    def __init__(self, *args, **kwargs):
+        super(Dict, self).__init__(*args, **kwargs)
+
+    def __getattr__(self, item):
+        try:
+            return self[item]
+        except KeyError:
+            raise AttributeError(f"`Dict` object has no attribute `{item}`")
+
+    def __setattr__(self, key, value):
+        self[key] = value
+
+
 class User(Model):
-    id = IntField(column_type='int(11)', null=False, primary_key=True, extra="auto_increment")
-    name = VarcharField(column_type='varchar(255)')
-    password = VarcharField(column_type='varchar(255)')
-    role = IntField(column_type='int(11)')
-    status = IntField(column_type='int(11)')
-    # name = VarcharField(column_type='varchar(255)', primary_key=True)
+    id = IntField(null=False, primary_key=True, extra="auto_increment")
+    created_at = DatetimeField(null=True, default=gen_now)
+    # updated_at = DatetimeField(null=False, auto_now=True, extra="on update current_timestamp")
+    updated_at = DatetimeField(null=True, default=gen_now, update=gen_now)
+
+    name = StringField(column_type='varchar(255)', null=False, comment="用户名")
+    password = StringField(null=False, comment="密码")
+    role_id = IntField(null=False, comment="角色ID")
+    # status = IntField(null=False, default=USER.status.active, comment="用户状态")
+    status = IntField(null=False, comment="用户状态")
 
     __database__ = db
     __table__ = 'users'
-    __unique_key__ = ('id', 'name')
-    __index_key__ = [('id', 'name'), ('name',)]
+    __unique_key__ = ('name', )
+    # __index_key__ = [('id', 'name'), ('name',)]
+
+    def __init__(self, **kwargs):
+        super(User, self).__init__(**kwargs)
+        # self.role = self.get_role()
+        # self.password = '***'
+
+    @property
+    def role(self):
+        if 'role_id' in self and self.role_id is not None:
+            role = Roles.get(self.role_id)
+            return role
+
+        return None
+
+    def is_admin(self, permissions):
+        if not self.role:
+            return False
+
+        r = self.role.permissions & permissions == permissions
+        return r
+
+    @staticmethod
+    def gen_password_hash(password):
+        m = hashlib.md5()
+        m.update(db.app.config["SECRET_KEY"].encode('utf-8'))
+        m.update(password.encode('utf-8'))
+        h = m.hexdigest()
+        return h
 
     @classmethod
-    def get_user(cls, uid):
-        sql = f"select id, name from users where id = {uid}"
-        data = db.select(sql)
-        user = data[0] if data else None
-        return user
+    def find_by_name(cls, username):
+        sql = f"{cls.__select__} where `name`=?"
+        data = cls.__database__.select(sql, [username], 1)
+        if not data:
+            return None
+
+        return cls(**data[0])
+
+    def without_password(self):
+        return {k: v for k, v in self.items() if k != 'password'}
+
+
+class Category(Model):
+    id = IntField(null=False, primary_key=True, extra="auto_increment")
+    created_at = DatetimeField(null=True, default=gen_now)
+    # updated_at = DatetimeField(null=False, auto_now=True, extra="on update current_timestamp")
+    updated_at = DatetimeField(null=True, default=gen_now, update=gen_now)
+
+    name = StringField(null=False, comment="分类名称")
+    # status = IntField(null=False, default=CATEGORY.status.active, comment="分类状态")
+    status = IntField(null=False, comment="分类状态")
+
+    __database__ = db
+    __table__ = 'categories'
+    __unique_key__ = ('name', )
+    # __index_key__ = [('user_id', ), ('cate_id', ), ]
+
+
+class Article(Model):
+    id = IntField(null=False, primary_key=True, extra="auto_increment")
+    created_at = DatetimeField(null=True, default=gen_now)
+    updated_at = DatetimeField(null=True, default=gen_now, update=gen_now)
+
+    user_id = IntField(null=False, comment="用户ID")
+    cate_id = IntField(null=False, comment="分类ID")
+    title = StringField(column_type='varchar(255)', null=False, comment="标题")
+    content = TextField(null=True, default=None, comment="文章内容")
+    # status = IntField(null=False, default=ARTICLE.status.active, comment="文章状态")
+    status = IntField(null=False, comment="文章状态")
+
+    __database__ = db
+    __table__ = 'articles'
+    __unique_key__ = ('title', )
+    __index_key__ = [('user_id', ), ('cate_id', ), ]
+
