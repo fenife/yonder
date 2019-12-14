@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import ujson
+import json
 from http.cookies import SimpleCookie
 
 from .status import code2name, code2status
@@ -74,8 +74,7 @@ class Response(object):
             "data": {} if self.data is None else self.data,
             "msg": self.msg,
         }
-        # self.data = ujson.dumps(self.data).encode(self.charset)
-        body = ujson.dumps(body).encode(self.charset)
+        body = json.dumps(body, default=str).encode(self.charset)
         return body
 
     def __call__(self, environ, start_response):
