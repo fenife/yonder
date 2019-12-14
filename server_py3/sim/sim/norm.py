@@ -10,6 +10,9 @@ import MySQLdb
 
 from .pretty import dictList2Table
 from .log import logger
+from .exceptions import abort
+
+ERROR_CODE = -2
 
 
 def gen_now():
@@ -76,7 +79,9 @@ class Database(object):
     def select(self, sql, args=None, size=None):
         sql = sql.replace('?', '%s')
 
-        print(f"[SELECT] - {sql}, {args}")
+        print(f"[SELECT] --\n"
+              f"  {sql}\n"
+              f"  {args}")
 
         with ConnContextManager(self) as conn:
             cur = conn.cursor(MySQLdb.cursors.DictCursor)
@@ -98,8 +103,8 @@ class Database(object):
             return data
 
     def execute(self, sql, args=None, autocommit=True):
-        if sql.find('?') > 0:
-            sql = sql.replace('?', '%s')
+        # if sql.find('?') > 0:
+        sql = sql.replace('?', '%s')
 
         print(f"\n[EXECUTE] - {sql}")
 
@@ -128,6 +133,47 @@ class Database(object):
 
             return affected
 
+    def insert(self, sql, args=None, autocommit=True):
+        """
+        different from execute, this method will return lastrowid
+
+        :param sql:
+        :param args:
+        :param autocommit:
+        :return:
+           affected
+           lastrowid
+        """
+        # if sql.find('?') > 0:
+        sql = sql.replace('?', '%s')
+
+        print(f"\n[EXECUTE] - {sql}")
+
+        with ConnContextManager(self) as conn:
+            if not autocommit:
+                conn.autocommit(False)
+                conn.begin()
+            else:
+                conn.autocommit(True)  # 自动提交事务
+
+            try:
+                cur = conn.cursor()
+                cur.execute(sql, args)
+
+                affected = cur.rowcount
+                lastrowid = cur.lastrowid
+                cur.close()
+
+                if not autocommit:
+                    conn.commit()
+
+            except Exception as e:
+                if not autocommit:
+                    conn.rollback()
+
+                raise
+
+            return affected, lastrowid
 
 #
 # orm
@@ -292,6 +338,7 @@ class ModelMetaclass(type):
         escaped_fields = list(map(lambda f: f"`{f}`", fields))
         attrs['__mappings__'] = mappings            # 保存属性和列的映射关系
         attrs['__fields__'] = fields                # 除主键外的属性名
+        # attrs['__escaped_fields__'] = escaped_fields
         attrs['__primary_key__'] = primary_key      # 主键的属性名
         attrs['__pk_auto_increment__'] = pk_auto_increment      # 主键是否是自增id
         attrs['__auto_now_key__'] = auto_now_key
@@ -419,6 +466,10 @@ class Model(dict, metaclass=ModelMetaclass):
         return cls.__database__.execute(*args, **kwargs)
 
     @classmethod
+    def insert(cls, *args, **kwargs):
+        return cls.__database__.insert(*args, **kwargs)
+
+    @classmethod
     def table_drop(cls):
         sql = f"drop table if exists {cls.__table__}"
         assert isinstance(cls.__database__, Database)
@@ -484,14 +535,19 @@ class Model(dict, metaclass=ModelMetaclass):
 
         try:
             # print(f"args: {args}")
-            rows = self.__database__.execute(self.__insert__, args)
-            # print(f"rows: {rows}")
+            rows, last_id = self.insert(self.__insert__, args)
             if rows != 1:
                 logger.error(f"failed to insert record, affected rows: {rows}")
 
+            if last_id:
+                self.id = last_id
+            else:
+                logger.error(f"failed to insert record, lastrowid:{last_id}")
+                self.id = None
+
         except Exception as e:
-            logger.exception(f"failed to insert")
-            logger.error(f"args: {args}")
+            # abort(ERROR_CODE, str(e))
+            logger.exception(f"failed to insert, sql: {self.__insert__}, args: {args}")
 
     def modify(self):
         """更新"""

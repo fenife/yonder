@@ -100,8 +100,8 @@ def _test_update():
 
 
 def _test():
-    # _test_create()
-    # _test_insert()
+    _test_create()
+    _test_insert()
     _test_update()
 
 
