@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
 
+class RespCode(object):
+    error = -1
+
+
 class Permission(object):
     """
     目前最多支持16种权限： 0xffff

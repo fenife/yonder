@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 
+import json
 import hashlib
+from sim.exceptions import abort
 from sim.norm import (Model, gen_now, IntField, StringField, DatetimeField, TextField)
 from . import app, db, cache_pool
-from .consts import Permission, RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
+from .consts import RespCode, Permission, RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
+from .utils import html_escape, is_ascii
 
 
 """
@@ -133,6 +136,62 @@ class User(Model):
 
     def without_password(self):
         return {k: v for k, v in self.items() if k != 'password'}
+
+    @staticmethod
+    def valid_username(name):
+        assert isinstance(name, str)
+        if ' ' in name:
+            abort(RespCode.error, "username can not contain blank space")
+
+        if not (4 <= len(name) <= 20):
+            abort(RespCode.error, "username len must between 4 and 20")
+
+        # prevent xss
+        valid_name = html_escape(name)
+        if valid_name != name:
+            abort(RespCode.error, "username can not contain html special char")
+
+        # if not is_ascii(user.name):
+        #     abort(RespCode.error, "no-ascii char is not supported for username yet")
+
+        # if not re.match(r"^[a-zA-Z\_][0-9a-zA-Z\_]{3, 19}$", user.name):
+        # app.logger.error(f"re not match for username: {user.name}")
+        # abort(RespCode.error, "username is invalid")
+
+        return name
+
+    @staticmethod
+    def valid_password(password):
+        if ' ' in password:
+            abort(RespCode.error, "password can not contain blank space")
+
+        if not (3 <= len(password) <= 20):
+            abort(RespCode.error, "password len must between 3 and 20")
+
+        if not is_ascii(password):
+            abort(RespCode.error, "password can not contain no-ascii char")
+
+        return password
+
+    @staticmethod
+    def save_user_to_redis_by_token(user, token):
+        assert isinstance(user, User)
+        with cache_pool.get() as cache:
+            key = f"token:{token}"
+            val = json.dumps(user, default=str).encode('utf-8')
+            cache.set(key, val, ex=USER.login_expired)
+
+    @staticmethod
+    def load_user_from_redis_by_token(token):
+        with cache_pool.get() as cache:
+            key = f"token:{token}"
+            val = cache.get(key)
+            if not val:
+                return
+
+            data = json.loads(val)
+            user = User(**data)
+            return user
 
 
 class Category(Model):

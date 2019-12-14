@@ -4,7 +4,6 @@ from sim.exceptions import abort
 from .. import app, db, cache_pool
 from ..models import User
 from ..consts import RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
-from ..utils import (valid_username, valid_password, save_user_to_redis_by_token)
 from ..decorators import login_required
 
 ERROR_CODE = -1
@@ -17,8 +16,8 @@ def singup(ctx):
     if not input_json or "username" not in input_json or 'password' not in input_json:
         abort(ERROR_CODE, "username and password are required")
 
-    username = valid_username(input_json['username'])
-    password = valid_password(input_json['password'])
+    username = User.valid_username(input_json['username'])
+    password = User.valid_password(input_json['password'])
 
     # check if user existed
     if User.find_by_name(username) is not None:
@@ -45,8 +44,8 @@ def signin(ctx):
     if not input_json or "username" not in input_json or 'password' not in input_json:
         abort(ERROR_CODE, "username and password are required")
 
-    username = valid_username(input_json['username'])
-    password = valid_password(input_json['password'])
+    username = User.valid_username(input_json['username'])
+    password = User.valid_password(input_json['password'])
 
     # 查找用户
     user = User.find_by_name(username)
@@ -65,7 +64,7 @@ def signin(ctx):
     ctx.set_cookie(name='token', value=token, max_age=10)       # todo: reset max_age
 
     # save to redis
-    save_user_to_redis_by_token(user, token)
+    User.save_user_to_redis_by_token(user, token)
 
     return user.without_password()
 
@@ -94,4 +93,46 @@ def get_user(ctx):
     return user.without_password()
 
 
+@app.route('/api/user/:uid', methods=('PUT', ))
+@login_required()
+def update_user(ctx):
+    uid = ctx.request.get_param('uid')
+    try:
+        uid = int(uid)
+    except Exception as e:
+        app.logger.error(f"uid must be an integer, but get uid: {uid}")
+        abort(ERROR_CODE, "uid must be an integer")
+
+    user = ctx.user
+    assert isinstance(user, User)
+    if user.id != uid and not user.is_admin():
+        app.logger.error(f"not the owner, uid({user.id}) != user.id({user.id})")
+        abort(ERROR_CODE, 'permission denied')
+
+    # todo:
+    input_json = ctx.request.json()
+    if not input_json:
+        abort(ERROR_CODE, "body data required")
+
+    if 'username' in input_json:
+        pass
+
+
+    if not input_json or "username" not in input_json or 'password' not in input_json:
+        abort(ERROR_CODE, "username and password are required")
+
+    username = User.valid_username(input_json['username'])
+    password = User.valid_password(input_json['password'])
+
+    # check if user existed
+    if User.find_by_name(username) is not None:
+        abort(ERROR_CODE, f"user `{username}` existed")
+
+    user = User()
+    user.name = username
+    user.password = user.gen_password_hash(password)
+    user.status = USER.status.active
+    user.role_id = USER.role.user
+
+    return
 
