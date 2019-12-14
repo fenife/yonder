@@ -10,6 +10,7 @@ sys.path.append(sim_path)
 # ../../sim dir
 from sim.application import Application
 from sim.norm import Database
+from sim.cache import AppCachePool
 
 # current dir
 from . import settings
@@ -30,6 +31,8 @@ app = create_app(os.getenv('YONDER_CONFIG') or 'default')
 db = Database()
 db.init_app(app)
 
+cache_pool = AppCachePool()
+cache_pool.init_app(app)
 
 # 让Python加载模块，否则app.route装饰器不会运行，无法添加路由
 from . import apis

@@ -2,7 +2,7 @@
 
 import hashlib
 from sim.norm import (Model, gen_now, IntField, StringField, DatetimeField, TextField)
-from . import app, db
+from . import app, db, cache_pool
 from .consts import RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
 
 
@@ -101,10 +101,23 @@ class User(Model):
     @staticmethod
     def gen_password_hash(password):
         m = hashlib.md5()
-        m.update(db.app.config["SECRET_KEY"].encode('utf-8'))
-        m.update(password.encode('utf-8'))
+        # m.update(db.app.config["SECRET_KEY"].encode('utf-8'))
+        # m.update(password.encode('utf-8'))
+        s = f"{db.app.config['SECRET_KEY']}-{password}"
+        m.update(s.encode('utf-8'))
         h = m.hexdigest()
         return h
+
+    def verify_password(self, password):
+        password_hash = self.gen_password_hash(password)
+        return self.password == password_hash
+
+    def gen_session_token(self):
+        m = hashlib.md5()
+        s = f"{db.app.config['SECRET_KEY']}-{self.id}-{self.name}-{self.password}"
+        m.update(s.encode('utf-8'))
+        token = m.hexdigest()
+        return token
 
     @classmethod
     def find_by_name(cls, username):

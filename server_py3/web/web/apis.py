@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-import ujson
-from . import app
+import json
+from . import app, db, cache_pool
 from .models import User
 from .consts import RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
 from sim.exceptions import abort
@@ -58,8 +58,29 @@ def valid_password(password):
     return password
 
 
+def save_user_to_redis_by_token(user, token):
+    assert isinstance(user, User)
+    with cache_pool.get() as cache:
+        key = f"token:{token}"
+        val = json.dumps(user, default=str).encode('utf-8')
+        cache.set(key, val, ex=USER.login_expired)
+
+
+def load_user_from_redis_by_token(token):
+    with cache_pool.get() as cache:
+        key = f"token:{token}"
+        val = cache.get(key)
+        if not val:
+            return
+
+        data = json.loads(val)
+        user = User(**data)
+        return user
+
+
 @app.route('/api/user/signup', methods=('POST', ))
 def singup(ctx):
+    """用户注册"""
     input_json = ctx.request.json()
     if not input_json or "username" not in input_json or 'password' not in input_json:
         abort(ERROR_CODE, "username and password are required")
@@ -98,6 +119,38 @@ def get_user(ctx):
     user = User.find(uid)
     if not user:
         abort(ERROR_CODE, "user not found")
+
+    return user.without_password()
+
+
+@app.route('/api/user/signin', methods=('POST', ))
+def signin(ctx):
+    """用户登录"""
+    input_json = ctx.request.json()
+    if not input_json or "username" not in input_json or 'password' not in input_json:
+        abort(ERROR_CODE, "username and password are required")
+
+    username = valid_username(input_json['username'])
+    password = valid_password(input_json['password'])
+
+    # 查找用户
+    user = User.find_by_name(username)
+    # 检查用户是否存在或是否已删除
+    if user is None or user.status != USER.status.active:
+        abort(ERROR_CODE, "user not found")
+
+    # 检查密码是否错误
+    if not user.verify_password(password):
+        abort(ERROR_CODE, "password is not correct")
+
+    # gen cookie token
+    token = user.gen_session_token()
+
+    # set-cookie
+    ctx.set_cookie(name='token', value=token, max_age=10)       # todo: reset max_age
+
+    # save to redis
+    save_user_to_redis_by_token(user, token)
 
     return user.without_password()
 
