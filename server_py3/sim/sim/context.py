@@ -17,6 +17,10 @@ class AppRequestContext(object):
 
     @property
     def cookies(self):
+        """
+        这里是服务器返回客户端的cookies (server -> client)
+        如果要获取客户端请求中的cookies，看`Request.cookies`
+        """
         return self._cookies
 
     def get_cookie(self, name):

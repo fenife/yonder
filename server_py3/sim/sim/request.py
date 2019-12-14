@@ -103,6 +103,10 @@ class Request(object):
 
     @property
     def cookies(self):
+        """
+        这里是客户端发给服务器的cookies (client -> server)
+        如果要获取服务器响应中的cookies，看`AppRequestContext.cookies`
+        """
         if self._cookies is not None:
             return self._cookies
 
