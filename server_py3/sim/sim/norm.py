@@ -258,7 +258,7 @@ class IntField(Field):
 
 
 class DatetimeField(Field):
-    default_column_type = "timestamp"
+    default_column_type = "datetime"
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
