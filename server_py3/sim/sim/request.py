@@ -21,7 +21,7 @@ class Request(object):
         self._json = None
 
         self.params = {}
-        self._cookies = None
+        self._cookies = self.parse_cookies()
 
     def json(self):
         """获取 http body 中的数据，以JSON格式返回"""
@@ -84,8 +84,7 @@ class Request(object):
 
         return self._query
 
-    @property
-    def cookies(self):
+    def parse_cookies(self):
         """
         code from aiohttp.web_request
 
@@ -95,12 +94,19 @@ class Request(object):
         => {'a': '1', 'b': '2'}
         :return:
         """
-        if self._cookies is not None:
-            return self._cookies
-
         raw = self.env.get('HTTP_COOKIE', '')
         parsed = SimpleCookie(raw)
         # self._cookies = MappingProxyType({k: v.value for k, v in parsed.items()})
-        self._cookies = {k: v.value for k, v in parsed.items()}
-        logger.debug('cookies: {}'.format(self._cookies))
-        return self._cookies
+        cookies = {k: v.value for k, v in parsed.items()}
+        logger.debug('cookies: {}'.format(cookies))
+        return cookies
+
+    @property
+    def cookies(self):
+        if self._cookies is not None:
+            return self._cookies
+
+        return self.parse_cookies()
+
+    def get_cookie(self, name):
+        return self._cookies.get(name, None)

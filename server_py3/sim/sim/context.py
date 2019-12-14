@@ -19,6 +19,9 @@ class AppRequestContext(object):
     def cookies(self):
         return self._cookies
 
+    def get_cookie(self, name):
+        return self._cookies.get(name, None)
+
     def set_cookie(self, name, value, expires=None, domain=None, max_age=None,
                    path='/', secure=None, httponly=None, version=None):
         """创建新cookie或更新已有cookie"""
