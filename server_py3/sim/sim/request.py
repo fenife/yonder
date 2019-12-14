@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import ujson
+import json
 from http.cookies import SimpleCookie
 from .log import logger
 
@@ -34,7 +34,8 @@ class Request(object):
 
             self.data = stream.read(self.content_length)
             if self.content_type == 'application/json':
-                self._json = ujson.decode(self.data)
+                # self._json = json.decode(self.data)
+                self._json = json.loads(self.data)
 
         return self._json
 
