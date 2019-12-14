@@ -174,7 +174,7 @@ def make_server(host=None, port=None, app=None, threaded=False,
 def run_simple(host, port, app, threaded=False, request_handler=None, **options):
     srv = make_server(host, port, app, threaded, request_handler)
     quit_msg = "(Press CTRL+C to quit)"
-    s = f"Running on http://{host}:{port}/ {quit_msg}"
+    s = f"\nRunning on http://{host}:{port}/ {quit_msg}\n"
     print(s)
     # logger.info(s)
     # logging.info(f"Running on http://{host}:{port}/ {quit_msg}")

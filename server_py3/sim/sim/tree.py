@@ -90,7 +90,8 @@ class Tree(object):
     @staticmethod
     def _insert_remained(node, keys):
         """把路径的剩余部分keys也加入到tree中"""
-        print('cur:', node, 'remain:', keys)
+        # todo: debug
+        # print('cur:', node, 'remain:', keys)
         if not keys:
             return
 

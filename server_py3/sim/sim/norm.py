@@ -79,9 +79,9 @@ class Database(object):
     def select(self, sql, args=None, size=None):
         sql = sql.replace('?', '%s')
 
-        print(f"[SELECT] --\n"
-              f"  {sql}\n"
-              f"  {args}")
+        print(f"[SELECT] -- \n"
+              f"  sql : {sql}\n"
+              f"  args: {args}\n")
 
         with ConnContextManager(self) as conn:
             cur = conn.cursor(MySQLdb.cursors.DictCursor)
@@ -371,10 +371,10 @@ class ModelMetaclass(type):
 
         attrs['__delete__'] = 'delete from `%s` where `%s`=?' % (table_name, primary_key)
 
-        logger.debug(f"show model attrs:")
-        for k, v in attrs.items():
-            print(f"{k:>24s} : {v}")
-        print()
+        # logger.debug(f"show model attrs:")
+        # for k, v in attrs.items():
+        #     print(f"{k:>24s} : {v}")
+        # print()
 
         return type.__new__(cls, name, bases, attrs)
 
