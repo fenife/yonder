@@ -2,7 +2,7 @@
 
 from sim.exceptions import abort
 from .. import app, db, cache_pool
-from ..models import User
+from ..model import User
 from ..consts import RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
 from ..decorators import login_required
 

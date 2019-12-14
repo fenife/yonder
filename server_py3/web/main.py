@@ -15,7 +15,7 @@ import sys
 import os
 
 from web import app
-from web.models import User, Category, Article
+from web.model import User, Category, Article
 
 
 def table_migrate():

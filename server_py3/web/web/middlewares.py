@@ -3,7 +3,7 @@
 from functools import wraps
 from sim.exceptions import abort
 from . import app
-from .models import User
+from .model import User
 
 
 @app.before_request

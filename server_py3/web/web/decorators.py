@@ -2,7 +2,7 @@
 
 from functools import wraps
 from sim.exceptions import abort
-from .models import User
+from .model import User
 
 
 ERROR_CODE = -1
