@@ -3,10 +3,8 @@
 from sim.exceptions import abort
 from .. import app, db, cache_pool
 from ..model import User
-from ..consts import RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
+from ..consts import RespCode, RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
 from ..decorators import login_required
-
-ERROR_CODE = -1
 
 
 @app.route('/api/user/signup', methods=('POST', ))
@@ -14,14 +12,14 @@ def singup(ctx):
     """用户注册"""
     input_json = ctx.request.json()
     if not input_json or "username" not in input_json or 'password' not in input_json:
-        abort(ERROR_CODE, "username and password are required")
+        abort(RespCode.error, "username and password are required")
 
     username = User.valid_username(input_json['username'])
     password = User.valid_password(input_json['password'])
 
     # check if user existed
     if User.find_by_name(username) is not None:
-        abort(ERROR_CODE, f"user `{username}` existed")
+        abort(RespCode.error, f"user `{username}` existed")
 
     user = User()
     user.name = username
@@ -32,7 +30,7 @@ def singup(ctx):
 
     user.save()
     if getattr(user, 'id', None) is None:
-        abort(ERROR_CODE, "create new user error")
+        abort(RespCode.error, "create new user error")
 
     return user.without_password()
 
@@ -42,7 +40,7 @@ def signin(ctx):
     """用户登录"""
     input_json = ctx.request.json()
     if not input_json or "username" not in input_json or 'password' not in input_json:
-        abort(ERROR_CODE, "username and password are required")
+        abort(RespCode.error, "username and password are required")
 
     username = User.valid_username(input_json['username'])
     password = User.valid_password(input_json['password'])
@@ -51,11 +49,11 @@ def signin(ctx):
     user = User.find_by_name(username)
     # 检查用户是否存在或是否已删除
     if user is None or user.status != USER.status.active:
-        abort(ERROR_CODE, "user not found")
+        abort(RespCode.error, "user not found")
 
     # 检查密码是否错误
     if not user.verify_password(password):
-        abort(ERROR_CODE, "password is not correct")
+        abort(RespCode.error, "password is not correct")
 
     # gen cookie token
     token = user.gen_session_token()
@@ -84,11 +82,11 @@ def get_user(ctx):
         uid = int(uid)
     except Exception as e:
         app.logger.error(f"uid must be an integer, but get uid: {uid}")
-        abort(ERROR_CODE, "uid must be an integer")
+        abort(RespCode.error, "uid must be an integer")
 
     user = User.find(uid)
     if not user:
-        abort(ERROR_CODE, "user not found")
+        abort(RespCode.error, "user not found")
 
     return user.without_password()
 
@@ -101,32 +99,32 @@ def update_user(ctx):
         uid = int(uid)
     except Exception as e:
         app.logger.error(f"uid must be an integer, but get uid: {uid}")
-        abort(ERROR_CODE, "uid must be an integer")
+        abort(RespCode.error, "uid must be an integer")
 
     user = ctx.user
     assert isinstance(user, User)
     if user.id != uid and not user.is_admin():
         app.logger.error(f"not the owner, uid({user.id}) != user.id({user.id})")
-        abort(ERROR_CODE, 'permission denied')
+        abort(RespCode.error, 'permission denied')
 
     # todo:
     input_json = ctx.request.json()
     if not input_json:
-        abort(ERROR_CODE, "body data required")
+        abort(RespCode.error, "body data required")
 
     if 'username' in input_json:
         pass
 
 
     if not input_json or "username" not in input_json or 'password' not in input_json:
-        abort(ERROR_CODE, "username and password are required")
+        abort(RespCode.error, "username and password are required")
 
     username = User.valid_username(input_json['username'])
     password = User.valid_password(input_json['password'])
 
     # check if user existed
     if User.find_by_name(username) is not None:
-        abort(ERROR_CODE, f"user `{username}` existed")
+        abort(RespCode.error, f"user `{username}` existed")
 
     user = User()
     user.name = username

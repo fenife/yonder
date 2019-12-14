@@ -3,9 +3,7 @@
 from functools import wraps
 from sim.exceptions import abort
 from .model import User
-
-
-ERROR_CODE = -1
+from .consts import RespCode
 
 
 def permission_required(permission):
@@ -13,12 +11,12 @@ def permission_required(permission):
         @wraps(func)
         def wrapper(ctx, *args, **kwargs):
             if not getattr(ctx, 'user', None):
-                abort(ERROR_CODE, msg="permission denied")
+                abort(RespCode.error, msg="permission denied")
 
             user = ctx.user
             assert isinstance(user, User)
             if not user.can(permission):
-                abort(ERROR_CODE, msg="permission denied")
+                abort(RespCode.error, msg="permission denied")
 
             return func(ctx, *args, **kwargs)
 
@@ -32,7 +30,7 @@ def login_required():
         @wraps(func)
         def wrapper(ctx, *args, **kwargs):
             if not getattr(ctx, 'user', None):
-                abort(ERROR_CODE, msg="permission denied")
+                abort(RespCode.error, msg="permission denied")
 
             return func(ctx, *args, **kwargs)
 
