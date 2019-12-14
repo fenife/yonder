@@ -85,6 +85,23 @@ def singup(ctx):
     return user.without_password()
 
 
+@app.route('/api/user/:uid')
+def get_user(ctx):
+    # req = ctx.request
+    uid = ctx.request.get_param('uid')
+    try:
+        uid = int(uid)
+    except Exception as e:
+        app.logger.error(f"uid must be an integer, but get uid: {uid}")
+        abort(ERROR_CODE, "uid must be an integer")
+
+    user = User.find(uid)
+    if not user:
+        abort(ERROR_CODE, "user not found")
+
+    return user.without_password()
+
+
 @app.route('/')
 def index(ctx):
     resp = "hello web"

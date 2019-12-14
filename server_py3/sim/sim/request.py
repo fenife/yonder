@@ -53,7 +53,7 @@ class Request(object):
         self.params = params
 
     def get_param(self, param):
-        return self.params[param]
+        return self.params.get(param, None)
 
     def parse_query(self):
         # a=1&b=2
