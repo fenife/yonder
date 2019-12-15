@@ -31,22 +31,6 @@ def category_create(ctx):
     return cate
 
 
-@app.route('/api/category/:cid')
-def category_retrieve(ctx):
-    cid = ctx.request.get_param('cid')
-    try:
-        cid = int(cid)
-    except Exception as e:
-        app.logger.error(f"cid must be an integer, but get cid: {cid}")
-        abort(RespCode.error, "in GET method, cid must be an integer")
-
-    cate = Category.find(cid)
-    if not cate:
-        abort(RespCode.error, "category not found")
-
-    return cate
-
-
 @app.route('/api/category/:cid', methods=('PUT', ))
 @permission_required(Permission.admin)
 def category_update(ctx):
@@ -93,7 +77,23 @@ def category_update(ctx):
     return cate
 
 
-@app.route('/api/categories')
+@app.route('/api/category/:cid', methods=('GET', ))
+def category_retrieve(ctx):
+    cid = ctx.request.get_param('cid')
+    try:
+        cid = int(cid)
+    except Exception as e:
+        app.logger.error(f"cid must be an integer, but get cid: {cid}")
+        abort(RespCode.error, "in GET method, cid must be an integer")
+
+    cate = Category.find(cid)
+    if not cate:
+        abort(RespCode.error, "category not found")
+
+    return cate
+
+
+@app.route('/api/category', methods=('GET', ))
 def category_list(ctx):
     data = Category.find_all()
     return data
