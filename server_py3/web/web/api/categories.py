@@ -10,6 +10,12 @@ from ..decorators import permission_required, login_required
 @app.route('/api/category', methods=('POST', ))
 @permission_required(Permission.admin)
 def category_create(ctx):
+    """
+    input:
+    {
+        "name": "aaa"
+    }
+    """
     input_json = ctx.request.json()
     if not input_json or "name" not in input_json:
         abort(RespCode.error, "field `name` is required")
@@ -34,6 +40,12 @@ def category_create(ctx):
 @app.route('/api/category/:cid', methods=('PUT', ))
 @permission_required(Permission.admin)
 def category_update(ctx):
+    """
+    input:
+    {
+        "name": "aaa"
+    }
+    """
     cid = ctx.request.get_param('cid')
     try:
         cid = int(cid)

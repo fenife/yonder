@@ -17,7 +17,7 @@ class Article(Model):
     user_id = IntField(null=False, comment="用户ID")
     cate_id = IntField(null=False, comment="分类ID")
     title = StringField(column_type='varchar(255)', null=False, comment="标题")
-    content = TextField(null=True, default=None, comment="文章内容")
+    content = TextField(null=False, default=None, comment="文章内容")
     # status = IntField(null=False, default=ARTICLE.status.active, comment="文章状态")
     status = IntField(null=False, comment="文章状态")
 
@@ -26,3 +26,22 @@ class Article(Model):
     __unique_key__ = ('title', )
     __index_key__ = [('user_id', ), ('cate_id', ), ]
 
+    @classmethod
+    def find_by_title(cls, title):
+        sql = f"{cls.__select__} where `title`=?"
+        data = cls.select(sql, [title], 1)
+        if not data:
+            return None
+
+        return cls(**data[0])
+
+    @staticmethod
+    def valid_title(title):
+        assert isinstance(title, str)
+
+        # prevent xss
+        valid_title = html_escape(title)
+        if valid_title != title:
+            abort(RespCode.error, "name can not contain html special char")
+
+        return valid_title
