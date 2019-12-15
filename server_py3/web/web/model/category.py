@@ -23,3 +23,25 @@ class Category(Model):
     __table__ = 'categories'
     __unique_key__ = ('name', )
     # __index_key__ = [('user_id', ), ('cate_id', ), ]
+
+    @classmethod
+    def find_by_name(cls, name):
+        sql = f"{cls.__select__} where `name`=?"
+        data = cls.select(sql, [name], 1)
+        if not data:
+            return None
+
+        return cls(**data[0])
+
+    @staticmethod
+    def valid_name(name):
+        assert isinstance(name, str)
+        if not (3 <= len(name) <= 20):
+            abort(RespCode.error, "name len must between 4 and 20")
+
+        # prevent xss
+        valid_name = html_escape(name)
+        if valid_name != name:
+            abort(RespCode.error, "name can not contain html special char")
+
+        return name
