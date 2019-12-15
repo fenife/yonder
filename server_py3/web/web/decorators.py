@@ -11,7 +11,7 @@ def permission_required(permission):
         @wraps(func)
         def wrapper(ctx, *args, **kwargs):
             if not getattr(ctx, 'user', None):
-                abort(RespCode.error, msg="permission denied")
+                abort(RespCode.error, msg="login first")
 
             user = ctx.user
             assert isinstance(user, User)

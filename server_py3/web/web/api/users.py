@@ -82,7 +82,7 @@ def get_user(ctx):
         uid = int(uid)
     except Exception as e:
         app.logger.error(f"uid must be an integer, but get uid: {uid}")
-        abort(RespCode.error, "uid must be an integer")
+        abort(RespCode.error, "in GET method, uid must be an integer")
 
     user = User.find(uid)
     if not user:

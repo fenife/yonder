@@ -18,18 +18,28 @@ from web import app
 from web.model import User, Category, Article, create_admin_user
 
 
-def table_migrate():
+def recreate_table_user():
     User.table_drop()
     User.table_create()
     User.table_show()
 
+
+def recreate_table_category():
     Category.table_drop()
     Category.table_create()
-    User.table_show()
+    Category.table_show()
 
+
+def recreate_table_article():
     Article.table_drop()
     Article.table_create()
-    User.table_show()
+    Article.table_show()
+
+
+def table_migrate():
+    recreate_table_user()
+    recreate_table_category()
+    recreate_table_article()
 
 
 def add_admin():
@@ -47,6 +57,12 @@ if __name__ == "__main__":
     argv = sys.argv
     if argv[-1] == 'migrate':
         table_migrate()
+    elif argv[-1] == 'user':
+        recreate_table_user()
+    elif argv[-1] == 'category':
+        recreate_table_category()
+    elif argv[-1] == 'article':
+        recreate_table_article()
     elif argv[-1] == 'admin':
         add_admin()
     else:
