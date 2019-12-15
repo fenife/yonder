@@ -28,3 +28,25 @@
     ```
     
 ## update  
+
+
+## detail
+    ```
+    GET     /api/article/:aid
+    
+    response:
+    {
+        "code": 0,
+        "data": {
+            "id": 1,
+            "created_at": "2019-12-15 17:43:19",
+            "updated_at": "2019-12-15 17:43:19",
+            "user_id": 1,
+            "cate_id": 1,
+            "title": "aaa",
+            "content": "abc",
+            "status": 1
+        },
+        "msg": "OK"
+    }
+    ```

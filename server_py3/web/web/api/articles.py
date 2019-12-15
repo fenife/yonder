@@ -67,3 +67,30 @@ def article_create(ctx):
         abort(RespCode.error, "create new article error")
 
     return article
+
+
+@app.route('/api/article/:aid', methods=('PUT', ))
+@permission_required(Permission.admin)
+def article_update(ctx):
+    return
+
+
+@app.route('/api/article', methods=('GET', ))
+def article_list(ctx):
+    return
+
+
+@app.route('/api/article/:aid', methods=('GET', ))
+def article_detail(ctx):
+    aid = ctx.request.get_param('aid')
+    try:
+        aid = int(aid)
+    except Exception as e:
+        app.logger.error(f"aid must be an integer, but get: {aid}")
+        abort(RespCode.error, "in GET method, aid must be an integer")
+
+    article = Article.find(aid)
+    if not article:
+        abort(RespCode.error, "article not found")
+
+    return article
