@@ -521,7 +521,7 @@ class Model(dict, metaclass=ModelMetaclass):
         if field.update is not None:
             val = field.update() if callable(field.update) else field.update
             logger.debug(f"using update value for {key}: {str(val)}")
-            setattr(self, key, val)
+            setattr(self, key, val)     # 更新当前对象的值
         else:
             val = getattr(self, key, None)
 
