@@ -138,4 +138,9 @@ class User(Model):
             user = User(**data)
             return user
 
-
+    @staticmethod
+    def del_user_from_redis(token):
+        with cache_pool.get() as cache:
+            key = f"token:{token}"
+            app.logger.debug(token)
+            cache.delete(key)

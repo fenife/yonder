@@ -19,7 +19,7 @@ def singup(ctx):
 
     # check if user existed
     if User.find_by_name(username) is not None:
-        abort(RespCode.error, f"user `{username}` existed")
+        abort(RespCode.error, f"username `{username}` existed")
 
     user = User()
     user.name = username
@@ -112,25 +112,32 @@ def update_user(ctx):
     if not input_json:
         abort(RespCode.error, "body data required")
 
+    supported = {'username', }
+    unsupported = set(input_json.keys()) - supported
+    if unsupported:
+        abort(RespCode.error, f"unsupported fields: {list(unsupported)}")
+
+    need_update = False
     if 'username' in input_json:
-        pass
+        username = input_json.pop('username')
 
+        # username need update
+        if username != user.name:
+            username = User.valid_username(username)
+            # check if user existed
+            if User.find_by_name(username) is not None:
+                abort(RespCode.error, f"username `{username}` existed")
 
-    if not input_json or "username" not in input_json or 'password' not in input_json:
-        abort(RespCode.error, "username and password are required")
+            user.name = username
+            need_update = True
+        else:
+            abort(RespCode.error, f"username `{username}` is the same as before")
 
-    username = User.valid_username(input_json['username'])
-    password = User.valid_password(input_json['password'])
+    if need_update:
+        if user.modify():
+            # 清除相关缓存，重新登录
+            token = ctx.request.get_cookie('token')
+            user.del_user_in_redis(token)
 
-    # check if user existed
-    if User.find_by_name(username) is not None:
-        abort(RespCode.error, f"user `{username}` existed")
-
-    user = User()
-    user.name = username
-    user.password = user.gen_password_hash(password)
-    user.status = USER.status.active
-    user.role_id = USER.role.user
-
-    return
+    return user
 

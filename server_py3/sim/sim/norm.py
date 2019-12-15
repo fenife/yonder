@@ -559,6 +559,9 @@ class Model(dict, metaclass=ModelMetaclass):
             if rows != 1:
                 logger.error(f"failed to update by primary key: {self.__primary_key__}, "
                              f"affected rows: {rows}")
+                return False
+
+            return True
 
         except Exception as e:
             logger.exception(f"failed to update")
