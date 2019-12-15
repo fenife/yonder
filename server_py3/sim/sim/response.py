@@ -52,10 +52,32 @@ class Response(object):
     def _get_headers(self):
         return self.headers
 
+    @property
+    def resp_code(self):
+        """
+        返回response自定义的状态码，不同于http状态码，用于响应的body中
+        0    表示成功
+        -1   表示错误
+        其他 自定义的状态码
+        :return:
+        """
+        # http status code
+        if 0 < self.status_code < 1000:
+            if self.status_code == 200:
+                # success
+                return 0
+            else:
+                # failed
+                return -1
+
+        # other custom code
+        else:
+            return self.status_code
+
     def _get_body(self):
         if isinstance(self.data, bytes):
             # 返回的格式是固定的，bytes需要手动拼接
-            c = b'{"code":' + str(self.status_code).encode(self.charset) + b','
+            c = b'{"code":' + str(self.resp_code).encode(self.charset) + b','
             d = b'"data":' + self.data + b','
             m = b'"msg":"' + self.msg.encode(self.charset) + b'"}'
             body = c + d + m
@@ -70,7 +92,7 @@ class Response(object):
         # b'{"code":200,"data":"{"a": 1, "b": 2}","msg":"OK"}'
 
         body = {
-            "code": self.status_code,
+            "code": self.resp_code,
             "data": {} if self.data is None else self.data,
             "msg": self.msg,
         }
