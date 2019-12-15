@@ -28,8 +28,8 @@ class Request(object):
         if self._json:
             return self._json
 
+        self.content_length = int(self.content_length)
         if self.content_length:
-            self.content_length = int(self.content_length)
             stream = self.environ.get('wsgi.input')
 
             self.data = stream.read(self.content_length)
