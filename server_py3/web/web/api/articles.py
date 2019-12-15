@@ -40,7 +40,7 @@ def article_create(ctx):
     try:
         cate_id = int(cate_id)
     except Exception as e:
-        abort(RespCode.error, f"cate_id must be an interger, but get: `{cate_id}`")
+        abort(RespCode.error, f"cate_id must be an integer, but get: `{cate_id}`")
 
     # check if category existed
     cate = Category.find(cate_id)
