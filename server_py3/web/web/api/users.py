@@ -149,3 +149,8 @@ def update_user(ctx):
             user.del_user_from_redis(token)
 
     return user.without_password()
+
+
+def delete_user():
+    # todo
+    pass

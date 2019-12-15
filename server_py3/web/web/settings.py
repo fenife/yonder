@@ -10,10 +10,16 @@ _dev_configs = {
     "DB_NAME": "test",
     "DB_CHARSET": "utf8",
 
+    # cache/redis config
     "REDIS_HOST": '127.0.0.1',
     "REDIS_PORT": 6379,
 
+    # web app secret key to gen session token
     "SECRET_KEY": "a key hard to guess",
+
+    # web admin user
+    "ADMIN_USERNAME": 'test',
+    "ADMIN_PASSWORD": 'test'
 }
 
 

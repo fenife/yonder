@@ -15,7 +15,7 @@ import sys
 import os
 
 from web import app
-from web.model import User, Category, Article
+from web.model import User, Category, Article, create_admin_user
 
 
 def table_migrate():
@@ -32,6 +32,10 @@ def table_migrate():
     User.table_show()
 
 
+def add_admin():
+    return create_admin_user()
+
+
 def main():
     host = '0.0.0.0'
     port = 6070
@@ -43,5 +47,7 @@ if __name__ == "__main__":
     argv = sys.argv
     if argv[-1] == 'migrate':
         table_migrate()
+    elif argv[-1] == 'admin':
+        add_admin()
     else:
         main()

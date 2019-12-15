@@ -144,3 +144,15 @@ class User(Model):
             key = f"token:{token}"
             app.logger.debug(token)
             cache.delete(key)
+
+
+def create_admin_user():
+    username = app.config['ADMIN_USERNAME']
+    password = app.config['ADMIN_PASSWORD']
+    admin = User()
+    admin.name = username
+    admin.password = admin.gen_password_hash(password)
+    admin.status = USER.status.active
+    admin.role_id = USER.role.admin
+    admin.save()
+    print('admin user:', admin.without_password())
