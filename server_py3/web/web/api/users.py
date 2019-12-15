@@ -107,12 +107,11 @@ def update_user(ctx):
         app.logger.error(f"not the owner, uid({user.id}) != user.id({user.id})")
         abort(RespCode.error, 'permission denied')
 
-    # todo:
     input_json = ctx.request.json()
     if not input_json:
         abort(RespCode.error, "body data required")
 
-    supported = {'username', }
+    supported = {'username', 'password'}
     unsupported = set(input_json.keys()) - supported
     if unsupported:
         abort(RespCode.error, f"unsupported fields: {list(unsupported)}")
@@ -133,11 +132,20 @@ def update_user(ctx):
         else:
             abort(RespCode.error, f"username `{username}` is the same as before")
 
+    if 'password' in input_json:
+        password = input_json.pop('password')
+        password = User.valid_password(password)
+        if user.verify_password(password):
+            abort(RespCode.error, f"password is the same as before")
+
+        # 有cookie说明登录成功，则不用验证旧密码了，直接更新密码
+        user.password = user.gen_password_hash(password)
+        need_update = True
+
     if need_update:
         if user.modify():
             # 清除相关缓存，重新登录
             token = ctx.request.get_cookie('token')
-            user.del_user_in_redis(token)
+            user.del_user_from_redis(token)
 
-    return user
-
+    return user.without_password()
