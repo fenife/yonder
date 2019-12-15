@@ -106,7 +106,9 @@ class Database(object):
         # if sql.find('?') > 0:
         sql = sql.replace('?', '%s')
 
-        print(f"\n[EXECUTE] - {sql}")
+        print(f"[EXECUTE] -- \n"
+              f"  sql : {sql}\n"
+              f"  args: {args}\n")
 
         with ConnContextManager(self) as conn:
             if not autocommit:
@@ -147,7 +149,9 @@ class Database(object):
         # if sql.find('?') > 0:
         sql = sql.replace('?', '%s')
 
-        print(f"\n[EXECUTE] - {sql}")
+        print(f"[INSERT] -- \n"
+              f"  sql : {sql}\n"
+              f"  args: {args}\n")
 
         with ConnContextManager(self) as conn:
             if not autocommit:

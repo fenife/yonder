@@ -3,6 +3,7 @@
 import json
 from http.cookies import SimpleCookie
 from .log import logger
+from .exceptions import abort
 
 
 class Request(object):
@@ -35,7 +36,12 @@ class Request(object):
             self.data = stream.read(self.content_length)
             if self.content_type == 'application/json':
                 # self._json = json.decode(self.data)
-                self._json = json.loads(self.data)
+                try:
+                    self._json = json.loads(self.data)
+                except Exception as e:
+                    msg = "http body parse error"
+                    logger.error(f"{msg}, data: {self.data}")
+                    abort(-1, msg)
 
         return self._json
 
