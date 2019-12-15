@@ -539,11 +539,12 @@ class Model(dict, metaclass=ModelMetaclass):
             if rows != 1:
                 logger.error(f"failed to insert record, affected rows: {rows}")
 
-            if last_id:
-                self.id = last_id
-            else:
-                logger.error(f"failed to insert record, lastrowid:{last_id}")
-                self.id = None
+            if self.__pk_auto_increment__:
+                if last_id:
+                    self.id = last_id
+                else:
+                    logger.error(f"failed to insert record, lastrowid:{last_id}")
+                    self.id = None
 
         except Exception as e:
             # abort(ERROR_CODE, str(e))
