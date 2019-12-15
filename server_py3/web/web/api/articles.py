@@ -31,7 +31,7 @@ def article_create(ctx):
     if unsupported:
         abort(RespCode.error, f"unsupported fields: {list(unsupported)}")
 
-    # get user_id
+    # get user
     user = ctx.user
     assert isinstance(user, User)
 
@@ -42,7 +42,7 @@ def article_create(ctx):
     except Exception as e:
         abort(RespCode.error, f"cate_id must be an interger, but get: `{cate_id}`")
 
-    # check if category name existed
+    # check if category existed
     cate = Category.find(cate_id)
     if not cate:
         abort(RespCode.error, f"category not existed")
