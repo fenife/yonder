@@ -29,3 +29,19 @@ def category_create(ctx):
         abort(RespCode.error, "create new user error")
 
     return cate
+
+
+@app.route('/api/category/:cid')
+def category_retrieve(ctx):
+    cid = ctx.request.get_param('cid')
+    try:
+        cid = int(cid)
+    except Exception as e:
+        app.logger.error(f"cid must be an integer, but get cid: {cid}")
+        abort(RespCode.error, "in GET method, cid must be an integer")
+
+    cate = Category.find(cid)
+    if not cate:
+        abort(RespCode.error, "category not found")
+
+    return cate
