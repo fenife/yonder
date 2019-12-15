@@ -33,6 +33,16 @@ class Category(Model):
 
         return cls(**data[0])
 
+    @classmethod
+    def find_all(cls):
+        sql = f"{cls.__select__}"
+        data = cls.select(sql)
+        if not data:
+            return []
+
+        rs = [cls(**r) for r in data]
+        return rs
+
     @staticmethod
     def valid_name(name):
         assert isinstance(name, str)

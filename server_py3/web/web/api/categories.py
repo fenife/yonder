@@ -93,3 +93,11 @@ def category_update(ctx):
     return cate
 
 
+@app.route('/api/categories')
+def category_list(ctx):
+    data = Category.find_all()
+    return data
+
+
+def category_delete(ctx):
+    pass
