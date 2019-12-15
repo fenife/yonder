@@ -18,8 +18,8 @@ _dev_configs = {
     "SECRET_KEY": "a key hard to guess",
 
     # web admin user
-    "ADMIN_USERNAME": 'test',
-    "ADMIN_PASSWORD": 'test'
+    "ADMIN_USERNAME": 'admin',
+    "ADMIN_PASSWORD": 'admin'
 }
 
 

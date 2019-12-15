@@ -59,7 +59,7 @@ def signin(ctx):
     token = user.gen_session_token()
 
     # set-cookie
-    ctx.set_cookie(name='token', value=token, max_age=10)       # todo: reset max_age
+    ctx.set_cookie(name='token', value=token, max_age=USER.login_expired)
 
     # save to redis
     User.save_user_to_redis_by_token(user, token)
