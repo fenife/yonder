@@ -79,6 +79,9 @@ def article_create(ctx):
     if getattr(article, 'id', None) is None:
         abort(RespCode.error, "create new article error")
 
+    article.user = user.without_password()
+    article.category = cate
+
     return article
 
 
@@ -108,15 +111,19 @@ def article_update(ctx):
     # get user
     user = ctx.user
     assert isinstance(user, User)
+    article.user = user.without_password()
 
     cate = Category.find(article.id)
     article.category = cate
 
-    need_update = False
+    update_fields = []
     if 'cate_id' in input_json:
         cate_id = input_json.pop('cate_id')
+        if not isinstance(cate_id, int):
+            app.logger.error(f"cate_id must be an integer, but get: {cate_id}")
+            abort(RespCode.error, "field `cate_id` must be an integer")
 
-        # categroy id need update
+        # category id need update
         if cate_id != article.cate_id:
             cate = Category.find(cate_id)
             if cate is None:
@@ -124,7 +131,7 @@ def article_update(ctx):
 
             article.cate_id = cate_id
             article.category = cate
-            need_update = True
+            update_fields.append('cate_id')
 
     if 'title' in input_json:
         new_title = input_json.pop('title')
@@ -135,12 +142,12 @@ def article_update(ctx):
             new_title = Article.valid_title(new_title)
 
             # if new title existed
-            old = Article.find_by_title(new_title)
-            if old:
+            art = Article.find_by_title(new_title)
+            if art:
                 abort(RespCode.error, f"title existed")
 
             article.title = new_title
-            need_update = True
+            update_fields.append('title')
 
     if 'content' in input_json:
         new_content = input_json.pop('content')
@@ -148,11 +155,10 @@ def article_update(ctx):
         # content need update
         if content_hash(new_content) != content_hash(article.content):
             article.content = new_content
-            need_update = True
+            update_fields.append('content')
 
-    article.user = user.without_password()
-
-    if need_update:
+    if update_fields:
+        app.logger.info(f"update fields: {update_fields}")
         if article.modify() is False:
             abort(RespCode.error, "update article error")
 
