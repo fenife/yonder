@@ -17,7 +17,6 @@ def content_hash(content):
     m = hashlib.md5()
     m.update(content.encode('utf-8'))
     h = m.hexdigest()
-    app.logger.debug(h)
     return h
 
 
@@ -110,17 +109,21 @@ def article_update(ctx):
     user = ctx.user
     assert isinstance(user, User)
 
+    cate = Category.find(article.id)
+    article.category = cate
+
     need_update = False
     if 'cate_id' in input_json:
         cate_id = input_json.pop('cate_id')
 
         # categroy id need update
         if cate_id != article.cate_id:
-
-            if Category.find(cate_id) is None:
+            cate = Category.find(cate_id)
+            if cate is None:
                 abort(RespCode.error, f"category not existed")
 
             article.cate_id = cate_id
+            article.category = cate
             need_update = True
 
     if 'title' in input_json:
@@ -146,6 +149,8 @@ def article_update(ctx):
         if content_hash(new_content) != content_hash(article.content):
             article.content = new_content
             need_update = True
+
+    article.user = user.without_password()
 
     if need_update:
         if article.modify() is False:
