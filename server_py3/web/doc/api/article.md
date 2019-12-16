@@ -4,13 +4,18 @@
     ```
     POST  /api/article
     
+    request headers:
+        key: Cookie 
+        val: token=fc3aeeebe31ba945cd1c076c6f2a9b2d
+       
+    request body:   
     {
         "title": "aaa",
         "content": "abc",
         "cate_id": 1
     }
     
-    response:
+    response body:
     {
         "code": 0,
         "data": {
