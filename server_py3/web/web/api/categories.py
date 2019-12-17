@@ -107,7 +107,20 @@ def category_retrieve(ctx):
 
 @app.route('/api/category', methods=('GET', ))
 def category_list(ctx):
+    # 暂时返回全部分类（包括status为delete的分类）
     data = Category.find_all()
+
+    sql = """
+    select cate_id, count(1) as cnt from articles where status = 1 group by cate_id
+    """
+    res = db.select(sql)
+    if not res:
+        abort(RespCode.error, "can not count articles")
+
+    counts = {d['cate_id']: d['cnt'] for d in res}
+    for d in data:
+        d['article_count'] = counts.get(d['id'])
+
     return data
 
 
