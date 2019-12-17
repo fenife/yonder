@@ -3,10 +3,24 @@
 import hashlib
 from sim.exceptions import abort
 from sim.response import Response
+from sim.context import AppRequestContext
 from .. import app, db, cache_pool
 from ..model import User, Category, Article
 from ..consts import RespCode, Permission, RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
 from ..decorators import permission_required, login_required
+
+
+DEFAULT_PAGE_SIZE = 10
+
+
+def to_int(var_name, val):
+    try:
+        val = int(val)
+    except Exception as e:
+        app.logger.error(f"{var_name} must be an integer, but get: {val}")
+        abort(RespCode.error, f"{var_name} must be an integer")
+
+    return val
 
 
 def content_hash(content):
@@ -18,6 +32,14 @@ def content_hash(content):
     m.update(content.encode('utf-8'))
     h = m.hexdigest()
     return h
+
+
+def get_aid_from_request(ctx):
+    # aid: article id
+    aid = ctx.request.get_param('aid')
+    aid = to_int('aid', aid)
+
+    return aid
 
 
 @app.route('/api/article', methods=('POST', ))
@@ -104,10 +126,11 @@ def article_update(ctx):
     if unsupported:
         abort(RespCode.error, f"unsupported fields: {list(unsupported)}")
 
-    article = Article.find(aid)
+    article = Article.get_with_more_detail(aid)
     if not article:
         abort(RespCode.error, "article not found")
 
+    """
     # get user
     user = ctx.user
     assert isinstance(user, User)
@@ -115,6 +138,7 @@ def article_update(ctx):
 
     cate = Category.find(article.id)
     article.category = cate
+    """
 
     update_fields = []
     if 'cate_id' in input_json:
@@ -173,8 +197,85 @@ def article_update(ctx):
 
 
 @app.route('/api/article', methods=('GET', ))
-def article_list(ctx):
-    return
+def article_list(ctx: AppRequestContext):
+    # 参数处理
+    cate_id = ctx.request.query('cate_id')
+    if cate_id is not None:
+        cate_id = to_int('cate_id', cate_id)
+
+    page = ctx.request.query('page')
+    if page is None:
+        page = 1
+    else:
+        page = to_int('page', page)
+
+    if page <= 0:
+        abort(RespCode.error, "page must be greater than 0")
+
+    limit = ctx.request.query('limit')
+    if limit is None:
+        limit = app.config.get("PAGE_SIZE", DEFAULT_PAGE_SIZE)
+    else:
+        limit = to_int('limit', limit)
+
+    if not 0 < limit <= 100:
+        abort(RespCode.error, "limit must be between 0 and 100")
+
+    # 可展示的文章总数
+    sqlForCount = """
+    select count(1) as total
+    from articles a
+    inner join users b on a.user_id = b.id
+    inner join categories c on a.cate_id = c.id
+    where a.status = ? and b.status = ? and c.status = ?
+    """
+
+    # 可展示的文章列表
+    sql = """
+    select 
+        a.id, a.title, a.created_at, a.updated_at, 
+        a.user_id, b.name as user_name,
+        a.cate_id, c.name as cate_name
+    from articles a
+    inner join users b on a.user_id = b.id
+    inner join categories c on a.cate_id = c.id
+    where a.status = ? and b.status = ? and c.status = ?
+    """
+
+    args = [
+        ARTICLE.status.active, USER.status.active, CATEGORY.status.active,
+    ]
+
+    if cate_id is not None:
+        extra = " and c.id = ?"
+        sqlForCount += extra
+        sql += extra
+        args.append(cate_id)
+
+    res = db.select(sqlForCount, args)
+    if not res:
+        abort(RespCode.error, "can not get article total counts")
+
+    total = res[0].get('total')
+
+    # 分页
+    sql += " limit ?, ?"
+    args += [(page - 1) * limit, limit]
+
+    items = db.select(sql, args)
+
+    q = {
+        "cate_id": cate_id,
+        "page": page,
+        "limit": limit
+    }
+
+    resp = {
+        "articles": items,
+        "total": total
+    }
+
+    return resp
 
 
 @app.route('/api/article/:aid', methods=('GET', ))
@@ -186,8 +287,12 @@ def article_detail(ctx):
         app.logger.error(f"aid must be an integer, but get: {aid}")
         abort(RespCode.error, "in GET method, aid must be an integer")
 
-    article = Article.find(aid)
+    # aid = get_aid_from_request(ctx)
+
+    article = Article.get_with_more_detail(aid)
     if not article:
         abort(RespCode.error, "article not found")
 
     return article
+
+

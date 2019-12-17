@@ -7,6 +7,8 @@ from sim.norm import (Model, gen_now, IntField, StringField, DatetimeField, Text
 from .. import app, db, cache_pool
 from ..consts import RespCode, Permission, RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
 from ..utils import html_escape, is_ascii
+from .user import User
+from .category import Category
 
 
 class Article(Model):
@@ -34,6 +36,31 @@ class Article(Model):
             return None
 
         return cls(**data[0])
+
+    @classmethod
+    def get_with_more_detail(cls, pk):
+        article = cls.find(pk)
+        if not article:
+            return None
+
+        user_id = article.user_id
+        user = User.find(user_id)
+        if not user:
+            app.logger.error(f"can not get category of article: {article.id}, user_id: {user_id}")
+            # abort(RespCode.error, f"can not get user")
+            article.user = None
+        else:
+            article.user = user.without_password()
+
+        cate_id = article.cate_id
+        cate = Category.find(cate_id)
+        if not cate:
+            app.logger.error(f"can not get category of article: {article.id}, cate_id: {cate_id}")
+            # abort(RespCode.error, f"can not get category")
+
+        article.category = cate
+
+        return article
 
     @staticmethod
     def valid_title(title):

@@ -19,7 +19,10 @@ _dev_configs = {
 
     # web admin user
     "ADMIN_USERNAME": 'admin',
-    "ADMIN_PASSWORD": 'admin'
+    "ADMIN_PASSWORD": 'admin',
+
+    # page
+    "PAGE_SIZE": 10,
 }
 
 
