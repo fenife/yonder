@@ -85,7 +85,29 @@
                 "created_at": "2019-12-16 11:46:21",
                 "updated_at": "2019-12-16 11:46:21",
                 "name": "aaa",
-                "status": 1
+                "status": 1,
+                "article_count": 5          # 该分类下可展示文章的数目
+            }
+        ],
+        "msg": "OK"
+    }
+    {
+        "code": 0,
+        "data": [
+            {
+                "id": 1,
+                "created_at": "2019-12-15 14:16:10",
+                "updated_at": "2019-12-15 16:10:12",
+                "name": "cccc",
+                "status": 1,
+            },
+            {
+                "id": 2,
+                "created_at": "2019-12-15 16:04:20",
+                "updated_at": "2019-12-15 16:04:20",
+                "name": "aaaa",
+                "status": 1,
+                "article_count": null
             }
         ],
         "msg": "OK"

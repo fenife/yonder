@@ -70,7 +70,7 @@ def category_update(ctx):
     if 'name' in input_json:
         name = input_json.pop('name')
 
-        # categroy name need update
+        # category name need update
         if name != cate.name:
             username = Category.valid_name(name)
             # check if category existed
@@ -118,8 +118,9 @@ def category_list(ctx):
         abort(RespCode.error, "can not count articles")
 
     counts = {d['cate_id']: d['cnt'] for d in res}
-    for d in data:
-        d['article_count'] = counts.get(d['id'])
+    for cate in data:
+        # 该分类下可展示文章的数目
+        cate.article_count = counts.get(cate.id, 0)
 
     return data
 
