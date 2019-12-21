@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import hashlib
 from sim.exceptions import abort
 from sim.response import Response
 from sim.context import AppRequestContext
@@ -47,4 +46,7 @@ def archive(ctx: AppRequestContext):
         year_dict[year]["art_list"].append(art)
         year_dict[year]["count"] += 1
 
-    return year_dict
+    resp = list(year_dict.values())
+    # print(resp)
+
+    return resp
