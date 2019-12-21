@@ -88,13 +88,28 @@
         "code": 0,
         "data": {
             "id": 1,
-            "created_at": "2019-12-15 17:43:19",
-            "updated_at": "2019-12-15 17:43:19",
+            "created_at": "2019-12-20 23:47:27",
+            "updated_at": "2019-12-20 23:47:27",
             "user_id": 1,
             "cate_id": 1,
-            "title": "aaa",
-            "content": "abc",
-            "status": 1
+            "title": "hello",
+            "content": "world",
+            "status": 1,
+            "user": {
+                "id": 1,
+                "created_at": "2019-12-20 23:38:53",
+                "updated_at": "2019-12-20 23:38:53",
+                "name": "admin",
+                "role_id": 1,
+                "status": 1
+            },
+            "category": {
+                "id": 1,
+                "created_at": "2019-12-20 23:46:07",
+                "updated_at": "2019-12-20 23:46:07",
+                "name": "aaa",
+                "status": 1
+            }
         },
         "msg": "OK"
     }
