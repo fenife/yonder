@@ -8,7 +8,7 @@ if (typeof window === 'undefined') {
 const apiList = {
   // 获取文章列表
   getArticles: {
-    url: baseUrl + "/articles",
+    url: baseUrl + "/article",
     method: "GET"
   },
   // 获取文章详情
@@ -37,7 +37,7 @@ const apiList = {
 
   // 分类列表
   getCates: {
-    url: baseUrl + "/categories",
+    url: baseUrl + "/category",
     method: "GET"
   },
   // 分类详情
@@ -63,7 +63,7 @@ const apiList = {
 
   // 登陆
   signin: {
-    url: baseUrl + "/user/login",
+    url: baseUrl + "/user/signin",
     method: "POST"
   },
   signout: {

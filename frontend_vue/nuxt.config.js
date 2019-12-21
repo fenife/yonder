@@ -31,7 +31,7 @@ module.exports = {
   proxy: [
     [
       '/api',{
-      target: 'http://localhost:6060',
+      target: 'http://localhost:6070',
       // target: 'https://elm-api.caibowen.net',
       changeOrigin: true,
       // pathRewrite: { '^/api' : '/' }
