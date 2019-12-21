@@ -26,7 +26,7 @@ from .tree import Tree
 from .exceptions import (AppBaseException, MethodNotAllowed, NotFound, InternalServerError)
 from .context import AppRequestContext
 from .response import Response
-# from .log import logger
+from .log import logger
 
 # context = ctx = threading.local()
 
@@ -69,7 +69,8 @@ class Application(object):
 
     def _init_app(self, **options):
         self.debug = options.pop('debug', False)
-        self.logger = self._init_logger(__name__)
+        # self.logger = self._init_logger(__name__)
+        self.logger = logger
 
     def _init_logger(self, name):
         # 指定logger输出格式
@@ -200,7 +201,7 @@ class Application(object):
 
         except AppBaseException as e:
             # logger.exception(f"http error")
-            self.logger.debug(f"{e.msg}", exc_info=True)
+            self.logger.debug(f"{e.msg}, uri: {ctx.uri}", exc_info=True)
             response = e
 
         except Exception as e:
