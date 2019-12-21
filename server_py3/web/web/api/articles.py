@@ -8,19 +8,7 @@ from .. import app, db, cache_pool
 from ..model import User, Category, Article
 from ..consts import RespCode, Permission, RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
 from ..decorators import permission_required, login_required
-
-
-DEFAULT_PAGE_SIZE = 10
-
-
-def to_int(var_name, val):
-    try:
-        val = int(val)
-    except Exception as e:
-        app.logger.error(f"{var_name} must be an integer, but get: {val}")
-        abort(RespCode.error, f"{var_name} must be an integer")
-
-    return val
+from ._internal import DEFAULT_PAGE_SIZE, to_int
 
 
 def content_hash(content):
