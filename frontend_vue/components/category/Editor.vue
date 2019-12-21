@@ -19,7 +19,7 @@
     data () {
       return {
         formData: {
-          name: (this.cate && this.cate.Name) || ''
+          name: (this.cate && this.cate.name) || ''
         },
         validRules: {
           name: [
@@ -41,7 +41,7 @@
 
           // 如果有cate，表示是更新分类，否则是新建分类
           let sendReq = this.cate ? request.updateCate : request.createCate
-          let params = this.cate ? { id: this.cate.ID } : null
+          let params = this.cate ? { id: this.cate.id } : null
           let body = {
             name: this.formData.name,
           }

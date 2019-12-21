@@ -8,10 +8,10 @@
         <Select v-model="formData.cateId" placeholder="select a category">
           <Option
             v-for="cate in cates"
-            :value="cate.ID"
-            :key="cate.ID"
+            :value="cate.id"
+            :key="cate.id"
           >
-            {{cate.Name}}
+            {{cate.name}}
           </Option>
         </Select>
       </FormItem>
@@ -46,7 +46,7 @@
       return {
         formData: {
           title: (this.article && this.article.title) || '',
-          cateId: (this.article && this.article.Category.ID) || '',
+          cateId: (this.article && this.article.category.ID) || '',
           content: (this.article && this.article.content) || '',
         },
         validRules: {

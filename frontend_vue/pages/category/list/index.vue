@@ -4,7 +4,7 @@
     <cate-entry
       v-for="cate in cates"
       :cate = cate
-      :key="cate.ID"
+      :key="cate.id"
     >
     </cate-entry>
   </div>

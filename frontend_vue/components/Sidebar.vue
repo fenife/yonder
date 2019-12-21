@@ -28,7 +28,7 @@
           v-for="cate in cates"
           v-if="cate.article_count > 0"
           :cate="cate"
-          :key="cate.ID"
+          :key="cate.id"
         >
         </cate-item>
       </Card>

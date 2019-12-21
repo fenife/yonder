@@ -43,7 +43,7 @@
 
         // categories
         let cates = resp[0].data || []
-        console.log("cates:", cates)
+        // console.log("cates:", cates)
         ctx.store.commit('setCates', cates)
 
         // articles

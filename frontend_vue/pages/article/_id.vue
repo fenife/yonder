@@ -4,7 +4,7 @@
       <Card dis-hover>
         <Breadcrumb>
           <BreadcrumbItem to="/">Home</BreadcrumbItem>
-          <BreadcrumbItem :to="`/category/${article.Category.ID}`">{{article.Category.Name}}</BreadcrumbItem>
+          <BreadcrumbItem :to="`/category/${article.category.id}`">{{article.category.name}}</BreadcrumbItem>
           <BreadcrumbItem>{{article.title}}</BreadcrumbItem>
         </Breadcrumb>
       </Card>
@@ -13,7 +13,7 @@
       <div slot="title">
         <h1 class="article-title">{{article.title}}</h1>
         <div class="article-info">
-          <span>{{article.user.Name}}</span>
+          <span>{{article.user.name}}</span>
           <span>{{article.created_at}}</span>
         </div>
       </div>
@@ -31,10 +31,10 @@
       <div class="pre-next">
         <div v-if="pre" class="pre-article">
           <Icon type="md-arrow-round-back" />
-          <a @click.prevent="toPreArticle">{{pre.Title}}</a>
+          <a @click.prevent="toPreArticle">{{pre.title}}</a>
         </div>
         <div v-if="next" class="next-article">
-          <a @click.prevent="toNextArticle">{{next.Title}}</a>
+          <a @click.prevent="toNextArticle">{{next.title}}</a>
           <Icon type="md-arrow-round-forward" />
         </div>
       </div>
@@ -80,7 +80,7 @@
         }
 
         let result = resp[0].data
-        let article = result.ad || {}
+        let article = result.article || {}
         let pre = result.pre
         let next = result.next
 
@@ -96,10 +96,10 @@
     },
     methods: {
       toPreArticle () {
-        this.$router.push('/article/' + this.pre.ID)
+        this.$router.push('/article/' + this.pre.id)
       },
       toNextArticle () {
-        this.$router.push('/article/' + this.next.ID)
+        this.$router.push('/article/' + this.next.id)
       }
     },
     components: {

@@ -37,7 +37,7 @@
         this.$router.push("/article/" + this.article.id)
       },
       toCatePage () {
-        this.$router.push("/category/" + this.article.CateId)
+        this.$router.push("/category/" + this.article.cate_id)
       },
     },
     components: {

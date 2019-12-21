@@ -1,7 +1,7 @@
 <template>
   <div>
     <Card>
-      {{cate.Name}}
+      {{cate.name}}
       <ButtonGroup class="cate-tool">
         <Button :size="buttonSize" @click="toEditPage"><Icon type="ios-code" /></Button>
         <Button :size="buttonSize" @click="deleteConfirm = true"><Icon type="ios-close" /></Button>
@@ -31,7 +31,7 @@
     },
     methods: {
       toEditPage () {
-        this.$router.push("/category/update/" + this.cate.ID)
+        this.$router.push("/category/update/" + this.cate.id)
       },
       deleteCategory () {
         // console.log('delete category')
@@ -39,7 +39,7 @@
         let self = this
         request.deleteCate({
           params: {
-            id: this.cate.ID,
+            id: this.cate.id,
           }
         }).then(resp => {
           if (resp.code === 0) {
