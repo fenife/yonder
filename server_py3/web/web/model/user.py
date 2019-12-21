@@ -124,7 +124,8 @@ class User(Model):
         with cache_pool.get() as cache:
             key = f"token:{token}"
             val = json.dumps(user, default=str).encode('utf-8')
-            cache.set(key, val, ex=USER.login_expired)
+            expired = app.config.get("LOGIN_EXPIRED")
+            cache.set(key, val, ex=expired)
 
     @staticmethod
     def load_user_from_redis_by_token(token):

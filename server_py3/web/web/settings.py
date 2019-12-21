@@ -23,6 +23,10 @@ _dev_configs = {
 
     # page
     "PAGE_SIZE": 10,
+
+    # 用户登录过期时间
+    # login expired time (seconds)
+    "LOGIN_EXPIRED": 30 * 60,
 }
 
 

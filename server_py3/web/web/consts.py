@@ -44,11 +44,6 @@ class Roles(object):
 
 class USER(object):
 
-    # 用户登录过期时间
-    # login_expired = 24 * 60 * 60
-    # todo: remove test
-    login_expired = 30 * 60
-
     class status(object):
         """用户状态"""
         delete = 0

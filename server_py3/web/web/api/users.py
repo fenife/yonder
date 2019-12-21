@@ -37,7 +37,7 @@ def singup(ctx):
 
 
 @app.route('/api/user/signin', methods=('POST', ))
-def signin(ctx):
+def signin(ctx: AppRequestContext):
     """用户登录"""
     input_json = ctx.request.json()
     if not input_json or "username" not in input_json or 'password' not in input_json:
@@ -60,7 +60,8 @@ def signin(ctx):
     token = user.gen_session_token()
 
     # set-cookie
-    ctx.set_cookie(name='token', value=token, max_age=USER.login_expired)
+    max_age = app.config.get("LOGIN_EXPIRED")
+    ctx.set_cookie(name='token', value=token, max_age=max_age)
 
     # save to redis
     User.save_user_to_redis_by_token(user, token)
