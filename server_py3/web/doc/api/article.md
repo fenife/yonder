@@ -33,7 +33,51 @@
     ```
     
 ## update  
+    同 create
 
+## article list
+    ```
+    GET     /api/article
+    
+    optional params:
+        cate_id: 1
+        page   : 1
+        limit  : 2
+        
+        eg:
+        /api/article?cate_id=1&page=1&limit=2
+    
+    response:
+    {
+        "code": 0,
+        "data": {
+            "articles": [
+                {
+                    "id": 1,
+                    "title": "aaaaa",
+                    "created_at": "2018-12-15 17:43:19",
+                    "updated_at": "2019-12-16 22:54:19",
+                    "user_id": 1,
+                    "user_name": "admin",
+                    "cate_id": 1,
+                    "cate_name": "cccc"
+                },
+                {
+                    "id": 2,
+                    "title": "hello worlda",
+                    "created_at": "2018-12-15 17:44:31",
+                    "updated_at": "2019-12-15 17:44:31",
+                    "user_id": 1,
+                    "user_name": "admin",
+                    "cate_id": 1,
+                    "cate_name": "cccc"
+                }
+            ],
+            "total": 10
+        },
+        "msg": "OK"
+    }
+    ```
 
 ## detail
     ```

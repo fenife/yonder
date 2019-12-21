@@ -1,5 +1,7 @@
 # archive
     ```
+    GET     /api/archive
+    
     response:
     {
         "code": 0,
