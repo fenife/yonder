@@ -64,10 +64,10 @@ class Article(Model):
 
     def get_pre(self):
         sql = f"""
-        {self.__select__} where `{self.__primary_key__}` < ? 
-        order by `{self.__primary_key__}` desc"""
-
-        data = self.select(sql, [self.id], 1)
+        {self.__select__} where `id` < ? and status = ?
+        order by `id` desc"""
+        args = [self.id, ARTICLE.status.active]
+        data = self.select(sql, args, 1)
         if not data:
             return None
 
@@ -75,12 +75,10 @@ class Article(Model):
 
     def get_next(self):
         sql = f"""
-        {self.__select__} where `{self.__primary_key__}` > ? 
-        order by `{self.__primary_key__}` asc"""
-
-        # sql = f"{self.__select__} where `{self.__primary_key__}` > ?"
-
-        data = self.select(sql, [self.id], 1)
+        {self.__select__} where `id` > ? and status = ?
+        order by `id` asc"""
+        args = [self.id, ARTICLE.status.active]
+        data = self.select(sql, args, 1)
         if not data:
             return None
 
