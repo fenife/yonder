@@ -98,18 +98,13 @@ def article_create(ctx):
 @app.route('/api/article/:aid', methods=('PUT', ))
 @permission_required(Permission.admin)
 def article_update(ctx):
-    aid = ctx.request.get_param('aid')
-    try:
-        aid = int(aid)
-    except Exception as e:
-        app.logger.error(f"aid must be an integer, but get: {aid}")
-        abort(RespCode.error, "aid must be an integer")
+    aid = get_aid_from_request(ctx)
 
     input_json = ctx.request.json()
     if not input_json:
         abort(RespCode.error, "body is empty")
 
-    supported = {'cate_id', 'title', 'content'}
+    supported = {'cate_id', 'title', 'content', 'status'}
     unsupported = set(input_json.keys()) - supported
     if unsupported:
         abort(RespCode.error, f"unsupported fields: {list(unsupported)}")
@@ -130,10 +125,7 @@ def article_update(ctx):
 
     update_fields = []
     if 'cate_id' in input_json:
-        cate_id = input_json.pop('cate_id')
-        if not isinstance(cate_id, int):
-            app.logger.error(f"cate_id must be an integer, but get: {cate_id}")
-            abort(RespCode.error, "field `cate_id` must be an integer")
+        cate_id = to_int('cate_id', input_json.pop('cate_id'))
 
         # category id need update
         if cate_id != article.cate_id:
@@ -167,6 +159,12 @@ def article_update(ctx):
         # content need update
         if content_hash(new_content) != content_hash(article.content):
             article.content = new_content
+            update_fields.append('content')
+
+    if 'status' in input_json:
+        new_status = to_int('status', input_json.pop('status'))
+        if new_status != article.status:
+            article.status = new_status
             update_fields.append('content')
 
     if update_fields:
