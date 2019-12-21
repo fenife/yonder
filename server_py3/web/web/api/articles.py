@@ -261,6 +261,15 @@ def article_detail(ctx):
     if not article:
         abort(RespCode.error, "article not found")
 
-    return article
+    _pre = article.get_pre()
+    _next = article.get_next()
+
+    resp = {
+        "article": article,
+        "pre": _pre,
+        "next": _next,
+    }
+
+    return resp
 
 

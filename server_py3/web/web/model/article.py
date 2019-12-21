@@ -62,6 +62,22 @@ class Article(Model):
 
         return article
 
+    def get_pre(self):
+        sql = f"{self.__select__} where `{self.__primary_key__}` < ?"
+        data = self.select(sql, [self.id], 1)
+        if not data:
+            return None
+
+        return Article(**data[0])
+
+    def get_next(self):
+        sql = f"{self.__select__} where `{self.__primary_key__}` > ?"
+        data = self.select(sql, [self.id], 1)
+        if not data:
+            return None
+
+        return Article(**data[0])
+
     @staticmethod
     def valid_title(title):
         assert isinstance(title, str)
