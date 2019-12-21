@@ -219,6 +219,7 @@ def article_list(ctx: AppRequestContext):
         ARTICLE.status.active, USER.status.active, CATEGORY.status.active,
     ]
 
+    # 分类
     if cate_id is not None:
         extra = " and c.id = ?"
         sql_for_count += extra
@@ -226,11 +227,15 @@ def article_list(ctx: AppRequestContext):
         args.append(cate_id)
 
     # 可展示的文章总数
+    # 应该先查询，后面args会变化
     res = db.select(sql_for_count, args)
     if not res:
         abort(RespCode.error, "can not get article total counts")
 
     total = res[0].get('total')
+
+    # 排序
+    sql += " order by a.id desc"
 
     # 分页
     sql += " limit ?, ?"
