@@ -8,7 +8,7 @@ from .. import app, db, cache_pool
 from ..model import User, Category, Article
 from ..consts import RespCode, Permission, RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
 from ..decorators import permission_required, login_required
-from ._internal import DEFAULT_PAGE_SIZE, to_int
+from ._internal import to_int, get_page_from_request, get_limit_from_request
 
 
 def content_hash(content):
@@ -191,26 +191,11 @@ def article_list(ctx: AppRequestContext):
     if cate_id is not None:
         cate_id = to_int('cate_id', cate_id)
 
-    page = ctx.request.query('page')
-    if page is None:
-        page = 1
-    else:
-        page = to_int('page', page)
-
-    if page <= 0:
-        abort(RespCode.error, "page must be greater than 0")
-
-    limit = ctx.request.query('limit')
-    if limit is None:
-        limit = app.config.get("PAGE_SIZE", DEFAULT_PAGE_SIZE)
-    else:
-        limit = to_int('limit', limit)
-
-    if not 0 < limit <= 100:
-        abort(RespCode.error, "limit must be between 0 and 100")
+    page = get_page_from_request(ctx)
+    limit = get_limit_from_request(ctx)
 
     # 可展示的文章总数
-    sqlForCount = """
+    sql_for_count = """
     select count(1) as total
     from articles a
     inner join users b on a.user_id = b.id
@@ -236,11 +221,12 @@ def article_list(ctx: AppRequestContext):
 
     if cate_id is not None:
         extra = " and c.id = ?"
-        sqlForCount += extra
+        sql_for_count += extra
         sql += extra
         args.append(cate_id)
 
-    res = db.select(sqlForCount, args)
+    # 可展示的文章总数
+    res = db.select(sql_for_count, args)
     if not res:
         abort(RespCode.error, "can not get article total counts")
 
@@ -251,12 +237,6 @@ def article_list(ctx: AppRequestContext):
     args += [(page - 1) * limit, limit]
 
     items = db.select(sql, args)
-
-    q = {
-        "cate_id": cate_id,
-        "page": page,
-        "limit": limit
-    }
 
     resp = {
         "articles": items,
