@@ -5,16 +5,16 @@
         <Breadcrumb>
           <BreadcrumbItem to="/">Home</BreadcrumbItem>
           <BreadcrumbItem :to="`/category/${article.Category.ID}`">{{article.Category.Name}}</BreadcrumbItem>
-          <BreadcrumbItem>{{article.Title}}</BreadcrumbItem>
+          <BreadcrumbItem>{{article.title}}</BreadcrumbItem>
         </Breadcrumb>
       </Card>
     </div>
     <Card dis-hover>
       <div slot="title">
-        <h1 class="article-title">{{article.Title}}</h1>
+        <h1 class="article-title">{{article.title}}</h1>
         <div class="article-info">
-          <span>{{article.User.Name}}</span>
-          <span>{{article.CreatedAt}}</span>
+          <span>{{article.user.Name}}</span>
+          <span>{{article.created_at}}</span>
         </div>
       </div>
       <ButtonGroup slot="extra" v-if="isAdmin">
@@ -22,7 +22,7 @@
       </ButtonGroup>
 
       <div class="article-content" >
-        <div v-html="article.Content"></div>
+        <div v-html="article.content"></div>
       </div>
 
       <!-- pre article and next article -->

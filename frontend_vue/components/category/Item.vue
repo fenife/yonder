@@ -3,13 +3,13 @@
   <div>
     <Button long type="default" class="cate-card-item" @click="toCatePage">
       <!-- todo: to category page -->
-      <span class="cate-name">{{cate.Name}}</span>
+      <span class="cate-name">{{cate.name}}</span>
 
       <div class="count-badge">
          <!--Badge, Tag, Button -->
          <!--type: success、primary、normal、error、warning、info	 -->
         <!-- todo: 该分类下的文章总数 -->
-        <Badge type="normal" :count="cate.Count"></Badge>
+        <Badge type="normal" :count="cate.article_count"></Badge>
       </div>
 
     </Button>
@@ -26,7 +26,7 @@
     },
     methods: {
       toCatePage () {
-        this.$router.push("/category/" + this.cate.ID)
+        this.$router.push("/category/" + this.cate.id)
       }
     },
   }

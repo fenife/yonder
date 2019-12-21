@@ -45,9 +45,9 @@
     data () {
       return {
         formData: {
-          title: (this.article && this.article.Title) || '',
+          title: (this.article && this.article.title) || '',
           cateId: (this.article && this.article.Category.ID) || '',
-          content: (this.article && this.article.Content) || '',
+          content: (this.article && this.article.content) || '',
         },
         validRules: {
           title: [
@@ -74,7 +74,7 @@
 
           // 如果有article，表示是更新文章，否则是新建文章
           let sendReq = this.article ? request.updateArticle : request.createArticle
-          let params = this.article ? { id: this.article.ID } : null
+          let params = this.article ? { id: this.article.id } : null
           let body = {
             title: this.formData.title,
             cateId: this.formData.cateId,
@@ -90,7 +90,7 @@
               let article = resp.data.ad
               this.$Message.info("update article success")
               // 成功后跳转到文章详情页
-              this.$router.push('/article/' + article.ID)
+              this.$router.push('/article/' + article.id)
             } else {
               this.$Message.error({
                 duration: 3,

@@ -96,4 +96,8 @@ const apiList = {
   },
 }
 
-module.exports = apiList
+// module.exports = apiList
+// module.exports = {
+//   apiList
+// };
+export default apiList

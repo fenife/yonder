@@ -3,7 +3,7 @@
     <article-item
       v-for="ar in articles"
       :article="ar"
-      :key="ar.ID"
+      :key="ar.id"
     >
     </article-item>
     <Page
@@ -42,13 +42,13 @@
         // console.log("get data:", resp)
 
         // categories
-        let cates = resp[0].data.cateList || []
-        // console.log("cates", cates)
+        let cates = resp[0].data || []
+        console.log("cates:", cates)
         ctx.store.commit('setCates', cates)
 
         // articles
-        let articles = resp[1].data.al || []
-        // console.log("articles", articles)
+        let articles = resp[1].data.articles || []
+        // console.log("articles:", articles)
         ctx.store.commit('setArticles', articles)
 
         let total = resp[1].data.total

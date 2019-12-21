@@ -2,7 +2,7 @@
   <div class="article-cell">
     <Card :bordered="false">
       <a slot="title" class="article-title"  @click.prevent="toDetailPage">
-        {{article.Title}}
+        {{article.title}}
       </a>
       <!--todo: edit article-->
       <!--<div slot="extra" v-if="isAdmin">-->
@@ -10,11 +10,11 @@
       <!--</div>-->
 
       <div class="card-body">
-        <Button :size="buttonSize" type="text">{{article.Username}}</Button>
-        <Button :size="buttonSize" type="text">{{article.CreatedAt}}</Button>
+        <Button :size="buttonSize" type="text">{{article.user_name}}</Button>
+        <Button :size="buttonSize" type="text">{{article.create_at}}</Button>
         <!-- todo: to category page -->
         <Button :size="buttonSize" type="info" shape="circle" @click="toCatePage">
-          {{article.CateName}}
+          {{article.cate_name}}
         </Button>
       </div>
     </Card>
@@ -34,7 +34,7 @@
     },
     methods: {
       toDetailPage () {
-        this.$router.push("/article/" + this.article.ID)
+        this.$router.push("/article/" + this.article.id)
       },
       toCatePage () {
         this.$router.push("/category/" + this.article.CateId)

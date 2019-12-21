@@ -27,7 +27,7 @@
     },
     methods: {
       updateArticle () {
-        this.$router.push("/article/update/" + this.article.ID)
+        this.$router.push("/article/update/" + this.article.id)
       },
       deleteArticle () {
         // console.log('delete article')
@@ -35,7 +35,7 @@
         let self = this
         request.deleteArticle({
           params: {
-            // id: this.article.ID,
+            // id: this.article.id,
           }
         }).then(resp => {
           if (resp.code === 0) {

@@ -1,5 +1,7 @@
 const axios = require('axios')
-const apiList = require('~/api/api')
+// const apiList = require('~/api/api')
+import apiList from '~/api/api'
+
 
 function send(key, options) {
   return new Promise( (resolve, reject) => {
