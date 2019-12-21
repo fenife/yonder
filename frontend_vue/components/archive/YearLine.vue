@@ -1,11 +1,11 @@
 <template>
   <div class="year-cell">
     <Card>
-      <p slot="title" class="card-title">{{artOfTheYear.Year}} 年</p>
+      <p slot="title" class="card-title">{{artOfTheYear.year}} 年</p>
       <Timeline>
-        <TimelineItem v-for="art in artOfTheYear.ArtList" :key="art.ID" class="time-item">
-          <span class="time">{{art.CreatedAt}}</span>
-          <a class="content" @click="toArticle(art.ID)">{{art.Title}}</a>
+        <TimelineItem v-for="art in artOfTheYear.art_list" :key="art.id" class="time-item">
+          <span class="time">{{art.created_at}}</span>
+          <a class="content" @click="toArticle(art.id)">{{art.title}}</a>
         </TimelineItem>
       </Timeline>
     </Card>

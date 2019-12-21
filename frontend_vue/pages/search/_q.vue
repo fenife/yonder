@@ -7,7 +7,7 @@
     <article-item
       v-for="ar in articles"
       :article="ar"
-      :key="ar.ID"
+      :key="ar.id"
     >
     </article-item>
     <Page
@@ -47,18 +47,18 @@
         request.searchArticle({
           client: ctx.req,
           query: {
-            q: searchValue
+            kw: searchValue
           }
         })
       ]).then(resp => {
         ctx.store.commit('setSearch', searchValue)
         // console.log("get data:", resp)
         // categories
-        let cates = resp[0].data.cateList || []
+        let cates = resp[0].data || []
         ctx.store.commit('setCates', cates)
 
         // articles
-        let articles = resp[1].data.al || []
+        let articles = resp[1].data.articles || []
         ctx.store.commit('setArticles', articles)
 
         let total = resp[1].data.total || 0
@@ -78,13 +78,13 @@
         // console.log('get article list, page: ', page)
         request.searchArticle({
           query: {
-            q: this.q,
+            kw: this.q,
             page: page,
           }
         }).then(resp => {
           if (resp.code === 0) {
             // articles
-            let articles = resp.data.al || []
+            let articles = resp.data.articles || []
             this.$store.commit('setArticles', articles)
             this.articles = articles
 

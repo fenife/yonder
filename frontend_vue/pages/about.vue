@@ -4,7 +4,7 @@
       <div slot="title">
         <h1 class="article-title">{{article.title}}</h1>
         <div class="article-info">
-          <span>{{article.user.Name}}</span>
+          <span>{{article.user.name}}</span>
           <span>{{article.created_at}}</span>
         </div>
       </div>
@@ -46,7 +46,7 @@
         if (result.code !== 0) {
           ctx.error({ message: "not found", statusCode: 404 })
         }
-        let article = result.data.ad || {}
+        let article = result.data || {}
         return {
           article: article,
         }
