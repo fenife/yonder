@@ -86,6 +86,8 @@
               })
               // fresh user state and reload page
               window.location.href = '/'
+            } else {
+              this.$Message.info(resp.msg)
             }
           })
           .catch(err => {
