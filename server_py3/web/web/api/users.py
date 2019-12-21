@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from sim.exceptions import abort
+from sim.context import AppRequestContext
 from .. import app, db, cache_pool
 from ..model import User
 from ..consts import RespCode, RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
@@ -64,7 +65,22 @@ def signin(ctx):
     # save to redis
     User.save_user_to_redis_by_token(user, token)
 
-    return user.without_password()
+    resp = {
+        "user": user.without_password(),
+        "token": token,
+    }
+
+    return resp
+
+
+@app.route('/api/user/signout')
+@login_required()
+def signout(ctx: AppRequestContext):
+    """用户登出"""
+    token = ctx.request.get_cookie('token')
+    user = ctx.user
+    if isinstance(user, User):
+        user.del_user_from_redis(token)
 
 
 @app.route('/api/user/info')

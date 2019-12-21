@@ -14,6 +14,7 @@ class AppRequestContext(object):
         self.env = environ
         self.uri = environ['PATH_INFO'] + environ['QUERY_STRING']
         self.request = Request(environ)
+        self.user = None
         self._cookies = SimpleCookie()
 
     @property
