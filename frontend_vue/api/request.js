@@ -62,6 +62,7 @@ function send(key, options) {
     // body
     if (apiConf.method === 'post' || apiConf.method === 'put') {
       axiosConf.data = options.body || {}
+      axiosConf.headers['Content-Type'] = "application/json"
     }
 
     // console.log("axios config:", axiosConf)

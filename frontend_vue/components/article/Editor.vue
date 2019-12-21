@@ -46,7 +46,7 @@
       return {
         formData: {
           title: (this.article && this.article.title) || '',
-          cateId: (this.article && this.article.category.ID) || '',
+          cateId: (this.article && this.article.category.id) || '',
           content: (this.article && this.article.content) || '',
         },
         validRules: {
@@ -77,7 +77,7 @@
           let params = this.article ? { id: this.article.id } : null
           let body = {
             title: this.formData.title,
-            cateId: this.formData.cateId,
+            cate_id: this.formData.cateId,
             content: this.formData.content,
           }
           // 发送请求
@@ -87,7 +87,7 @@
           }).then(resp => {
             // console.log(resp)
             if (resp.code === 0) {
-              let article = resp.data.ad
+              let article = resp.data
               this.$Message.info("update article success")
               // 成功后跳转到文章详情页
               this.$router.push('/article/' + article.id)

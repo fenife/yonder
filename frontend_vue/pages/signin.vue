@@ -46,7 +46,7 @@
 
           request.signin({
             body: {
-              name: this.info.username,
+              username: this.info.username,
               password: this.info.passwd,
             }
           }).then(resp => {

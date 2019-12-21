@@ -32,7 +32,7 @@
         })
       ]).then(resp => {
         // console.log("get data:", resp)
-        let cate = resp[0].data.cate || null
+        let cate = resp[0].data || null
 
         return {
           cate: cate

@@ -54,7 +54,7 @@ export const mutations = {
   },
   setUser (state, user) {
     state.user = user
-    state.isAdmin = (user && (user.Role === UserRoleAdmin))
+    state.isAdmin = (user && (user.role_id === UserRoleAdmin))
   },
   setSearch (state, q) {
     state.q = q

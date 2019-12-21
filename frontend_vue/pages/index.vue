@@ -73,7 +73,7 @@
         }).then(resp => {
           if (resp.code === 0) {
             // articles
-            let articles = resp.data.al || []
+            let articles = resp.data.articles || []
             // console.log("articles", articles)
             this.$store.commit('setArticles', articles)
             this.articles = articles

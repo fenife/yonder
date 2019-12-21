@@ -38,7 +38,7 @@
         })
       ]).then(resp => {
         // console.log("get data:", resp)
-        let article = resp[0].data.ad || null
+        let article = resp[0].data.article || null
 
         return {
           article: article
