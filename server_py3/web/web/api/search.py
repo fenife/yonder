@@ -31,6 +31,7 @@ def search(ctx: AppRequestContext):
     inner join categories c on a.cate_id = c.id
     where a.status = ? and b.status = ? and c.status = ? 
     and a.title like ?
+    order by a.id desc
     """
 
     args = [
@@ -38,14 +39,18 @@ def search(ctx: AppRequestContext):
         f"%{kw}%"
     ]
 
-    # 分页
-    sql += " limit ?, ?"
-    args += [(page - 1) * limit, limit]
+    articles = []
+    total = 0
 
     items = db.select(sql, args)
+    if items:
+        # 分页
+        articles = items[(page-1) * limit: page * limit]
+        total = len(items)
 
     resp = {
-        "articles": items,
+        "articles": articles,
+        "total": total,
     }
 
     return resp
