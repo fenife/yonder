@@ -93,7 +93,7 @@ class Response(object):
 
         body = {
             "code": self.resp_code,
-            "data": {} if self.data is None else self.data,
+            "data": self.data,
             "msg": self.msg,
         }
         body = json.dumps(body, default=str).encode(self.charset)
