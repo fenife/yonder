@@ -11,7 +11,7 @@
 
       <div class="card-body">
         <Button :size="buttonSize" type="text">{{article.user_name}}</Button>
-        <Button :size="buttonSize" type="text">{{article.create_at}}</Button>
+        <Button :size="buttonSize" type="text">{{article.created_at}}</Button>
         <!-- todo: to category page -->
         <Button :size="buttonSize" type="info" shape="circle" @click="toCatePage">
           {{article.cate_name}}
