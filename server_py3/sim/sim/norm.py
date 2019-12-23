@@ -76,6 +76,14 @@ class Database(object):
         self.db_name = self.app.config["DB_NAME"]
         self.charset = self.app.config["DB_CHARSET"]
 
+    def init_config(self, host, port, user, password, db_name, charset='utf8'):
+        self.host = host
+        self.port = port
+        self.user = user
+        self.password = password
+        self.db_name = db_name
+        self.charset = charset
+
     def select(self, sql, args=None, size=None):
         sql = sql.replace('?', '%s')
 
