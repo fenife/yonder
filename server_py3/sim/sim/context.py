@@ -12,10 +12,19 @@ class AppRequestContext(object):
         self.app = app
         self.environ = environ
         self.env = environ
-        self.uri = environ['PATH_INFO'] + environ['QUERY_STRING']
+        self.uri = self.get_uri()
         self.request = Request(environ)
         self.user = None
         self._cookies = SimpleCookie()
+
+    def get_uri(self):
+        path = self.environ['PATH_INFO']
+        query = self.environ['QUERY_STRING']
+        if query:
+            uri = path + '?' + query
+        else:
+            uri = path
+        return uri
 
     @property
     def cookies(self):
