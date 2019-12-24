@@ -7,7 +7,7 @@ from sim.context import AppRequestContext
 from .. import app, db, cache_pool
 from ..model import User, Category, Article
 from ..consts import RespCode, Permission, RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
-from ..decorators import permission_required, login_required
+from ..decorators import permission_required, login_required, api_cache
 from ._internal import to_int, get_page_from_request, get_limit_from_request
 
 
@@ -183,6 +183,7 @@ def article_update(ctx):
 
 
 @app.route('/api/article', methods=('GET', ))
+@api_cache()
 def article_list(ctx: AppRequestContext):
     # 参数处理
     cate_id = ctx.request.query('cate_id')
@@ -250,6 +251,7 @@ def article_list(ctx: AppRequestContext):
 
 
 @app.route('/api/article/:aid', methods=('GET', ))
+@api_cache()
 def article_detail(ctx):
     aid = ctx.request.get_param('aid')
     try:
