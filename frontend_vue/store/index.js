@@ -75,10 +75,9 @@ export const actions = {
       // Header.vue, v-if="user"
       // 判断user是否为空对象{}；如果是{}，则肯定不存在属性id
       // 也有其他的判断方法，具体可google
-      // if (Object.keys(user) == 0) {
-      if (!user.id) {
-        user = null
-      }
+      // if (!user.id) {
+      //   user = null
+      // }
       // console.log('nuxtServerInit, user:', user)
       commit("setUser", user)
       // next()
