@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import hashlib
+import markdown
 from sim.exceptions import abort
 from sim.response import Response
 from sim.context import AppRequestContext
@@ -259,19 +260,19 @@ def article_list(ctx: AppRequestContext):
 
 @app.route('/api/article/:aid', methods=('GET', ))
 @api_cache()
-def article_detail(ctx):
-    aid = ctx.request.get_param('aid')
-    try:
-        aid = int(aid)
-    except Exception as e:
-        app.logger.error(f"aid must be an integer, but get: {aid}")
-        abort(RespCode.error, "in GET method, aid must be an integer")
-
-    # aid = get_aid_from_request(ctx)
+def article_detail(ctx: AppRequestContext):
+    aid = get_aid_from_request(ctx)
 
     article = Article.get_with_more_detail(aid)
     if not article:
         abort(RespCode.error, "article not found")
+
+    # ct: article content type
+    ct = ctx.request.query('ct')
+    if ct == 'html' and article.content:
+        # markdown covert to html
+        html = markdown.markdown(article.content)
+        article.content = html
 
     _pre = article.get_pre()
     _next = article.get_next()
