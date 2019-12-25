@@ -2,7 +2,7 @@
 
 from sim.context import AppRequestContext
 from sim.exceptions import abort
-from .. import app
+from .. import app, cache_pool
 from ..consts import RespCode
 
 
@@ -71,3 +71,14 @@ def get_limit_from_request(ctx: AppRequestContext) -> int:
         abort(RespCode.error, "limit must be between 0 and 100")
 
     return limit
+
+
+def clear_cache_data(pattern: str):
+    with cache_pool.get() as rds:
+        keys = rds.keys(pattern)
+        app.logger.debug(f"clear keys, pat: `{pattern}`, len: {len(keys)}")
+        if keys:
+            rds.delete(*keys)
+
+        # for key in rds.scan_iter(pattern):
+        #     rds.delete(key)

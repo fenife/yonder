@@ -7,10 +7,11 @@ from sim.context import AppRequestContext
 from .. import app, db, cache_pool
 from ..model import User, Category, Article
 from ..consts import RespCode, Permission, RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
-from ..decorators import permission_required, login_required
+from ..decorators import api_cache
 
 
 @app.route('/api/about')
+@api_cache()
 def about(ctx: AppRequestContext):
     article = Article.find_by_title('about')
     if not article:

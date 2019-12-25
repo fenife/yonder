@@ -8,7 +8,7 @@ from .. import app, db, cache_pool
 from ..model import User, Category, Article
 from ..consts import RespCode, Permission, RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
 from ..decorators import permission_required, login_required, api_cache
-from ._internal import to_int, get_page_from_request, get_limit_from_request
+from ._internal import to_int, get_page_from_request, get_limit_from_request, clear_cache_data
 
 
 def content_hash(content):
@@ -92,6 +92,10 @@ def article_create(ctx):
     article.user = user.without_password()
     article.category = cate
 
+    # 创建新文章后，清除文章列表等缓存，以展示最新的文章
+    clear_cache_data('/api/article*')
+    clear_cache_data('/api/archive*')
+
     return article
 
 
@@ -171,6 +175,9 @@ def article_update(ctx):
         app.logger.info(f"update fields: {update_fields}")
         if article.modify() is False:
             abort(RespCode.error, "update article error")
+
+        # 更新成功后，清除该文章详情的缓存
+        clear_cache_data(f"/api/article/{article.id}*")
 
         return article
 

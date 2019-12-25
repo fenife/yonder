@@ -6,10 +6,11 @@ from sim.context import AppRequestContext
 from .. import app, db, cache_pool
 from ..model import User, Category, Article
 from ..consts import RespCode, Permission, RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
-from ..decorators import permission_required, login_required
+from ..decorators import api_cache
 
 
 @app.route('/api/archive')
+@api_cache()
 def archive(ctx: AppRequestContext):
     sql = """
     select 
