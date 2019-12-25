@@ -270,8 +270,14 @@ def article_detail(ctx: AppRequestContext):
     # ct: article content type
     ct = ctx.request.query('ct')
     if ct == 'html' and article.content:
+        exts = [
+            'markdown.extensions.extra',
+            'markdown.extensions.codehilite',
+            'markdown.extensions.tables',
+            'markdown.extensions.toc'
+        ]
         # markdown covert to html
-        html = markdown.markdown(article.content)
+        html = markdown.markdown(article.content, extensions=exts)
         article.content = html
 
     _pre = article.get_pre()
