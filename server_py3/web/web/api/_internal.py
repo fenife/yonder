@@ -74,6 +74,7 @@ def get_limit_from_request(ctx: AppRequestContext) -> int:
 
 
 def clear_cache_data(pattern: str):
+    """清除缓存"""
     with cache_pool.get() as rds:
         keys = rds.keys(pattern)
         app.logger.debug(f"clear keys, pat: `{pattern}`, len: {len(keys)}")

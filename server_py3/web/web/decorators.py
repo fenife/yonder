@@ -55,7 +55,7 @@ def api_cache(ex=API_CACHE_EXPIRED):
                 key = ctx.uri
                 val = cache.get(key)
                 if val:
-                    app.logger.debug(f"get resp from cache, key: {key}")
+                    app.logger.debug(f"get resp from cache, key: `{key}`")
                     # resp = json.loads(val)
                     resp = val
                     return resp

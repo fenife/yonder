@@ -4,7 +4,8 @@ from sim.exceptions import abort
 from .. import app, db, cache_pool
 from ..model import Category
 from ..consts import RespCode, Permission, RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
-from ..decorators import permission_required, login_required
+from ..decorators import permission_required, login_required, api_cache
+from ._internal import clear_cache_data
 
 
 @app.route('/api/category', methods=('POST', ))
@@ -33,6 +34,9 @@ def category_create(ctx):
     cate.save()
     if getattr(cate, 'id', None) is None:
         abort(RespCode.error, "create new user error")
+
+    # 创建成功后，清除分类列表的缓存
+    clear_cache_data("/api/category*")
 
     return cate
 
@@ -106,6 +110,7 @@ def category_retrieve(ctx):
 
 
 @app.route('/api/category', methods=('GET', ))
+@api_cache()
 def category_list(ctx):
     # 暂时返回全部分类（包括status为delete的分类）
     data = Category.find_all()

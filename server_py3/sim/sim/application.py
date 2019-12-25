@@ -201,7 +201,7 @@ class Application(object):
 
         except AppBaseException as e:
             # logger.exception(f"http error")
-            self.logger.debug(f"{e.msg}, uri: {ctx.uri}", exc_info=True)
+            self.logger.debug(f"{e.msg}, uri: `{ctx.uri}`", exc_info=True)
             response = e
 
         except Exception as e:
