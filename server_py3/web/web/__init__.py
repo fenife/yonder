@@ -12,7 +12,6 @@ from sim.application import Application
 from sim.norm import Database
 from sim.cache import AppCachePool
 
-# current dir
 from .config import config
 
 
@@ -26,6 +25,10 @@ def create_app(config_name):
         default, dev, live
     :return:
     """
+    print('-' * 50)
+    print(f"env mode: {config_name}")
+    print('-' * 50)
+
     if not config_name:
         config_name = 'default'
 
