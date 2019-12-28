@@ -181,7 +181,6 @@ class Application(object):
             if self.debug:
                 self.logger.exception(msg)
             else:
-                # self.logger.exception(msg)
                 self.logger.error(msg)
 
             response = e

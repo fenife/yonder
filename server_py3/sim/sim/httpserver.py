@@ -118,20 +118,9 @@ class WSGIRequestHandler(BaseHTTPRequestHandler):
             fmt % args))
 
     def log_request(self, code='-', size='-'):
-        # logger.info('%s %s %s %s' % (
-        #     self.address_string(), self.requestline, str(code), str(size)
-        # ))
-
         logger.info('remote=%s||request="%s"||status=%s||size=%s' % (
             self.address_string(), self.requestline, str(code), str(size)
         ))
-
-        # logger.info(f"remote={self.address_string()}||request='{self.requestline}'||"
-        #             f"status={code}||size={size}")
-
-        # self.address_string()
-        # self.log_date_time_string()
-        # self.requestline
 
     def handle(self):
         """Handle a single HTTP request"""
