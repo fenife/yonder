@@ -7,7 +7,7 @@ import logging
 def init_stdout_logger(name, level=logging.DEBUG):
     # 指定logger输出格式
     # fmt = "\n[%(asctime)s]-[%(levelname)-5s]-[%(filename)s:%(funcName)s:%(lineno)d]:: %(message)s"
-    fmt = "\n%(asctime)s||lv=%(levelname)-5s||f=%(filename)s||func=%(funcName)s||line=%(lineno)d:: %(message)s"
+    fmt = "\n%(asctime)s||lv=%(levelname)s||f=%(filename)s||func=%(funcName)s||line=%(lineno)d:: %(message)s"
     # fmt = "\n%(asctime)s|%(levelname)-5s|%(filename)s|%(funcName)s|%(lineno)d:: %(message)s"
 
     # 获取logger实例，如果参数为空则返回root logger
@@ -28,4 +28,6 @@ def init_stdout_logger(name, level=logging.DEBUG):
 
 
 # 目前输出到stdout，可通过重定向`>`输出到文件中
-logger = init_stdout_logger(__name__)
+# logger = init_stdout_logger(__name__)
+logger = logging
+# logger.setLevel(logging.DEBUG)

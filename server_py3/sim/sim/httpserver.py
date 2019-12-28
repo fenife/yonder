@@ -35,7 +35,7 @@ class ServerHandler(SimpleHandler):
     def close(self):
         try:
             self.request_handler.log_request(
-                self.status.split(' ',1)[0], self.bytes_sent
+                self.status.split(' ', 1)[0], self.bytes_sent
             )
         finally:
             SimpleHandler.close(self)
@@ -111,6 +111,23 @@ class WSGIRequestHandler(BaseHTTPRequestHandler):
         year, month, day, hh, mm, ss, x, y, z = time.localtime(now)
         s = "%04d-%02d-%02d %02d:%02d:%02d" % (year, month, day, hh, mm, ss)
         return s
+
+    def log_message(self, fmt, *args):
+        logger.info('remote=%s||%s' % (
+            self.address_string(),
+            fmt % args))
+
+    def log_request(self, code='-', size='-'):
+        logger.info('remote=%s||request="%s"||status=%s||size=%s' % (
+            self.address_string(), self.requestline, str(code), str(size)
+        ))
+
+        # logger.info(f"remote={self.address_string()}||request='{self.requestline}'||"
+        #             f"status={code}||size={size}")
+
+        # self.address_string()
+        # self.log_date_time_string()
+        # self.requestline
 
     def handle(self):
         """Handle a single HTTP request"""
