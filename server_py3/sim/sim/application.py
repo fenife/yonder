@@ -55,7 +55,7 @@ class Application(object):
         self.after_request_funcs = []
 
         # this logger is for higher application
-        self.logger = None
+        self.logger: logging.Logger = logger
 
         # configs
         self.config = {}
@@ -68,30 +68,7 @@ class Application(object):
         return run_simple(host, port, self, **options)
 
     def _init_app(self, **options):
-        self.debug = options.pop('debug', False)
-        # self.logger = self._init_logger(__name__)
-        self.logger = logger
-
-    def _init_logger(self, name):
-        # 指定logger输出格式
-        fmt = "\n%(asctime)s||lv=%(levelname)-5s||f=%(filename)s||func=%(funcName)s||line=%(lineno)d:: %(message)s"
-
-        # 获取logger实例，如果参数为空则返回root logger
-        _logger = logging.getLogger(name)
-        formatter = logging.Formatter(fmt, datefmt='%Y-%m-%d %H:%M:%S')
-
-        # 控制台日志
-        console_handler = logging.StreamHandler()
-        console_handler.formatter = formatter  # 也可以直接给formatter赋值
-
-        # 为logger添加的日志处理器
-        _logger.addHandler(console_handler)
-
-        # 指定日志的最低输出级别
-        level = logging.DEBUG if self.debug else logging.ERROR
-        _logger.setLevel(level)
-
-        return _logger
+        self.debug = self.config.get("DEBUG_MODE", False)
 
     def update_config(self, configs):
         assert isinstance(configs, dict), f"configs must be a dict"
@@ -200,8 +177,13 @@ class Application(object):
             response = self.process_response(ctx, response)
 
         except AppBaseException as e:
-            # logger.exception(f"http error")
-            self.logger.debug(f"{e.msg}, uri: `{ctx.uri}`", exc_info=True)
+            msg = f"`{ctx.method} {ctx.uri}`, msg: {e.msg}"
+            if self.debug:
+                self.logger.exception(msg)
+            else:
+                # self.logger.exception(msg)
+                self.logger.error(msg)
+
             response = e
 
         except Exception as e:

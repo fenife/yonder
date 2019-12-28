@@ -118,6 +118,10 @@ class WSGIRequestHandler(BaseHTTPRequestHandler):
             fmt % args))
 
     def log_request(self, code='-', size='-'):
+        # logger.info('%s %s %s %s' % (
+        #     self.address_string(), self.requestline, str(code), str(size)
+        # ))
+
         logger.info('remote=%s||request="%s"||status=%s||size=%s' % (
             self.address_string(), self.requestline, str(code), str(size)
         ))

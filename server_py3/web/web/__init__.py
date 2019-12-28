@@ -13,26 +13,36 @@ from sim.norm import Database
 from sim.cache import AppCachePool
 
 # current dir
-from . import settings
+from .config import config
+
+
+db = Database()
+cache_pool = AppCachePool()
 
 
 def create_app(config_name):
+    """
+    :param config_name:
+        default, dev, live
+    :return:
+    """
     if not config_name:
         config_name = 'default'
 
     app = Application()
-    config = settings.configs[config_name]
-    app.update_config(config)
+
+    config[config_name].init_app(app)
+
+    db.init_app(app)
+    cache_pool.init_app(app)
 
     return app
 
 
 app = create_app(os.getenv('YONDER_CONFIG') or 'default')
-db = Database()
-db.init_app(app)
 
-cache_pool = AppCachePool()
-cache_pool.init_app(app)
+# todo: remove test
+# app = create_app('live')
 
 # 让Python加载模块，否则app.route装饰器不会运行，无法添加路由
 from . import middlewares

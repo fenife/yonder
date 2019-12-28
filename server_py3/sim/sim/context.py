@@ -13,6 +13,7 @@ class AppRequestContext(object):
         self.environ = environ
         self.env = environ
         self.uri = self.get_uri()
+        self.method = self.environ['REQUEST_METHOD']
         self.request = Request(environ)
         self.user = None
         self._cookies = SimpleCookie()

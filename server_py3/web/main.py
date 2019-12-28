@@ -78,8 +78,7 @@ def add_admin():
 def start():
     host = '0.0.0.0'
     port = 6070
-    app.run(host=host, port=port, debug=True)
-    # app.run(host=host, port=port, debug=False)
+    app.run(host=host, port=port)
 
 
 def parse_input():
