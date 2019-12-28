@@ -86,19 +86,10 @@ class Database(object):
 
     def select(self, sql, args=None, size=None):
         sql = sql.replace('?', '%s')
-
-        print(f"[SELECT] -- \n"
-              f"  sql : {sql}\n"
-              f"  args: {args}\n")
+        logger.debug(f"[select] -- sql: `{sql}`, args: {args}")
 
         with ConnContextManager(self) as conn:
             cur = conn.cursor(MySQLdb.cursors.DictCursor)
-
-            # if has_args:
-            #     cur.execute(sql, args)
-            # else:
-            #     cur.execute(sql)
-
             cur.execute(sql, args or ())
             if size:
                 data = cur.fetchmany(size)
@@ -107,16 +98,12 @@ class Database(object):
 
             cur.close()
 
-            print(f"rows returned: {len(data)}")
+            logger.debug(f"rows returned: {len(data)}")
             return data
 
     def execute(self, sql, args=None, autocommit=True):
-        # if sql.find('?') > 0:
         sql = sql.replace('?', '%s')
-
-        print(f"[EXECUTE] -- \n"
-              f"  sql : {sql}\n"
-              f"  args: {args}\n")
+        logger.debug(f"[execute] -- sql: `{sql}`, args: {args}")
 
         with ConnContextManager(self) as conn:
             if not autocommit:
@@ -154,12 +141,8 @@ class Database(object):
            affected
            lastrowid
         """
-        # if sql.find('?') > 0:
         sql = sql.replace('?', '%s')
-
-        print(f"[INSERT] -- \n"
-              f"  sql : {sql}\n"
-              f"  args: {args}\n")
+        logger.debug(f"[insert] -- sql: `{sql}`, args: {args}")
 
         with ConnContextManager(self) as conn:
             if not autocommit:
@@ -296,14 +279,6 @@ class ModelMetaclass(type):
         if name in ('Model', ):
             return type.__new__(cls, name, bases, attrs)
 
-        # print(cls)
-        # print("name:", name)
-        # print("bases:", bases)
-        # print("attrs:")
-        # for k, v in attrs.items():
-        #     print(k, ":", v)
-        # print()
-
         if '__database__' not in attrs:
             raise Exception('__database__ is missed')
 
@@ -322,7 +297,6 @@ class ModelMetaclass(type):
 
         for k, v in attrs.items():
             if isinstance(v, Field):
-                # print(f"    mapping: {k} ==> {v}")
                 mappings[k] = v
                 if v.primary_key:
                     if primary_key:
@@ -436,10 +410,8 @@ class Model(dict, metaclass=ModelMetaclass):
 
         for name, field in cls.__mappings__.items():
             assert isinstance(field, Field), f"field: {field}"
-            # print(f"`{name}`: '{field.sql_for_create()}'")
             sql += f"`{name}`{field.sql_for_create()}, "
 
-        # print(cls.__primary_key__)
         if not cls.__primary_key__:
             raise Exception("primary key not found")
 
@@ -464,22 +436,9 @@ class Model(dict, metaclass=ModelMetaclass):
                 sql += f", key `{key_name}` ({key_fields})"
 
         sql += f") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;"
-        # print(sql)
 
         assert isinstance(cls.__database__, Database)
         return cls.__database__.execute(sql)
-
-    @classmethod
-    def select(cls, *args, **kwargs):
-        return cls.__database__.select(*args, **kwargs)
-
-    @classmethod
-    def execute(cls, *args, **kwargs):
-        return cls.__database__.execute(*args, **kwargs)
-
-    @classmethod
-    def insert(cls, *args, **kwargs):
-        return cls.__database__.insert(*args, **kwargs)
 
     @classmethod
     def table_drop(cls):
@@ -497,10 +456,45 @@ class Model(dict, metaclass=ModelMetaclass):
             print(f"can not show table: {cls.__table__}")
 
     @classmethod
+    def table_existed(cls):
+        sql = f"desc {cls.__table__}"
+        data = cls.select(sql)
+        return True if data else False
+
+    @classmethod
     def print_all(cls):
         sql = f"select * from {cls.__table__}"
         data = cls.select(sql)
         print(dictList2Table(data))
+
+    @classmethod
+    def select(cls, *args, **kwargs):
+        try:
+            r = cls.__database__.select(*args, **kwargs)
+            return r
+        except Exception as e:
+            logger.error(str(e))
+            return None
+
+    @classmethod
+    def execute(cls, *args, **kwargs):
+        # return cls.__database__.execute(*args, **kwargs)
+        try:
+            r = cls.__database__.execute(*args, **kwargs)
+            return r
+        except Exception as e:
+            logger.error(str(e))
+            return None
+
+    @classmethod
+    def insert(cls, *args, **kwargs):
+        # return cls.__database__.insert(*args, **kwargs)
+        try:
+            r = cls.__database__.insert(*args, **kwargs)
+            return r
+        except Exception as e:
+            logger.error(str(e))
+            return None
 
     @classmethod
     def find(cls, pk):
@@ -546,7 +540,6 @@ class Model(dict, metaclass=ModelMetaclass):
             args.append(self.get_value_or_default(self.__primary_key__))
 
         try:
-            # print(f"args: {args}")
             rows, last_id = self.insert(self.__insert__, args)
             if rows != 1:
                 logger.error(f"failed to insert record, affected rows: {rows}")

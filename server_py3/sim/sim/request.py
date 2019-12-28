@@ -64,7 +64,6 @@ class Request(object):
 
     def parse_query(self):
         # a=1&b=2
-        print('query_string:', self.query_string)
         if not self.query_string:
             return
 
