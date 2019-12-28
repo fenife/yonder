@@ -86,7 +86,7 @@ class Database(object):
 
     def select(self, sql: str, args=None, size=None):
         sql = sql.replace('?', '%s')
-        logger.debug(f"[select] -- \nsql: {sql} \nargs: {args}")
+        logger.debug(f"[select] -- \nsql: {sql} \narg: {args}")
 
         with ConnContextManager(self) as conn:
             cur = conn.cursor(MySQLdb.cursors.DictCursor)
@@ -103,7 +103,7 @@ class Database(object):
 
     def execute(self, sql, args=None, autocommit=True):
         sql = sql.replace('?', '%s')
-        logger.debug(f"[execute] -- \nsql: {sql} \nargs: {args}")
+        logger.debug(f"[execute] -- \nsql: {sql} \narg: {args}")
 
         with ConnContextManager(self) as conn:
             if not autocommit:
@@ -142,7 +142,7 @@ class Database(object):
            lastrowid
         """
         sql = sql.replace('?', '%s')
-        logger.debug(f"[insert] -- \nsql: {sql} \nargs: {args}")
+        logger.debug(f"[insert] -- \nsql: {sql} \narg: {args}")
 
         with ConnContextManager(self) as conn:
             if not autocommit:
