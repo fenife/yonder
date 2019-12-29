@@ -42,7 +42,7 @@ def create_app(config_name):
     return app
 
 
-app = create_app(os.getenv('YONDER_CONFIG') or 'default')
+app = create_app(os.getenv('YONDER_CONFIG') or 'dev')
 
 # todo: remove test
 # app = create_app('live')
