@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import markdown
 from sim.context import AppRequestContext
 from sim.exceptions import abort
 from .. import app, cache_pool
@@ -83,3 +84,15 @@ def clear_cache_data(pattern: str):
 
         # for key in rds.scan_iter(pattern):
         #     rds.delete(key)
+
+
+def md2html(content):
+    exts = [
+        'markdown.extensions.extra',
+        'markdown.extensions.codehilite',
+        'markdown.extensions.tables',
+        'markdown.extensions.toc'
+    ]
+    # markdown covert to html
+    html = markdown.markdown(content, extensions=exts)
+    return html

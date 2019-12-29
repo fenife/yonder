@@ -8,6 +8,7 @@ from .. import app, db, cache_pool
 from ..model import User, Category, Article
 from ..consts import RespCode, Permission, RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
 from ..decorators import api_cache
+from ._internal import md2html
 
 
 @app.route('/api/about')
@@ -18,4 +19,10 @@ def about(ctx: AppRequestContext):
         abort(RespCode.error, "about not found")
 
     article = Article.get_with_more_detail(article.id)
+
+    # ct: article content type
+    ct = ctx.request.query('ct')
+    if ct == 'html' and article.content:
+        article.content = md2html(article.content)
+
     return article

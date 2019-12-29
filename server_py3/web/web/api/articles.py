@@ -9,7 +9,9 @@ from .. import app, db, cache_pool
 from ..model import User, Category, Article
 from ..consts import RespCode, Permission, RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
 from ..decorators import permission_required, login_required, api_cache
-from ._internal import to_int, get_page_from_request, get_limit_from_request, clear_cache_data
+from ._internal import (
+    to_int, get_page_from_request, get_limit_from_request, clear_cache_data, md2html
+)
 
 
 def content_hash(content):
@@ -270,15 +272,7 @@ def article_detail(ctx: AppRequestContext):
     # ct: article content type
     ct = ctx.request.query('ct')
     if ct == 'html' and article.content:
-        exts = [
-            'markdown.extensions.extra',
-            'markdown.extensions.codehilite',
-            'markdown.extensions.tables',
-            'markdown.extensions.toc'
-        ]
-        # markdown covert to html
-        html = markdown.markdown(article.content, extensions=exts)
-        article.content = html
+        article.content = md2html(article.content)
 
     _pre = article.get_pre()
     _next = article.get_next()
