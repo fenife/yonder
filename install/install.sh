@@ -123,11 +123,12 @@ function install_yonder_server_py3() {
     fi
 
     cd ${WORK_SERVER_PY3}
-    # todo
-    python3 ${WORK_SERVER_PY3}/web/main.py
+    pid=$(ps aux | grep 'main.py' | grep -v grep | awk '{print $2}')
+    if [ -n "${pid}" ]; then
+        echo "${pid}" | xargs sudo kill -9
+    fi
 
-#    sudo kill -9 $(ps aux | grep 'main.py' | grep -v grep | awk '{print $2}')
-#    python3 ${WORK_SERVER_PY3}/web/main.py & > /dev/null 2>&1
+    python3 ${WORK_SERVER_PY3}/web/main.py & > /dev/null 2>&1
 
     ps aux | grep main.py | grep -v grep
 }
