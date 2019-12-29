@@ -120,9 +120,10 @@ def category_list(ctx):
     """
     res = db.select(sql)
     if not res:
-        abort(RespCode.error, "can not count articles")
+        # abort(RespCode.error, "can not count articles")
+        app.logger.error(f"can not count articles, {sql}")
 
-    counts = {d['cate_id']: d['cnt'] for d in res}
+    counts = {d['cate_id']: d['cnt'] for d in res} if res else {}
     for cate in data:
         # 该分类下可展示文章的数目
         cate.article_count = counts.get(cate.id, 0)
