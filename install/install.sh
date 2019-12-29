@@ -95,10 +95,50 @@ function install_backup() {
     ls /etc/cron.d/
 }
 
+
+# server_py3
+WORK_SERVER_PY3=${PROJECT_DIR}/server_py3
+LOG_SERVER_PY3=${LOG_HOME}/server_py3
+
+function install_yonder_server_py3() {
+    echo ''
+    echo "copy and edit config_live.py first"
+    echo ''
+    sleep 0.5
+
+    export PYTHONPATH=$PYTHONPATH:${WORK_SERVER_PY3}/sim
+    echo $PYTHONPATH
+
+    echo "export YONDER_CONFIG=live"
+    export YONDER_CONFIG=live
+
+    echo "start server py3 ... "
+
+    if [ ! -d ${LOG_SERVER_PY3} ]; then
+        mkdir ${LOG_SERVER_PY3} -p
+    fi
+
+    if [ ! -f ${LOG_SERVER_PY3}/app.log ]; then
+        touch ${LOG_SERVER_PY3}/app.log
+    fi
+
+    cd ${WORK_SERVER_PY3}
+    # todo
+    python3 ${WORK_SERVER_PY3}/web/main.py
+
+#    sudo kill -9 $(ps aux | grep 'main.py' | grep -v grep | awk '{print $2}')
+#    python3 ${WORK_SERVER_PY3}/web/main.py & > /dev/null 2>&1
+
+    ps aux | grep main.py | grep -v grep
+}
+
+
+
 function install_all_without_conf() {
     install_yonder_nginx
     install_yonder_frontend
     install_yonder_server_go
+    install_yonder_server_py3
     # install_go_config
     install_backup
 }
@@ -114,8 +154,11 @@ case $1 in
     go)
         install_yonder_server_go
         ;;
-    config)
+    config_go)
         install_go_config
+        ;;
+    py3)
+        install_yonder_server_py3
         ;;
     backup)
         install_backup
@@ -124,7 +167,7 @@ case $1 in
         install_all_without_conf
         ;;
     *)
-        echo "$0 {nginx|vue|go|config|backup|all}" 
+        echo "$0 {nginx|vue|go|config_go|py3|backup|all}"
         exit 1
         ;;
 esac

@@ -12,8 +12,6 @@ auth
 
 
 import sys
-import os
-import optparse
 
 from web import app, db
 from web.model import User, Category, Article, create_admin_user
