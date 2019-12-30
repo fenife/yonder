@@ -33,6 +33,7 @@ function install_yonder_nginx() {
     fi
 
     sudo cp ${NGINX_CONF}/nginx.example.conf /etc/nginx/conf.d/yonder.conf
+    echo "edit /etc/nginx/conf.d/yonder.conf, listen server ip in nginx"
     sudo nginx -t
     sudo nginx -s reload
     ps aux | grep nginx
@@ -97,6 +98,15 @@ function install_backup() {
 
 
 # server_py3
+# export PYTHONPATH=$PYTHONPATH:/work/yonder/server_py3/sim
+# export YONDER_CONFIG=live
+# cd /work/yonder/server_py3/web/web/config
+# cp config_dev.py config_live.py
+# vi config_live.py
+# cd /work/yonder/server_py3/
+# python3 migrate.py all
+
+
 WORK_SERVER_PY3=${PROJECT_DIR}/server_py3
 LOG_SERVER_PY3=${LOG_HOME}/server_py3
 
