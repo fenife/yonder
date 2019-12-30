@@ -36,7 +36,7 @@ class LiveConfig(BaseConfig):
         from sim.log import formatter
 
         fn = live_configs['LOG_FILE']
-        fh = TimedRotatingFileHandler(filename=fn, when='D')
+        fh = TimedRotatingFileHandler(filename=fn, when='MIDNIGHT')
         fh.setFormatter(formatter)
         app.logger.addHandler(fh)
 

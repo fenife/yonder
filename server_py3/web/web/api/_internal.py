@@ -78,7 +78,7 @@ def clear_cache_data(pattern: str):
     """清除缓存"""
     with cache_pool.get() as rds:
         keys = rds.keys(pattern)
-        app.logger.debug(f"clear keys, pat: `{pattern}`, len: {len(keys)}")
+        app.logger.info(f"clear keys, pat: `{pattern}`, len: {len(keys)}")
         if keys:
             rds.delete(*keys)
 
