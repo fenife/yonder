@@ -37,10 +37,10 @@ class Application(object):
         self.debug = False
 
         # route trees
-        self._methodTrees = {}
+        self._method_trees = {}
 
         # allow methods
-        self._allowMethods = set()
+        self._allow_methods = set()
 
         # handler funcs before request
         # def func(ctx):
@@ -81,10 +81,10 @@ class Application(object):
             methods = options.get('methods', ('GET', ))
             for method in methods:
                 method = method.upper()
-                tree = self._methodTrees.get(method)
+                tree = self._method_trees.get(method)
                 if not tree:
                     tree = Tree()
-                    self._methodTrees[method] = tree
+                    self._method_trees[method] = tree
 
                 tree.insert(rule, f)
 
@@ -102,14 +102,14 @@ class Application(object):
 
     def dispatch_request(self, ctx):
         """根据url分发请求到 handler，获取响应"""
-        if not self._allowMethods:
-            self._allowMethods = set(self._methodTrees.keys())
+        if not self._allow_methods:
+            self._allow_methods = set(self._method_trees.keys())
 
         method = ctx.request.method.upper()
-        if not method or method not in self._allowMethods:
+        if not method or method not in self._allow_methods:
             raise MethodNotAllowed
 
-        tree = self._methodTrees.get(method)
+        tree = self._method_trees.get(method)
         if not tree:
             raise NotFound
 
