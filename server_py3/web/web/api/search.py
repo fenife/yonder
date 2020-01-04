@@ -9,9 +9,11 @@ from ..model import User, Category, Article
 from ..consts import RespCode, Permission, RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
 from ..decorators import permission_required, login_required
 from ._internal import get_page_from_request, get_limit_from_request
+from . import api_group
 
 
-@app.route('/api/search')
+# @app.route('/api/search')
+@api_group.route('/search')
 def search(ctx: AppRequestContext):
     # 参数处理
     kw = ctx.request.query('kw')

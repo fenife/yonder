@@ -28,8 +28,6 @@ from .context import AppRequestContext
 from .response import Response
 from .log import logger
 
-# context = ctx = threading.local()
-
 
 class Application(object):
     def __init__(self):
@@ -37,10 +35,10 @@ class Application(object):
         self.debug = False
 
         # route trees
-        self._method_trees = {}
+        self.method_trees = {}
 
         # allow methods
-        self._allow_methods = set()
+        self.allow_methods = set()
 
         # handler funcs before request
         # def func(ctx):
@@ -60,9 +58,20 @@ class Application(object):
         # configs
         self.config = {}
 
+    def show_routes(self):
+        # print('-' * 50)
+        print("routes: ")
+        for method, tree in self.method_trees.items():
+            print(f"method: [{method}]")
+            tree.print_tree()
+            print()
+
     def run(self, host='localhost', port=8000, **options):
         # 初始化app的部分属性
         self._init_app(**options)
+
+        if self.debug:
+            self.show_routes()
 
         options.setdefault('threaded', True)
         return run_simple(host, port, self, **options)
@@ -75,16 +84,31 @@ class Application(object):
         self.config.update(configs)
 
     def route(self, rule, **options):
-        """添加路由"""
+        """
+        装饰器，为app添加路由，装饰的函数将作为该路由的处理函数
+
+        :param rule:    str, url路由规则
+        :param options: 其他选项
+        目前支持`methods`，为添加的路由指定http请求方法(GET,POST,PUT,...)
+
+        例子：
+        >>> app = Application()
+
+        >>> @group.route('/api/test', methods=('GET',))
+        >>> def test(ctx):
+        ...     pass
+
+        `/api/test`就会被添加到此app的路由树中
+        """
         def decorator(f):
             # options.setdefault('methods', ('GET', ))
             methods = options.get('methods', ('GET', ))
             for method in methods:
                 method = method.upper()
-                tree = self._method_trees.get(method)
+                tree = self.method_trees.get(method)
                 if not tree:
                     tree = Tree()
-                    self._method_trees[method] = tree
+                    self.method_trees[method] = tree
 
                 tree.insert(rule, f)
 
@@ -102,14 +126,14 @@ class Application(object):
 
     def dispatch_request(self, ctx):
         """根据url分发请求到 handler，获取响应"""
-        if not self._allow_methods:
-            self._allow_methods = set(self._method_trees.keys())
+        if not self.allow_methods:
+            self.allow_methods = set(self.method_trees.keys())
 
         method = ctx.request.method.upper()
-        if not method or method not in self._allow_methods:
+        if not method or method not in self.allow_methods:
             raise MethodNotAllowed
 
-        tree = self._method_trees.get(method)
+        tree = self.method_trees.get(method)
         if not tree:
             raise NotFound
 
@@ -197,3 +221,51 @@ class Application(object):
         return self.wsgi_app(environ, start_response)
 
 
+class RouteGroup(object):
+    """
+    定义一个路由组，该路由组将以 base_rule 为url的前缀
+
+    1. 可以像下面这样使用：
+
+    >>> app = Application()
+    >>> group = RouteGroup(app, base_rule='/api')
+
+    则此路由组会以`/api`作为url的前缀
+    然后添加一个路由url规则：
+
+    >>> @group.route('/test')
+    >>> def test_group(ctx):
+    ...     pass
+
+    则完整的url为：`/api/test`
+
+    2. 不同于`app.route()`函数，`app.route()`中，其参数就是完整的url规则，
+    不添加任何前缀，比如：
+    >>> @app.route('/test')
+    >>> def test_app(ctx):
+    ...     pass
+
+    则其完整的url为`/test`
+    """
+    def __init__(self, app: Application, base_rule: str):
+        self.app = app
+        self.base_rule = base_rule
+
+    def route(self, rule: str, **options):
+        """在路由组中添加一个路由"""
+        def decorator(f):
+            full_rule = self.base_rule + rule
+
+            methods = options.get('methods', ('GET', ))
+            for method in methods:
+                method = method.upper()
+                tree = self.app.method_trees.get(method)
+                if not tree:
+                    tree = Tree()
+                    self.app.method_trees[method] = tree
+
+                tree.insert(full_rule, f)
+
+            return f
+
+        return decorator
