@@ -9,7 +9,7 @@ class Node(object):
 
         self.handler = handler
         # self._parent = None
-        self.children = []
+        self.children: [Node] = []
         # 是否是通配符节点
         # `:`匹配路径中的单个key，`*`匹配url中剩余的所有内容
         self.wildcard = True if self.key and self.key[0] in (':', '*') else False
@@ -189,8 +189,23 @@ class Tree(object):
         for child in node.children:
             self.show(child, depth + 1)
 
+    def find_route(self, node: Node, routes: dict):
+        if not node.children:
+            return
+
+        for child in node.children:
+            if child.handler is not None:
+                routes[child.path] = child.handler
+            self.find_route(child, routes)
+
     def print_tree(self):
-        self.show(self._root, 0)
+        # self.show(self._root, 0)
+        routes = {}
+        self.find_route(self._root, routes)
+
+        if routes:
+            for r in sorted(routes.keys()):
+                print(' ', r)
 
 
 ########################################################################
