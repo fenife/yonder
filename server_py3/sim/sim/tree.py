@@ -58,11 +58,16 @@ class Node(object):
 class Tree(object):
     def __init__(self):
         self._root = Node(key='')
+        self._map = {}
 
     @staticmethod
     def path_to_keys(path):
         """
         把path转换为keys
+
+        1. 首字符必须为'/'，作为第一个key
+        2. 末尾的'/'（如果有），作为最后一个key
+        3. 中间以'/'分隔
 
         eg:
             /a/b/c/:x/
@@ -88,6 +93,15 @@ class Tree(object):
         return keys
 
     @staticmethod
+    def is_static_route(path):
+        """判断是否是静态路由"""
+        if ('*' not in path) and (':' not in path):
+            # 路由中不包含`*`和`:`
+            return True
+
+        return False
+
+    @staticmethod
     def _insert_remained(node, keys):
         """把路径的剩余部分keys也加入到tree中"""
         # todo: debug
@@ -102,7 +116,13 @@ class Tree(object):
 
         return node
 
-    def insert(self, path, handler):
+    def insert(self, path: str, handler):
+        """插入一个路由到树中"""
+        if self.is_static_route(path):
+            # 静态路由，直接加入dict中
+            self._map[path] = handler
+            return True
+
         keys = self.path_to_keys(path)
 
         cur = self._root
@@ -141,6 +161,14 @@ class Tree(object):
         if not path:
             return None, params
 
+        # 如果在 self._map 中找到匹配的静态路由，直接返回
+        handler = self._map.get(path, None)
+        if handler is not None:
+            n = Node()
+            n.path = path
+            n.handler = handler
+            return n, params
+
         keys = self.path_to_keys(path)
 
         cur = self._root
@@ -156,7 +184,7 @@ class Tree(object):
                     cur = cur.wildcard_child
                     if cur.key.startswith(':'):
 
-                        # todo: 最后是'/'，不能匹配通配符 ？ 还是全部不要后面的 '/' 节点？
+                        # 最后的key是'/'时，不能算匹配通配符
                         # 否则，`/user/` 会匹配： `/user/:id`
                         if key == '/':
                             return None, params
@@ -180,28 +208,47 @@ class Tree(object):
 
         return cur, params
 
-    def show(self, node, depth):
+    def _print_node(self, node, depth):
+        """递归展示某个节点及其子节点"""
         if not node.children:
             return
 
         print(' ' * depth, node.children)
 
         for child in node.children:
-            self.show(child, depth + 1)
+            self._print_node(child, depth + 1)
 
-    def find_route(self, node: Node, routes: dict):
+    def print_dynamic_routes(self):
+        """展示所有动态路由（树的形式）"""
+        print()
+        print("dynamic routes:")
+        self._print_node(self._root, 0)
+
+    def print_static_routes(self):
+        """展示所有静态路由（url形式）"""
+        print()
+        print("static routes:")
+        for path in self._map.keys():
+            print(' ', path)
+
+    def _find_handler_node(self, node: Node, routes: dict):
+        """找到有handler的节点"""
         if not node.children:
             return
 
         for child in node.children:
             if child.handler is not None:
                 routes[child.path] = child.handler
-            self.find_route(child, routes)
+            self._find_handler_node(child, routes)
 
-    def print_tree(self):
-        # self.show(self._root, 0)
+    def print_all_routes(self):
+        """展示全部路由（url形式）"""
+        print()
+        print("all routes:")
         routes = {}
-        self.find_route(self._root, routes)
+        self._find_handler_node(self._root, routes)
+
+        routes.update(self._map)
 
         if routes:
             for r in sorted(routes.keys()):
@@ -229,28 +276,40 @@ def fake_handler(route):
     return _echo
 
 
+def fake_handler2(route):
+    def _echo2():
+        print(f"route in handler: {route}")
+        return route
+
+    return _echo2
+
+
 def _test():
 
     tree = Tree()
 
     routes = [
         '/',
-        '/c',
         '/a/b/c',
         '/a/b/c/:x',
         '/a/b/c/:x/',
+        '/a/b/c/:x/:z',
         '/a/b/c/d',
         # '/a/b/c/*w',
         # '/a/b/c/:w',
-        '/a/b/c/:x/:z',
         '/a/b/c/d/*y',
+        '/c',
     ]
 
     for route in routes:
         tree.insert(route, fake_handler(route))
 
-    print()
-    tree.print_tree()
+    r = '/c'
+    tree.insert(r, fake_handler2(r))
+
+    tree.print_all_routes()
+    tree.print_static_routes()
+    tree.print_dynamic_routes()
 
     routes = [
         '/',
@@ -268,6 +327,7 @@ def _test():
 
     print()
     for path in routes:
+        print('-' * 20)
         node, params = tree.search(path)
         print(f"url: {path}, node: {node}, var: {params}")
         if node:

@@ -63,7 +63,7 @@ class Application(object):
         print("routes: ")
         for method, tree in self.method_trees.items():
             print(f"method: [{method}]")
-            tree.print_tree()
+            tree.print_all_routes()
             print()
 
     def run(self, host='localhost', port=8000, **options):
