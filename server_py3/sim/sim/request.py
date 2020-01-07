@@ -77,6 +77,7 @@ class Request(object):
         self._query = queries
 
     def query(self, k):
+        """返回url的参数，`?`后面部分"""
         if not self._query:
             self.parse_query()
 
@@ -84,10 +85,19 @@ class Request(object):
         return v
 
     def all_query(self):
+        """返回url的所有参数，`?`后面部分"""
         if not self._query:
             self.parse_query()
 
         return self._query
+
+    def get_uri_arg(self, k):
+        """返回url的参数，`?`后面部分"""
+        return self.query(k)
+
+    def get_uri_args(self):
+        """返回url的所有参数，`?`后面部分"""
+        return self.all_query()
 
     def parse_cookies(self):
         """
