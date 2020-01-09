@@ -8,7 +8,7 @@ from .. import app, db, cache_pool
 from ..model import User, Category, Article
 from ..consts import RespCode, Permission, RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
 from ..decorators import permission_required, login_required
-from ._internal import get_page_from_request, get_limit_from_request
+from ._utils import get_page_from_request, get_limit_from_request
 from . import api_group
 
 

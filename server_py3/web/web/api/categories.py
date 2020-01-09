@@ -5,7 +5,7 @@ from .. import app, db, cache_pool
 from ..model import Category
 from ..consts import RespCode, Permission, RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
 from ..decorators import permission_required, login_required, api_cache
-from ._internal import clear_cache_data
+from ._utils import clear_cache_data
 
 
 @app.route('/api/category', methods=('POST', ))
