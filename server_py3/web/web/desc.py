@@ -26,7 +26,11 @@ class ApiDescBase(object):
         """请求头部"""
         headers = [
             # (key, val, desc)
-        ] + self.default_req_headers
+        ]
+
+        if 'POST' in self.method or 'PUT' in self.method:
+            headers += self.default_req_headers
+
         return headers
 
     def req_args(self):

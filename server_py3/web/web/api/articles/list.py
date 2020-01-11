@@ -92,74 +92,47 @@ class ApiArticleCreateDesc(ApiDescBase):
     method = ['GET']
     rule = "/api/article/list"
 
-    def req_headers(self):
-        headers = [
-            # (key, val, desc)
-            ('Cookie', 'token=xxx', "用户登录token"),
-        ] + self.default_req_headers
-        return headers
-
     def req_args(self):
         args = [
             # (key, name, type, default, required, desc)
             # (字段，字段名称，字段类型，默认值，是否必传，备注描述)
-            ('aid', '文章ID', 'number', '', 1, ''),
+            ('cate_id', '分类ID',       'number', '', 0, ''),
+            ('page',    '页码',         'number', 1,  0, '第几页，从1开始'),
+            ('limit',   '每页的限制条目', 'number', 10, 0, '配置中可指定该值'),
         ]
         return args
-
-    def req_body(self):
-        # {
-        # 	"title": "aafdafdas",
-        # 	"content": "afadaasdf",
-        # 	"cate_id": 2
-        # }
-        body = [
-            # (key, name, type, default, required, desc)
-            ('title',   '文章标题', 'string', '', 0, ''),
-            ('content', '文章内容', 'string', '', 0, ''),
-            ('cate_id', '分类ID',   'number', '', 0, ''),
-            ('status',  '文章状态', 'number', '', 0, '枚举值: 0 不可见; 1 可见;'),
-        ]
-        return body
 
     @property
     def example(self):
         r = {
-            "url": self.url + "?aid=2",
-            "note": "先登录，请求头部Cookie带上token",
-            "request": {
-                "body": {
-                    "title": "aafdsfds",
-                    "content": "afadasdf",
-                    "cate_id": 2
-                }
-            },
+            "url": self.url + "?cate_id=2&page=2&limit=2",
+            "request": {},
             "response": {
                 "code": 0,
                 "data": {
-                    "id": 2,
-                    "created_at": "2017-12-15 17:44:31",
-                    "updated_at": "2020-01-11 12:48:00",
-                    "user_id": 1,
-                    "cate_id": 2,
-                    "title": "aafdsfds",
-                    "content": "afadasdf",
-                    "status": 1,
-                    "user": {
-                        "id": 1,
-                        "created_at": "2019-12-28 15:11:02",
-                        "updated_at": "2019-12-28 15:11:02",
-                        "name": "admin",
-                        "role_id": 1,
-                        "status": 1
-                    },
-                    "category": {
-                        "id": 2,
-                        "created_at": "2019-12-15 16:04:20",
-                        "updated_at": "2019-12-15 16:04:20",
-                        "name": "aaaa",
-                        "status": 1
-                    }
+                    "articles": [
+                        {
+                            "id": 21,
+                            "title": "aafdafdas",
+                            "created_at": "2020-01-11 10:31:21",
+                            "updated_at": "2020-01-11 10:31:21",
+                            "user_id": 1,
+                            "user_name": "admin",
+                            "cate_id": 2,
+                            "cate_name": "aaaa"
+                        },
+                        {
+                            "id": 20,
+                            "title": "aafdfds",
+                            "created_at": "2019-12-25 21:37:51",
+                            "updated_at": "2019-12-25 22:50:05",
+                            "user_id": 1,
+                            "user_name": "admin",
+                            "cate_id": 2,
+                            "cate_name": "aaaa"
+                        }
+                    ],
+                    "total": 12
                 },
                 "msg": "OK"
             }

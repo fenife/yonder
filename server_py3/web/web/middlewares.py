@@ -20,7 +20,11 @@ def load_user_to_context(ctx: AppRequestContext):
 
 @app.before_request
 def can_access_api_desc(ctx: AppRequestContext):
-    """检查用户是否有权限查看api文档（以desc结尾的所有url）"""
+    """
+    检查用户是否有权限查看api文档（以desc结尾的所有url）
+
+    因为开发文档是比较隐秘的信息，普通用户是没有权限查看的
+    """
     path = ctx.request.path
     if isinstance(path, str) and path.endswith('/desc'):
         # if not getattr(ctx, 'user', None):

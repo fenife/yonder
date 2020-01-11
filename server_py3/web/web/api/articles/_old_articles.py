@@ -33,7 +33,7 @@ def get_aid_from_request(ctx):
     return aid
 
 
-@app.route('/api/article', methods=('POST', ))
+# @app.route('/api/article', methods=('POST', ))
 @permission_required(Permission.admin)
 def article_create(ctx):
     """
@@ -102,7 +102,7 @@ def article_create(ctx):
     return article
 
 
-@app.route('/api/article/:aid', methods=('PUT', ))
+# @app.route('/api/article/:aid', methods=('PUT', ))
 @permission_required(Permission.admin)
 def article_update(ctx):
     aid = get_aid_from_request(ctx)
@@ -192,7 +192,7 @@ def article_update(ctx):
         )
 
 
-@app.route('/api/article', methods=('GET', ))
+# @app.route('/api/article', methods=('GET', ))
 @api_cache()
 def article_list(ctx: AppRequestContext):
     # 参数处理
