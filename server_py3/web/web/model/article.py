@@ -67,22 +67,26 @@ class Article(Model):
         {self.__select__} where `id` < ? and status = ?
         order by `id` desc"""
         args = [self.id, ARTICLE.status.active]
-        data = self.select(sql, args, 1)
-        if not data:
+        items = self.select(sql, args, 1)
+        if not items:
             return None
 
-        return Article(**data[0])
+        data = items[0]
+        a = Article(**data)
+        return a
 
     def get_next(self):
         sql = f"""
         {self.__select__} where `id` > ? and status = ?
         order by `id` asc"""
         args = [self.id, ARTICLE.status.active]
-        data = self.select(sql, args, 1)
-        if not data:
+        items = self.select(sql, args, 1)
+        if not items:
             return None
 
-        return Article(**data[0])
+        data = items[0]
+        a = Article(**data)
+        return a
 
     @staticmethod
     def valid_title(title):

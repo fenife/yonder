@@ -21,6 +21,9 @@ def to_int(var_name, val) -> int:
     :param var_name: 参数名称，用于提示
     :param val: 要转换的值
     """
+    if not val:
+        abort(RespCode.error, f"arg `{var_name}` is required")
+
     try:
         val = int(val)
     except Exception as e:
