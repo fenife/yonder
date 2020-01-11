@@ -75,6 +75,7 @@
           // 如果有article，表示是更新文章，否则是新建文章
           let sendReq = this.article ? request.updateArticle : request.createArticle
           let params = this.article ? { id: this.article.id } : null
+          let query = this.article ? { aid: this.article.id }: null
           let body = {
             title: this.formData.title,
             cate_id: this.formData.cateId,
@@ -83,7 +84,8 @@
           // 发送请求
           sendReq({
             params: params,
-            body: body
+            body: body,
+            query: query,
           }).then(resp => {
             // console.log(resp)
             if (resp.code === 0) {

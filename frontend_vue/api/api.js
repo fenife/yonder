@@ -19,13 +19,14 @@ const apiList = {
 
   // 新建文章
   createArticle: {
-    url: baseUrl + "/article",
+    url: baseUrl + "/article/create",
     method: "POST"
   },
 
   // 更新文章
   updateArticle: {
-    url: baseUrl + "/article/:id",
+    // url: baseUrl + "/article/:id",
+    url: baseUrl + "/article/update",
     method: "PUT"
   },
 
