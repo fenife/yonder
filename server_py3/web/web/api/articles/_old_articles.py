@@ -5,11 +5,11 @@ import markdown
 from sim.exceptions import abort
 from sim.response import Response
 from sim.context import AppRequestContext
-from .. import app, db, cache_pool
-from ..model import User, Category, Article
-from ..consts import RespCode, Permission, RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
-from ..decorators import permission_required, login_required, api_cache
-from ._utils import (
+from web import app, db, cache_pool
+from web.model import User, Category, Article
+from web.consts import RespCode, Permission, RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
+from web.decorators import permission_required, login_required, api_cache
+from web.api._utils import (
     to_int, get_page_from_request, get_limit_from_request, clear_cache_data, md2html
 )
 
