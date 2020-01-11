@@ -124,7 +124,7 @@ class Application(object):
         self.after_request_funcs.append(f)
         return f
 
-    def dispatch_request(self, ctx):
+    def dispatch_request(self, ctx: AppRequestContext):
         """根据url分发请求到 handler，获取响应"""
         if not self.allow_methods:
             self.allow_methods = set(self.method_trees.keys())
