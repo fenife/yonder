@@ -29,6 +29,9 @@ class Request(object):
         if self._json:
             return self._json
 
+        if not self.content_length:
+            return
+
         self.content_length = int(self.content_length)
         if self.content_length:
             stream = self.environ.get('wsgi.input')
