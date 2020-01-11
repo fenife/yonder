@@ -209,7 +209,9 @@ class Application(object):
             response = self.process_response(ctx, response)
 
         except AppBaseException as e:
-            msg = f"`{ctx.method} {ctx.uri}`, msg: {e.msg}"
+            # msg = f"`{ctx.method} {ctx.uri}`, msg: {e.msg}, body: {ctx.request.json()}"
+            # todo: log request body (if too big)?
+            msg = f"`{ctx.method} {ctx.uri}`, msg: {e.msg}, body: {ctx.request.json()}"
             if self.debug:
                 self.logger.exception(msg)
             else:
