@@ -7,7 +7,7 @@ from ...consts import RespCode, Permission, ARTICLE
 from ...decorators import permission_required
 from ...desc import ApiDescBase, api_desc_wrapper
 from .. import api_group
-from .._utils import clear_cache_data
+from .._utils import clear_cache_data, to_int
 
 
 @api_group.route('/article/create', methods=('POST', ))
@@ -33,10 +33,7 @@ def article_create(ctx: AppRequestContext):
 
     # if category existed
     cate_id = input_json['cate_id']
-    try:
-        cate_id = int(cate_id)
-    except Exception as e:
-        abort(RespCode.error, f"cate_id must be an integer, but get: `{cate_id}`")
+    cate_id = to_int('cate_id', cate_id)
 
     # check if category existed
     cate = Category.find(cate_id)
@@ -105,6 +102,7 @@ class ApiArticleCreateDesc(ApiDescBase):
     @property
     def example(self):
         r = {
+            "url": self.url,
             "note": "先登录，请求头部Cookie带上token",
             "request": {
                 "body": {
