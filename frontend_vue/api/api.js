@@ -8,7 +8,7 @@ if (typeof window === 'undefined') {
 const apiList = {
   // 获取文章列表
   getArticles: {
-    url: baseUrl + "/article",
+    url: baseUrl + "/article/list",
     method: "GET"
   },
   // 获取文章详情

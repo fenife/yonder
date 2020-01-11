@@ -89,7 +89,7 @@
         console.log('get article list, page: ', page)
         request.getArticles({
           query: {
-            cateId: this.cate.id,
+            cate_id: this.cate.id,
             page: page,
           }
         }).then(resp => {
