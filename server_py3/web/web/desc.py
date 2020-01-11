@@ -160,7 +160,7 @@ def api_desc_wrapper():
 
     比如:
 
-        from .. import app
+        from . import app
 
         @app.route('/api/test/desc')
         @api_desc_wrapper()

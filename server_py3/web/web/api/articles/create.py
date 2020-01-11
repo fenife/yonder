@@ -1,20 +1,13 @@
 #!/usr/bin/env python3
 
-import hashlib
-import markdown
 from sim.exceptions import abort
-from sim.response import Response
 from sim.context import AppRequestContext
-from ... import app, db, cache_pool
 from ...model import User, Category, Article
-from ...consts import RespCode, Permission, RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
-from ...decorators import permission_required, login_required, api_cache
+from ...consts import RespCode, Permission, ARTICLE
+from ...decorators import permission_required
+from ...desc import ApiDescBase, api_desc_wrapper
 from .. import api_group
-from .._utils import (
-    to_int, get_page_from_request, get_limit_from_request, clear_cache_data, md2html
-)
-from .._desc import ApiDescBase, api_desc_wrapper
-from ._internal import content_hash
+from .._utils import clear_cache_data
 
 
 @api_group.route('/article/create', methods=('POST', ))
@@ -88,6 +81,13 @@ class ApiArticleCreateDesc(ApiDescBase):
     method = ['POST']
     rule = "/api/article/create"
 
+    def req_headers(self):
+        headers = [
+            # (key, val, desc)
+            ('Cookie', 'token=xxx', "用户登录token"),
+        ] + self.default_req_headers
+        return headers
+
     def req_body(self):
         # {
         # 	"title": "aafdafdas",
@@ -105,6 +105,7 @@ class ApiArticleCreateDesc(ApiDescBase):
     @property
     def example(self):
         r = {
+            "note": "先登录，请求头部Cookie带上token",
             "request": {
                 "body": {
                     "title": "aaee",
