@@ -24,8 +24,8 @@ def to_int(var_name, val) -> int:
     try:
         val = int(val)
     except Exception as e:
-        app.logger.error(f"{var_name} must be an integer, but get: {val}")
-        abort(RespCode.error, f"{var_name} must be an integer")
+        # app.logger.error(f"{var_name} must be an integer, but get: {val}")
+        abort(RespCode.error, f"{var_name} must be an integer, but get: '{val}';")
 
     return val
 
