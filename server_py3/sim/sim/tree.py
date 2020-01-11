@@ -213,6 +213,7 @@ class Tree(object):
         if not node.children:
             return
 
+        # todo: 如果是 desc 结尾的url不显示？
         print(' ' * depth, node.children)
 
         for child in node.children:
@@ -228,10 +229,11 @@ class Tree(object):
         """展示所有静态路由（url形式）"""
         print()
         print("static routes:")
+        # todo: 如果是 desc 结尾的url不显示？
         for path in self._map.keys():
             print(' ', path)
 
-    def _find_handler_node(self, node: Node, routes: dict):
+    def _find_dynamic_handler_node(self, node: Node, routes: dict):
         """找到有handler的节点"""
         if not node.children:
             return
@@ -239,20 +241,24 @@ class Tree(object):
         for child in node.children:
             if child.handler is not None:
                 routes[child.path] = child.handler
-            self._find_handler_node(child, routes)
+            self._find_dynamic_handler_node(child, routes)
 
-    def print_all_routes(self):
+    def print_all_routes(self, **kwargs):
         """展示全部路由（url形式）"""
         print()
-        print("all routes:")
+        # print("all routes:")
+        method = kwargs.get('method', None)
         routes = {}
-        self._find_handler_node(self._root, routes)
+        self._find_dynamic_handler_node(self._root, routes)
 
         routes.update(self._map)
 
         if routes:
             for r in sorted(routes.keys()):
-                print(' ', r)
+                if method:
+                    print(' [{m:<4}] {r}'.format(m=method, r=r))
+                else:
+                    print(' ', r)
 
 
 ########################################################################

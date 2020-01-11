@@ -59,12 +59,12 @@ class Application(object):
         self.config = {}
 
     def show_routes(self):
-        # print('-' * 50)
         print("routes: ")
         for method, tree in self.method_trees.items():
-            print(f"method: [{method}]")
-            tree.print_all_routes()
-            print()
+            tree.print_all_routes(method=method)
+            # print()
+
+        print('-' * 50)
 
     def run(self, host='localhost', port=8000, **options):
         # 初始化app的部分属性
@@ -148,10 +148,18 @@ class Application(object):
             raise NotFound
 
         handler = node.handler
-        if not handler.__code__.co_argcount:    # 参数个数
-            resp = node.handler()
+        resp = None
+
+        # a class, not a instance
+        # if isinstance(handler, type):
+        #     # 先实例化，实例化时传入ctx参数;
+        #     # 再调用该实例的`__call__()`函数，调用时不会传入任何参数
+        #     resp = handler(ctx)()
+
+        if callable(handler):
+            resp = handler(ctx)
         else:
-            resp = node.handler(ctx)
+            raise Exception("handler is not callable")
 
         return resp
 
