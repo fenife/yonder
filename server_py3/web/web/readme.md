@@ -9,4 +9,6 @@
         api 为 'POST /api/article/create'
         则其描述文档的url为：
         'POST /api/article/create/desc'
-        
+    
+    3. 以desc结尾的api url归为描述文档一类，需要权限才能查看
+       在middleware中进行权限检查及拦截
