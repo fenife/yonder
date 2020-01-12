@@ -2,10 +2,10 @@
 
 from sim.exceptions import abort
 from sim.context import AppRequestContext
-from .. import app, db, cache_pool
-from ..model import User
-from ..consts import RespCode, RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
-from ..decorators import login_required
+from ... import app, db, cache_pool
+from ...model import User
+from ...consts import RespCode, RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
+from ...decorators import login_required
 
 
 @app.route('/api/user/signup', methods=('POST', ))
