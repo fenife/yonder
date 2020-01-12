@@ -14,7 +14,7 @@ from ._internal import content_hash, get_aid_from_request
 
 
 # 可添加多个路由，兼容旧的api
-@app.route('/api/article/:aid', methods=('PUT', ))
+# @app.route('/api/article/:aid', methods=('PUT', ))
 @api_group.route('/article/update', methods=('PUT', ))
 @permission_required(Permission.admin)
 def article_update(ctx: AppRequestContext):

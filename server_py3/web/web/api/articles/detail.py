@@ -12,7 +12,6 @@ from .._utils import md2html
 from ._internal import get_aid_from_request
 
 
-@app.route('/api/article/:aid', methods=('GET', ))
 @api_group.route('/article/detail', methods=('GET', ))
 @api_cache()
 def article_detail(ctx: AppRequestContext):
@@ -47,7 +46,6 @@ def article_detail(ctx: AppRequestContext):
 
 
 @api_group.route('/article/detail/desc', methods=('GET', ))
-# @permission_required(Permission.admin)
 @api_desc_wrapper()
 class ApiArticleDetailDesc(ApiDescBase):
     name = "文章详情"
