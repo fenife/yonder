@@ -3,8 +3,8 @@
 import logging
 from sim.application import Application
 
-from .config_dev import dev_configs
-from .config_live import live_configs
+from .config_dev import configs as dev_configs
+from .config_live import configs as live_configs
 
 
 class BaseConfig(object):

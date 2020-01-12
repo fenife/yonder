@@ -3,7 +3,7 @@
 import logging
 from sim.application import Application
 
-dev_configs = {
+configs = {
     # app debug mode
     "DEBUG_MODE": True,
 
