@@ -26,6 +26,9 @@
       return Promise.all([
         request.getCateDetail({
           client: ctx.req,
+          query: {
+            cid: ctx.params.id
+          },
           params: {
             id: ctx.params.id
           }

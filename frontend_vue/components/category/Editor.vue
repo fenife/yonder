@@ -41,6 +41,7 @@
 
           // 如果有cate，表示是更新分类，否则是新建分类
           let sendReq = this.cate ? request.updateCate : request.createCate
+          let query = this.cate ? { cid: this.cate.id } : null
           let params = this.cate ? { id: this.cate.id } : null
           let body = {
             name: this.formData.name,
@@ -48,7 +49,8 @@
           // 发送请求
           sendReq({
             params: params,
-            body: body
+            body: body,
+            query: query
           }).then(resp => {
             // console.log(resp)
             if (resp.code === 0) {

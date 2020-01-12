@@ -38,22 +38,24 @@ const apiList = {
 
   // 分类列表
   getCates: {
-    url: baseUrl + "/category",
+    url: baseUrl + "/category/list",
     method: "GET"
   },
   // 分类详情
   getCateDetail: {
-    url: baseUrl + "/category/:id",
+    // url: baseUrl + "/category/:id",
+    url: baseUrl + "/category/detail",
     method: "GET"
   },
   // 新建分类
   createCate: {
-    url: baseUrl + "/category",
+    url: baseUrl + "/category/create",
     method: "POST"
   },
   // 更新分类
   updateCate: {
-    url: baseUrl + "/category/:id",
+    // url: baseUrl + "/category/:id",
+    url: baseUrl + "/category/update",
     method: "PUT"
   },
   // 删除分类
