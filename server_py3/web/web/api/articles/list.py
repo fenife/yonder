@@ -86,7 +86,7 @@ def article_list(ctx: AppRequestContext):
 @api_group.route('/article/list/desc', methods=('GET', ))
 # @permission_required(Permission.admin)
 @api_desc_wrapper()
-class ApiArticleCreateDesc(ApiDescBase):
+class ApiArticleListDesc(ApiDescBase):
     name = "文章列表"
     desc = ""
     method = ['GET']

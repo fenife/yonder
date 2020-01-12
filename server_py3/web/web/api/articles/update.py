@@ -96,9 +96,9 @@ def article_update(ctx: AppRequestContext):
 
 
 @api_group.route('/article/update/desc', methods=('PUT', ))
-@permission_required(Permission.admin)
+# @permission_required(Permission.admin)
 @api_desc_wrapper()
-class ApiArticleCreateDesc(ApiDescBase):
+class ApiArticleUpdateDesc(ApiDescBase):
     name = "文章更新"
     desc = ""
     method = ['PUT']

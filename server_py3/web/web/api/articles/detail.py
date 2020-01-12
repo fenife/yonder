@@ -49,7 +49,7 @@ def article_detail(ctx: AppRequestContext):
 @api_group.route('/article/detail/desc', methods=('GET', ))
 # @permission_required(Permission.admin)
 @api_desc_wrapper()
-class ApiArticleCreateDesc(ApiDescBase):
+class ApiArticleDetailDesc(ApiDescBase):
     name = "文章详情"
     desc = ""
     method = ['GET']
