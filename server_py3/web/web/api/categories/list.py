@@ -35,7 +35,7 @@ def category_list(ctx: AppRequestContext):
 
 @api_group.route('/category/list/desc', methods=('GET', ))
 @api_desc_wrapper()
-class ApiArticleListDesc(ApiDescBase):
+class ApiCateListDesc(ApiDescBase):
     name = "分类列表"
     desc = ""
     method = ['GET']

@@ -59,13 +59,14 @@ def category_update(ctx: AppRequestContext):
 
     # 更新成功后，清除分类列表的缓存
     clear_cache_data("/api/category*")
+    clear_cache_data('/api/article*')
 
     return cate
 
 
 @api_group.route('/category/update/desc', methods=('PUT', ))
 @api_desc_wrapper()
-class ApiArticleUpdateDesc(ApiDescBase):
+class ApiCateUpdateDesc(ApiDescBase):
     name = "分类更新"
     desc = ""
     method = ['PUT']

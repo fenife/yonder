@@ -34,6 +34,7 @@ def category_create(ctx: AppRequestContext):
 
     # 创建成功后，清除分类列表的缓存
     clear_cache_data("/api/category*")
+    clear_cache_data('/api/article*')
 
     return cate
 
