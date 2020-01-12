@@ -90,7 +90,12 @@
             // console.log(resp)
             if (resp.code === 0) {
               let article = resp.data
-              this.$Message.info("update article success")
+              if (resp.msg !== 'OK') {
+                this.$Message.info(resp.msg)
+              } else {
+                this.$Message.info("update article success")
+              }
+
               // 成功后跳转到文章详情页
               this.$router.push('/article/' + article.id)
             } else {

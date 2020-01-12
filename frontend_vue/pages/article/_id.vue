@@ -70,6 +70,7 @@
             id: ctx.params.id
           },
           query: {
+            aid: ctx.params.id,
             ct: "html"
           }
         })

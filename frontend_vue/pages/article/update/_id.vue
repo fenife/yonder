@@ -32,6 +32,9 @@
       return Promise.all([
         request.getArticleDetail({
           client: ctx.req,
+          query: {
+            aid: ctx.params.id
+          },
           params: {
             id: ctx.params.id
           }

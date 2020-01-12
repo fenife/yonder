@@ -13,7 +13,7 @@ const apiList = {
   },
   // 获取文章详情
   getArticleDetail: {
-    url: baseUrl + "/article/:id",
+    url: baseUrl + "/article/detail",
     method: "GET"
   },
 
