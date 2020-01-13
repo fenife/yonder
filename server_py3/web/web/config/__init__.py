@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
 
+import os
 import logging
 from sim.application import Application
 
-from .config_dev import configs as dev_configs
-from .config_live import configs as live_configs
+env = os.getenv('YONDER_CONFIG') or 'dev'
+
+if env == 'live':
+    from .config_live import configs
+else:
+    from .config_dev import configs
 
 
 class BaseConfig(object):
-    configs = dev_configs
+    configs = configs
     log_level = logging.DEBUG
 
     @classmethod
@@ -29,13 +34,11 @@ class BaseConfig(object):
 
 class DevConfig(BaseConfig):
     """开发环境的配置"""
-    configs = dev_configs
     log_level = logging.DEBUG
 
 
 class LiveConfig(BaseConfig):
     """线上环境的配置"""
-    configs = live_configs
     log_level = logging.INFO
 
 
