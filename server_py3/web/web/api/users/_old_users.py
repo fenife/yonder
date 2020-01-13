@@ -8,7 +8,7 @@ from ...consts import RespCode, RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTI
 from ...decorators import login_required
 
 
-@app.route('/api/user/signup', methods=('POST', ))
+# @app.route('/api/user/signup', methods=('POST', ))
 def singup(ctx):
     """用户注册"""
     input_json = ctx.request.json()
