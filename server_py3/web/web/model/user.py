@@ -51,6 +51,7 @@ class User(Model):
 
     @staticmethod
     def gen_password_hash(password):
+        # 这里的password还是明文密码
         m = hashlib.md5()
         # m.update(db.app.config["SECRET_KEY"].encode('utf-8'))
         # m.update(password.encode('utf-8'))
@@ -64,6 +65,7 @@ class User(Model):
         return self.password == password_hash
 
     def gen_session_token(self):
+        # 这里的password已经是加密后的hash字符串
         m = hashlib.md5()
         s = f"{db.app.config['SECRET_KEY']}-{self.id}-{self.name}-{self.password}"
         m.update(s.encode('utf-8'))

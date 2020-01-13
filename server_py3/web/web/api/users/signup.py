@@ -26,7 +26,11 @@ def singup(ctx: AppRequestContext):
 
     user = User()
     user.name = username
+
+    # 密码需要加密为hash字符串后保存
+    # 不保存明文密码
     user.password = user.gen_password_hash(password)
+
     user.status = USER.status.active
     user.role_id = USER.role.user
     # user.role = user.get_role()
