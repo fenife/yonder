@@ -36,7 +36,7 @@ def singup(ctx):
     return user.without_password()
 
 
-@app.route('/api/user/signin', methods=('POST', ))
+# @app.route('/api/user/signin', methods=('POST', ))
 def signin(ctx: AppRequestContext):
     """用户登录"""
     input_json = ctx.request.json()
