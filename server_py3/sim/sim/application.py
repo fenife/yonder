@@ -94,11 +94,11 @@ class Application(object):
         例子：
         >>> app = Application()
 
-        >>> @group.route('/api/test', methods=('GET',))
+        >>> @app.route('/api/test', methods=('GET',))
         >>> def test(ctx):
         ...     pass
 
-        `/api/test`就会被添加到此app的路由树中
+        `/api/test`将会被添加到此app的路由树中
         """
         def decorator(f):
             # options.setdefault('methods', ('GET', ))
