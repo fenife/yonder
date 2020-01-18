@@ -2,12 +2,6 @@
 
 """
 web api app
-
-todo:
-db
-models
-middleware
-auth
 """
 
 
