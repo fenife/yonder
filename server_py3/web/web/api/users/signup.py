@@ -44,7 +44,7 @@ def singup(ctx: AppRequestContext):
 
 @api_group.route('/user/signup/desc', methods=('POST', ))
 @api_desc_wrapper()
-class ApiCateCreateDesc(ApiDescBase):
+class ApiSignupDesc(ApiDescBase):
     name = "用户注册"
     desc = ""
     method = ['POST']

@@ -22,7 +22,7 @@ def signout(ctx: AppRequestContext):
 
 @api_group.route('/user/signout/desc', methods=('GET', ))
 @api_desc_wrapper()
-class ApiCateCreateDesc(ApiDescBase):
+class ApiSignoutDesc(ApiDescBase):
     name = "用户退出"
     desc = ""
     method = ['GET']

@@ -21,7 +21,7 @@ def get_user_info(ctx: AppRequestContext):
 
 @api_group.route('/user/info/desc', methods=('GET', ))
 @api_desc_wrapper()
-class ApiCateCreateDesc(ApiDescBase):
+class ApiUserInfoDesc(ApiDescBase):
     name = "已登录用户的信息"
     desc = ""
     method = ['GET']

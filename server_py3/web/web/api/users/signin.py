@@ -50,7 +50,7 @@ def signin(ctx: AppRequestContext):
 
 @api_group.route('/user/signin/desc', methods=('POST', ))
 @api_desc_wrapper()
-class ApiCateCreateDesc(ApiDescBase):
+class ApiSigninDesc(ApiDescBase):
     name = "用户注册"
     desc = ""
     method = ['POST']

@@ -31,7 +31,7 @@ def user_detail(ctx: AppRequestContext):
 
 @api_group.route('/user/detail/desc', methods=('GET', ))
 @api_desc_wrapper()
-class ApiCateCreateDesc(ApiDescBase):
+class ApiUserDetailDesc(ApiDescBase):
     name = "用户详情"
     desc = ""
     method = ['GET']

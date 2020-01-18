@@ -61,7 +61,7 @@ def search(ctx: AppRequestContext):
 
 @api_group.route('/search/desc', methods=('GET', ))
 @api_desc_wrapper()
-class ApiCateCreateDesc(ApiDescBase):
+class ApiSearchDesc(ApiDescBase):
     name = "搜索"
     desc = ""
     method = ['GET']

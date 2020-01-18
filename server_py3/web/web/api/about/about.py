@@ -33,7 +33,7 @@ def about(ctx: AppRequestContext):
 
 @api_group.route('/about/desc', methods=('GET', ))
 @api_desc_wrapper()
-class ApiCateCreateDesc(ApiDescBase):
+class ApiAboutDesc(ApiDescBase):
     name = "网站相关"
     desc = ""
     method = ['GET']

@@ -69,7 +69,7 @@ def update_user(ctx: AppRequestContext):
 
 @api_group.route('/user/update/desc', methods=('PUT', ))
 @api_desc_wrapper()
-class ApiCateCreateDesc(ApiDescBase):
+class ApiUserUpdateDesc(ApiDescBase):
     name = "用户更新"
     desc = ""
     method = ['PUT']
