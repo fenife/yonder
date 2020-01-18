@@ -21,16 +21,15 @@ cache_pool = AppCachePool()
 
 def create_app(config_name):
     """
-    :param config_name:
-        default, dev, live
+    :param config_name: dev/live
     :return:
     """
+    if not config_name:
+        config_name = 'dev'
+
     print('-' * 50)
     print(f"env mode: {config_name}")
     print('-' * 50)
-
-    if not config_name:
-        config_name = 'default'
 
     app = Application()
 
@@ -43,9 +42,6 @@ def create_app(config_name):
 
 
 app = create_app(os.getenv('YONDER_CONFIG') or 'dev')
-
-# todo: remove test
-# app = create_app('live')
 
 # 让Python加载模块，否则app.route装饰器不会运行，无法添加路由
 from . import middlewares

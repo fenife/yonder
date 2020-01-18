@@ -42,15 +42,19 @@ class Application(object):
         self.allow_methods = set()
 
         # handler funcs before request
-        # def func(ctx):
-        #     pass
         # use `before_request` to add a function
+        #
+        # @app.before_request
+        # def handler(ctx):
+        #     pass
         self.before_request_funcs = []
 
         # handler funcs after request
+        # use `after_request` to add a handler
+        #
+        # @app.after_request
         # def handler(ctx, response):
         #     pass
-        # use `after_request` to add a handler
         self.after_request_funcs = []
 
         # this logger is for higher application
@@ -167,14 +171,13 @@ class Application(object):
         path = ctx.request.path
         node, params = tree.search(path)
 
-        # 路径中的参数
-        ctx.request.set_params(params)
-
         if not (node and node.handler):
             raise NotFound
 
+        # 路径中的参数
+        ctx.request.set_params(params)
+
         handler = node.handler
-        resp = None
 
         # a class, not a instance
         # if isinstance(handler, type):
