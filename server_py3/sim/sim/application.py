@@ -1,21 +1,9 @@
 #!/usr/bin/env python3
 
 """
-todo:
-name: sim, yon
+一个自实现的web微框架
 
-db
-del_cookie
-add request id
-config
-
-done:
-json data from http body
-parse query string, unquote to utf-8
-cookie
-middleware
-debug loader: auto reload source code in debug mode
-logger
+暂时只支持返回json数据
 """
 
 import threading
