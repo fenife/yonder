@@ -92,7 +92,7 @@ def get_user_info(ctx):
     return user.without_password()
 
 
-@app.route('/api/user/:uid')
+# @app.route('/api/user/:uid')
 def get_user(ctx):
     uid = ctx.request.get_param('uid')
     try:

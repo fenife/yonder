@@ -13,15 +13,8 @@ from ._internal import get_uid_from_request
 
 @api_group.route('/user/update', methods=('PUT', ))
 @login_required()
-def update_user(ctx):
+def update_user(ctx: AppRequestContext):
     """用户更新"""
-    # uid = ctx.request.get_param('uid')
-    # try:
-    #     uid = int(uid)
-    # except Exception as e:
-    #     app.logger.error(f"uid must be an integer, but get uid: {uid}")
-    #     abort(RespCode.error, "uid must be an integer")
-
     uid = get_uid_from_request(ctx)
 
     user = ctx.user

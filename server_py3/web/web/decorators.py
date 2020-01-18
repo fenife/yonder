@@ -14,6 +14,7 @@ API_CACHE_EXPIRED = 10 * 60
 
 
 def permission_required(permission):
+    """看用户是否具有某种权限"""
     def decorator(func):
         @wraps(func)
         def wrapper(ctx, *args, **kwargs):

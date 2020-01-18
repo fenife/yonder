@@ -12,7 +12,7 @@ from .. import api_group
 
 @api_group.route('/user/info')
 @login_required()
-def get_user_info(ctx):
+def get_user_info(ctx: AppRequestContext):
     """登录用户的信息"""
     user = ctx.user
     assert isinstance(user, User)
