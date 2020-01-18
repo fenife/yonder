@@ -108,7 +108,7 @@ def get_user(ctx):
     return user.without_password()
 
 
-@app.route('/api/user/:uid', methods=('PUT', ))
+# @app.route('/api/user/:uid', methods=('PUT', ))
 @login_required()
 def update_user(ctx):
     uid = ctx.request.get_param('uid')
