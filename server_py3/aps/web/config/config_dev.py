@@ -19,10 +19,10 @@ configs = {
     "REDIS_HOST": '127.0.0.1',
     "REDIS_PORT": 6379,
 
-    # web app secret key to gen session token
+    # app secret key to gen session token
     "SECRET_KEY": "a key hard to guess",
 
-    # web admin user
+    # admin user for website
     "ADMIN_USERNAME": 'admin',
     "ADMIN_PASSWORD": 'admin',
 

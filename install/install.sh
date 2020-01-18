@@ -100,7 +100,7 @@ function install_backup() {
 # server_py3
 # export PYTHONPATH=$PYTHONPATH:/work/yonder/server_py3/sim
 # export YONDER_CONFIG=live
-# cd /work/yonder/server_py3/web/web/config
+# cd /work/yonder/server_py3/aps/wes/config
 # cp config_dev.py config_live.py
 # vi config_live.py
 # cd /work/yonder/server_py3/
@@ -138,7 +138,7 @@ function install_yonder_server_py3() {
         echo "${pid}" | xargs sudo kill -9
     fi
 
-    python3 ${WORK_SERVER_PY3}/web/main.py & > /dev/null 2>&1
+    python3 ${WORK_SERVER_PY3}/aps/main.py & > /dev/null 2>&1
 
     ps aux | grep main.py | grep -v grep
 }

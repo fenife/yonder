@@ -1,5 +1,11 @@
 # yonder
     server and frontend of yonder blog 
+    
+    sim: simple micro framework
+    ydr: yonder
+    wes: web service
+    aps: app service
+    ses: search service
 
 ## 依赖
     后端：
