@@ -4,6 +4,8 @@ from functools import wraps
 from collections import OrderedDict
 from sim.context import AppRequestContext
 
+from .decorators import api_cache
+
 
 class ApiDescBase(object):
     """api描述文档"""
@@ -177,6 +179,7 @@ def api_desc_wrapper():
     当请求`/api/test/desc`时，会返回ApiDesc的内容
     """
     def decorator(api_desc_class):
+        # @api_cache()
         @wraps(api_desc_class)
         def wrapper(ctx, *args, **kwargs):
             assert issubclass(api_desc_class, ApiDescBase)
