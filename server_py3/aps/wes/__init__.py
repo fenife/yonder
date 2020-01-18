@@ -12,7 +12,7 @@ from sim.application import Application
 from sim.norm import Database
 from sim.cache import AppCachePool
 
-from .config import config
+from wes.config import config
 
 
 db = Database()

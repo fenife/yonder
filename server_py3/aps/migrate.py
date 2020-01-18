@@ -7,7 +7,7 @@ table or data migrate
 
 import sys
 
-from web.model import User, Category, Article
+from wes.model import User, Category, Article
 
 
 _opt2Model = {
