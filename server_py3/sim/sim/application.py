@@ -83,10 +83,20 @@ class Application(object):
         print('-' * 50)
 
     def run(self, host='localhost', port=8000, **options):
+        """
+        启动app
+        :param host: 主机ip，默认为localhost
+        :param port: 端口，默认为8000
+        :param options:
+            show_routes: true/false, 是否打印路由树
+        :return:
+        """
         # 初始化app的部分属性
         self._init_app(**options)
 
-        if self.debug:
+        # 打印路由树
+        show_routes = options.get('show_routes', False)
+        if show_routes:
             self.show_routes()
 
         options.setdefault('threaded', True)
