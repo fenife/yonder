@@ -34,7 +34,7 @@ configs = {
     "LOGIN_EXPIRED": 30 * 60,
 
     # log file path
-    "LOG_FILE": "./app.log"
+    "LOG_FILE": "logs/app.log"
 }
 
 

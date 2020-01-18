@@ -8,7 +8,9 @@ from sim.context import AppRequestContext
 class ApiDescBase(object):
     """api描述文档"""
 
-    host = "http://127.0.0.1:6070"  # server host
+    # host = "http://127.0.0.1:6070"  # server host
+    host = "http:yonder-dev.com:6070"  # server host
+
     name = ""       # api name
     desc = ""       # api description
     method = []     # api methods
