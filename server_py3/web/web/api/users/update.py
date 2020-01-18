@@ -114,6 +114,11 @@ class ApiCateCreateDesc(ApiDescBase):
         r = {
             "url": self.url + '?uid=2',
             "request": {
+                "headers": {
+                    "Cookie": {
+                        "value": "token=334a9d0...",
+                    }
+                },
                 "body": {
                     "username": "aabbb",
                     "password": "aabbb"

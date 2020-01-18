@@ -84,7 +84,7 @@ def signout(ctx: AppRequestContext):
         user.del_user_from_redis(token)
 
 
-@app.route('/api/user/info')
+# @app.route('/api/user/info')
 @login_required()
 def get_user_info(ctx):
     user = ctx.user
