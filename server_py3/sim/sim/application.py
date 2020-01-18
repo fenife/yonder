@@ -20,6 +20,7 @@ logger
 
 import threading
 import logging
+from collections import OrderedDict
 
 from .httpserver import run_simple
 from .tree import Tree
@@ -59,11 +60,26 @@ class Application(object):
         self.config = {}
 
     def show_routes(self):
-        print("routes: ")
+        """
+        打印路由树
+        """
+        print("all routes: ")
+        i = 0
         for method, tree in self.method_trees.items():
-            tree.print_all_routes(method=method)
-            # print()
+            routes = tree.get_all_routes()
+            # dict排序
+            sorted_routes = OrderedDict([(k, routes.get(k)) for k in sorted(routes.keys())])
+            # 所有key的最大长度，方便格式化
+            ml = max([len(k) for k in sorted_routes.keys()])
+            for r, h in sorted_routes.items():
+                # r: route, string
+                # h: handler, function
+                print(' [{m:<4}] {r:<{ml}} -> {h}'.format(m=method, r=r, ml=ml, h=h.__name__))
+                i += 1
 
+            print()
+
+        print(f"{i} routes showed")
         print('-' * 50)
 
     def run(self, host='localhost', port=8000, **options):

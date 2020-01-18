@@ -260,6 +260,14 @@ class Tree(object):
                 else:
                     print(' ', r)
 
+    def get_all_routes(self, **kwargs):
+        """获取全部路由（url形式）"""
+        routes = {}
+        self._find_dynamic_handler_node(self._root, routes)
+        routes.update(self._map)
+
+        return routes
+
 
 ########################################################################
 # test
