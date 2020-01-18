@@ -74,7 +74,7 @@ def signin(ctx: AppRequestContext):
     return resp
 
 
-@app.route('/api/user/signout')
+# @app.route('/api/user/signout')
 @login_required()
 def signout(ctx: AppRequestContext):
     """用户登出"""
