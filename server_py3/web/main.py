@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-web api app
+api app server
 """
 
 

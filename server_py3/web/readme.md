@@ -1,6 +1,9 @@
 # app
 a simple web api app
 
+sim: simple micro framework
+ydr: yonder
+
 ## todo
     models:
     user

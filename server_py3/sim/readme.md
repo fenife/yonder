@@ -2,6 +2,8 @@
 
 a simple web micro framework 
 
+sim: simple micro framework
+
 name: sim, yon
 
 todo:
