@@ -7,8 +7,8 @@ api app server
 
 import sys
 
-from web import app, db
-from web.model import User, Category, Article, create_admin_user
+from wes import app, db
+from wes.model import User, Category, Article, create_admin_user
 
 
 def add_admin():
