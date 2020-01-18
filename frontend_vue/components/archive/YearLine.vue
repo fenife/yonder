@@ -28,13 +28,14 @@
     padding-bottom: 8px;
   }
   .card-title {
-    font-size: 18px;
+    font-size: 20px;
   }
   .time {
-    font-size: 16px;
+    font-size: 17px;
   }
   .content {
-    font-size: 16px;
+    font-size: 17px;
+    padding-left: 5px;
   }
   .time-item {
     padding: 0;

@@ -37,7 +37,7 @@
       })
     },
     methods: {},
-    layout: 'default',
+    layout: 'nosidebar',
     components: {
       "year-line": YearLine,
     }

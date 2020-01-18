@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <Form ref="info" :model="info" :rules="validRules" class="login">
+  <div class="login">
+    <Form ref="info" :model="info" :rules="validRules" >
       <FormItem label="Name" prop="username">
         <Input v-model="info.username" placeholder="Enter your name"></Input>
       </FormItem>
@@ -81,6 +81,7 @@
 
 <style scoped>
   .login {
-    width: 300px
+    width: 300px;
+    margin: 0 auto;
   }
 </style>
