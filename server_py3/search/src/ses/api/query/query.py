@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 
-from sim.exceptions import abort
-from sim.response import Response
 from sim.context import AppRequestContext
-from ses import app, cache_pool
 from ses.api import api_group
 from ses.desc import ApiDescBase, api_desc_wrapper
 
@@ -15,7 +12,7 @@ def query(ctx: AppRequestContext):
 
 @api_group.route('/query/desc', methods=('GET', ))
 @api_desc_wrapper()
-class ApiAboutDesc(ApiDescBase):
+class SearchApiDesc(ApiDescBase):
     name = "搜索"
     desc = ""
     method = ['GET']

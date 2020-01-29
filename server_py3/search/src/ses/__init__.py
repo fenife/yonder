@@ -4,7 +4,7 @@ import os
 import sys
 
 sim_path = os.path.abspath(
-    os.path.join(os.path.dirname(__name__), '..', '..', '..', 'sim')
+    os.path.join(os.path.dirname(__name__), '..', '..', 'sim')
 )
 print(f"sim_path: {sim_path}")
 sys.path.append(sim_path)
