@@ -8,16 +8,16 @@ from ses.api import api_group
 from ses.desc import ApiDescBase, api_desc_wrapper
 
 
-@api_group.route('/index/update', methods=('POST',))
-def update(ctx: AppRequestContext):
+@api_group.route('/query', methods=('GET',))
+def query(ctx: AppRequestContext):
     pass
 
 
-@api_group.route('/index/update/desc', methods=('GET', ))
+@api_group.route('/query/desc', methods=('GET', ))
 @api_desc_wrapper()
 class ApiAboutDesc(ApiDescBase):
-    name = "建索引"
+    name = "搜索"
     desc = ""
-    method = ['POST']
-    rule = "/search/index/update"
+    method = ['GET']
+    rule = "/search/query"
 
