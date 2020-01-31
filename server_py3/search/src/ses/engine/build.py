@@ -82,4 +82,3 @@ def build(article):
         raise
 
     total_data[doc_id] = article
-    store_save()

@@ -2,10 +2,12 @@
 
 from sim.exceptions import abort
 from sim.context import AppRequestContext
+from ses import app
 from ses.api import api_group
 from ses.desc import ApiDescBase, api_desc_wrapper
 from ses.consts import RespCode
 from ses.engine.build import build
+from ses.engine.store import store_save
 
 
 @api_group.route('/index/update', methods=('POST',))
@@ -21,6 +23,8 @@ def update(ctx: AppRequestContext):
 
     try:
         build(input_json)
+        store_save()
+        app.logger.info("build and save data success")
     except Exception as e:
         abort(RespCode.error, str(e))
 

@@ -9,6 +9,7 @@
 import os
 import sys
 import json
+import pprint
 
 try:
     from ses import app
@@ -19,7 +20,7 @@ except Exception as e:
 cur_dir = os.path.abspath(os.path.dirname('.'))
 
 store_path = os.path.abspath(
-    os.path.join(os.path.dirname(__name__), '..', '..', '..', 'data')
+    os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data')
 )
 print('store_path:', store_path)
 
@@ -39,6 +40,11 @@ total_index = {}
 
 def store_save():
     try:
+        if not os.path.exists(store_path):
+            os.mkdir(store_path)
+
+        print("data to save:")
+        pprint.pprint(total_data)
         with open(data_path, 'w') as f:
             json.dump(total_data, f, indent=1)
 
@@ -55,17 +61,28 @@ def store_load():
     global total_index
 
     try:
-        with open(data_path, 'r') as f:
-            total_data = json.load(f)
+        if os.path.exists(data_path):
+            with open(data_path, 'r') as f:
+                total_data.update(json.load(f))
 
-        with open(index_path, 'r') as f:
-            total_index = json.load(f)
+        if os.path.exists(index_path):
+            with open(index_path, 'r') as f:
+                total_index.update(json.load(f))
 
         print('load data for search success')
 
     except Exception as e:
         print('load data for search failed')
         raise
+
+
+def print_data_and_index():
+    global total_data
+    global total_index
+
+    print("-" * 20, 'data and index:')
+    pprint.pprint(total_data)
+    pprint.pprint(total_index)
 
 
 def _test():

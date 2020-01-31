@@ -6,8 +6,18 @@ api app server
 
 
 import sys
+from ses.engine.store import store_load, print_data_and_index
 
 from ses import app
+
+
+def load_search_data():
+    try:
+        store_load()
+        app.logger.info("load search data success")
+    except Exception as e:
+        app.logger.exception("load search data failed")
+        sys.exit()
 
 
 def start():
@@ -19,24 +29,13 @@ def start():
 def usage():
     print()
     print("usage: %prog [options]")
-    print("  python main.py [admin]")
-    print("  [admin]: create super admin user")
+    print("  python main.py")
     print()
 
 
 def main():
-    if len(sys.argv) > 2:
-        usage()
-        return
-
-    if len(sys.argv) == 2:
-        if sys.argv[1] == 'admin':
-            add_admin()
-        else:
-            usage()
-            return
-    else:
-        start()
+    load_search_data()
+    start()
 
 
 if __name__ == "__main__":

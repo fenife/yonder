@@ -12,7 +12,7 @@ import jieba
 import pprint
 from collections import OrderedDict
 
-from .store import total_data, total_index, load
+from .store import total_data, total_index, store_load
 from .utils import text_to_tokens
 
 
@@ -68,7 +68,6 @@ def rank_results(indexes):
         # lambda x: (doc_id, (token, len(pos_list))
         sorted(merge_docs.items(), key=lambda x: x[1][1], reverse=True)
     )
-    pprint.pprint((sort_docs))
 
     doc_ids = sort_docs.keys()
     return doc_ids
@@ -76,7 +75,6 @@ def rank_results(indexes):
 
 def search(keyword):
     indexes = {}
-    doc_ids = OrderedDict()
 
     # 分词
     tokens = text_to_tokens(keyword)
