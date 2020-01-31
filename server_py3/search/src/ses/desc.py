@@ -79,11 +79,11 @@ class ApiDescBase(object):
         body = self.req_body()
         body = {
             v[0]: {
-                "name": v[1],
-                "type": v[2],
-                "default": v[3],
+                "name":     v[1],
+                "type":     v[2],
+                "default":  v[3],
                 "required": v[4],
-                "desc": v[5],
+                "desc":     v[5],
             }
             for v in body
         }
@@ -91,7 +91,7 @@ class ApiDescBase(object):
         req = {
             'headers': headers,
             'args': args,
-            'boby': body,
+            'body': body,
         }
         return req
 
@@ -109,7 +109,7 @@ class ApiDescBase(object):
         headers = {
             v[0]: {
                 "value": v[1],
-                "desc": v[2],
+                "desc":  v[2],
             }
             for v in headers
         }

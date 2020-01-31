@@ -35,15 +35,19 @@ class SearchApiDesc(ApiDescBase):
 
     def req_body(self):
         # {
-        # 	"title": "aafdafdas",
-        # 	"content": "afadaasdf",
-        # 	"id": 2
+        #     "id": 2,
+        #     "title": "aaaa",
+        #     "created_at": "2019-12-20 23:47:37",
+        #     "updated_at": "2020-01-12 15:55:58",
+        #     "user_id": 1,
+        #     "user_name": "admin",
+        #     "cate_id": 1,
+        #     "cate_name": "aaa"
         # }
         body = [
             # (key, name, type, default, required, desc)
-            ('title',   '文章标题', 'string', '', 0, ''),
-            ('content', '文章内容', 'string', '', 0, ''),
-            ('id',      '文章ID',   'number', '', 0, ''),
+            ('id',      '文章ID',  'number', '', 1, ''),
+            ('title',   '文章标题', 'string', '', 1, ''),
         ]
         return body
 
@@ -54,7 +58,6 @@ class SearchApiDesc(ApiDescBase):
             "request": {
                 "body": {
                     "title": "aafdsfds",
-                    "content": "afadasdf",
                     "id": 2
                 }
             },

@@ -9,19 +9,10 @@ tf: term frequency
 import os
 import sys
 import pprint
-from collections import OrderedDict
 
+from .store import total_data, total_index, store_save
 from .utils import text_to_tokens
 from ses import app
-
-
-# 建索引的源数据，搜索时会返回这里的内容
-# {document_id: text, ...}
-total_data = {}
-
-# 索引数据
-# {word: {document_id: [pos1, pos2, ...]}, ...}, ...}
-total_index = {}
 
 
 def build_index(doc_id, text):
@@ -34,8 +25,6 @@ def build_index(doc_id, text):
     2. global index
         {word: {document_id: [pos1, pos2, ...]}, ...}, ...}
     """
-    global total_data
-    global total_index
 
     # tokens: {word: [pos1, pos2, ...], ... }
     tokens = text_to_tokens(text)
@@ -59,9 +48,9 @@ def build_index(doc_id, text):
         #   (1, [7, 21])
         #
         # len(x[1]), 该词元在文档中出现了多少次（词频）
-        total_index[word] = OrderedDict(
-            sorted(total_index[word].items(), key=lambda x: len(x[1]), reverse=True)
-        )
+        # total_index[word] = OrderedDict(
+        #     sorted(total_index[word].items(), key=lambda x: len(x[1]), reverse=True)
+        # )
 
 
 def build(article):
@@ -93,3 +82,4 @@ def build(article):
         raise
 
     total_data[doc_id] = article
+    store_save()
