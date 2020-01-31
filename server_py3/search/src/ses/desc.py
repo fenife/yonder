@@ -10,7 +10,7 @@ class ApiDescBase(object):
 
     # host = "http://127.0.0.1:6070"  # server host
     # 修改/etc/hosts，添加此域名的解析
-    host = "http://yonder-dev.com:6070"  # server host
+    host = "http://yonder-search-dev.com:6090"  # server host
 
     name = ""       # api name
     desc = ""       # api description

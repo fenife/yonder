@@ -12,6 +12,7 @@ import pprint
 from collections import OrderedDict
 
 from .utils import text_to_tokens
+from ses import app
 
 
 # 建索引的源数据，搜索时会返回这里的内容
@@ -62,5 +63,33 @@ def build_index(doc_id, text):
             sorted(total_index[word].items(), key=lambda x: len(x[1]), reverse=True)
         )
 
-    total_data[doc_id] = text
 
+def build(article):
+    """
+    传入文章内容，建立索引，并保存该内容
+    :param article:
+    {
+        "id": 2,
+        "title": "aaaa",
+        "created_at": "2019-12-20 23:47:37",
+        "updated_at": "2020-01-12 15:55:58",
+        "user_id": 1,
+        "user_name": "admin",
+        "cate_id": 1,
+        "cate_name": "aaa"
+    }
+    :return:
+    """
+    try:
+        doc_id, text = article['id'], article['title']
+    except Exception as e:
+        app.logger.exception("field `id`, `title` not found in article")
+        raise
+
+    try:
+        build_index(doc_id, text)
+    except Exception as e:
+        app.logger.exception("build index failed")
+        raise
+
+    total_data[doc_id] = article
