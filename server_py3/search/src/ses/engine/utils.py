@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
+import os
 import jieba
 
 
 def get_stopwords():
-    with open('./stopwords.txt', encoding='utf-8') as f:
+    fn = f"{os.path.dirname(__file__)}/stopwords.txt"
+    with open(fn, encoding='utf-8') as f:
         stopwords = set([l.strip('\n') for l in f.readlines()])
 
     return stopwords
