@@ -94,7 +94,7 @@ def search(keyword):
     doc_ids = rank_results(indexes)
 
     # 获取查询到的源数据
-    res = [total_data.get(doc_id) for doc_id in doc_ids]
+    res = [total_data.get(str(doc_id)) for doc_id in doc_ids]
 
     return res
 

@@ -70,10 +70,27 @@ def build(article):
     :return:
     """
     try:
-        doc_id, text = article['id'], article['title']
+        doc_id, text = str(article['id']), article['title']
     except Exception as e:
         app.logger.exception("field `id`, `title` not found in article")
         raise
+
+    # 删除已存在的文档索引，为相同id的文档重建索引
+    if doc_id in total_data:
+
+        # 记录索引为空的词元，后面删除
+        empty_items = set()
+
+        for token, docs in total_index.items():
+            if doc_id in docs:
+                del docs[doc_id]
+
+            if not docs:
+                empty_items.add(token)
+
+        # 该词元下的索引数据为空，则清除该词元
+        for token in empty_items:
+            del total_index[token]
 
     try:
         build_index(doc_id, text)

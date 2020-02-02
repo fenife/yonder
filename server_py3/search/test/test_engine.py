@@ -18,6 +18,7 @@ print(f"cur: {os.path.abspath('.')}")
 sys.path.append(engine_path)
 
 from ses.engine.build import total_data, total_index, build
+from ses.engine.store import store_save, store_load, print_data_and_index
 from ses.engine.query import search
 
 
@@ -26,6 +27,7 @@ def main():
         {
             "id": 1,
             "title": "Python中调用C语言扩展模块hello调用",
+            12: '12',
             # "content": "Python中调用C语言扩展模块hello调用",
         },
         {
@@ -38,10 +40,10 @@ def main():
 
     for article in articles:
         build(article)
+        store_save()
         # build_index(article['id'], article['title'])
 
-    pprint.pprint(total_data)
-    pprint.pprint(total_index)
+    print_data_and_index()
 
     keyword = "C调用"
     res = search(keyword)
