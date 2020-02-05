@@ -28,6 +28,18 @@ def text_to_tokens(text: str):
     :param text: str, utf-8
     :return:     {word: [pos1, pos2, ...], ... }
     """
+    def add_token(res, token):
+        word, start, end = token
+
+        word = word.strip(' ').strip('\n').lower()
+        if not word or word in STOPWORDS:
+            return
+
+        if word not in res:
+            res[word] = []
+
+        res[word].append(start)
+
     if not text:
         return
 
@@ -36,27 +48,15 @@ def text_to_tokens(text: str):
     res = {}
     for token in tokens:
         word, start, end = token
-
-        word = word.strip(' ').strip('\n').lower()
-        if not word or word in STOPWORDS:
-            continue
-
-        if word not in res:
-            res[word] = []
-
-        res[word].append(start)
+        add_token(res, token)
 
         # N-Gram
         if len(word) >= NGRAM_N_MIN:
-            ngram_words = word_ngrams(word)
+            ngram_tokens = word_ngrams(word)
 
-            # nw, ngram word: (word, start, end)
-            for nw in ngram_words:
-                w, s, e = nw
-                if w not in res:
-                    res[w] = []
-
-                res[w].append(s)
+            # tk, ngram token: (word, start, end)
+            for tk in ngram_tokens:
+                add_token(res, tk)
 
     return res
 
