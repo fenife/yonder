@@ -13,7 +13,7 @@ from ses.api._utils import get_page_from_request, get_limit_from_request
 def query(ctx: AppRequestContext):
     kw = ctx.request.get_uri_arg('kw')
     if not kw:
-        abort("params `kw` is required")
+        abort(RespCode.error, "params `kw` is required")
 
     page = get_page_from_request(ctx)
     limit = get_limit_from_request(ctx)

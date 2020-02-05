@@ -26,13 +26,13 @@ def main():
     articles = [
         {
             "id": 1,
-            "title": "Python中调用C语言扩展模块hello调用",
+            "title": "Python中调用C语言扩展模块machine learning调用",
             12: '12',
             # "content": "Python中调用C语言扩展模块hello调用",
         },
         {
             "id": 2,
-            "title": "C语言中调用Python模块调用调用",
+            "title": "C语言中调用Python模块调用ai调用",
             # "content": "C语言中调用Python模块调用调用",
         },
 
