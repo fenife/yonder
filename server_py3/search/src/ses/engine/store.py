@@ -11,14 +11,6 @@ import sys
 import json
 import pprint
 
-try:
-    from ses import app
-    logger = app.logger
-except Exception as e:
-    import logging as logger
-
-cur_dir = os.path.abspath(os.path.dirname('.'))
-
 store_path = os.path.abspath(
     os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data')
 )

@@ -27,7 +27,6 @@ def main():
         {
             "id": 1,
             "title": "Python中调用C语言扩展模块machine learning调用",
-            12: '12',
             # "content": "Python中调用C语言扩展模块hello调用",
         },
         {

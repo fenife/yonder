@@ -45,4 +45,4 @@ app = create_app(os.getenv('YONDER_CONFIG') or 'dev')
 
 # 让Python加载模块，否则app.route装饰器不会运行，无法添加路由
 from . import middlewares
-from . import api
+from . import api, apiv2
