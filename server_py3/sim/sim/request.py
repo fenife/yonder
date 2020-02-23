@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 
+import logging
 import json
 from http.cookies import SimpleCookie
-from .log import logger
+# from .log import logger
 from .exceptions import abort
+
+logger = logging.getLogger(__name__)
 
 
 class Request(object):

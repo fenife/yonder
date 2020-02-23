@@ -2,6 +2,7 @@
 
 import time
 import sys
+import logging
 from urllib.parse import unquote
 from socketserver import ThreadingMixIn
 from http.server import HTTPServer, BaseHTTPRequestHandler
@@ -11,8 +12,11 @@ from platform import python_implementation
 from wsgiref.simple_server import SimpleHandler
 
 # logging.basicConfig(level=logging.DEBUG)
-from .log import logger
+# from .log import logger
 
+logger = logging.getLogger(__name__)
+# logger.addHandler(logging.StreamHandler())
+# logger.setLevel(logging.DEBUG)
 
 __version__ = "0.2"
 

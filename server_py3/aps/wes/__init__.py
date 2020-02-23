@@ -31,7 +31,7 @@ def create_app(config_name):
     print(f"env mode: {config_name}")
     print('-' * 50)
 
-    app = Application()
+    app = Application("yonder")
 
     config[config_name].init_app(app)
 
