@@ -11,9 +11,13 @@ from .. import api_group
 
 
 @api_group.route('/user/info')
-@login_required()
+# @login_required()
 def get_user_info(ctx: AppRequestContext):
     """登录用户的信息"""
+    # 未登陆
+    if not getattr(ctx, 'user', None):
+        return None
+
     user = ctx.user
     assert isinstance(user, User)
     return user.without_password()

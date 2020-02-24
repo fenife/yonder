@@ -20,7 +20,9 @@ class BaseConfig(object):
     # fmt = "\n%(asctime)s||lv=%(levelname)s||f=%(filename)s||func=%(funcName)s||line=%(lineno)d:: %(message)s"
     # " [%(process)s: %(threadName)s]" \
     formatter = logging.Formatter(
-        "[%(asctime)s] [%(levelname)5s] [%(name)s]" 
+        "[%(asctime)s] [%(levelname)-5s]"
+        " [%(threadName)s]"
+        " [%(name)s]"
         " [%(filename)s:%(funcName)s:%(lineno)d]" 
         " -- %(message)s",
         datefmt='%Y-%m-%d %H:%M:%S'
