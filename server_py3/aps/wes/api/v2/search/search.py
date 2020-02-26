@@ -24,8 +24,8 @@ def search(ctx: AppRequestContext):
     page = ctx.request.get_uri_arg('page')
     limit = ctx.request.get_uri_arg('limit')
 
-    resp = call_ses_query(kw, page, limit)
-
+    res = call_ses_query(kw, page, limit)
+    resp = Response(data=res['data'], code=res['code'], msg=res['msg'])
     return resp
 
 
