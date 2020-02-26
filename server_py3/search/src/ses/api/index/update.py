@@ -4,7 +4,7 @@ from sim.exceptions import abort
 from sim.context import AppRequestContext
 from ses import app
 from ses.api import api_group
-from ses.desc import ApiDescBase, api_desc_wrapper
+from ses.api.desc import ApiDescBase, api_desc_wrapper
 from ses.consts import RespCode
 from ses.engine.build import build
 from ses.engine.store import store_save

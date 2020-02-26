@@ -3,7 +3,7 @@
 from sim.exceptions import abort
 from sim.context import AppRequestContext
 from ses.api import api_group
-from ses.desc import ApiDescBase, api_desc_wrapper
+from ses.api.desc import ApiDescBase, api_desc_wrapper
 from ses.consts import RespCode
 from ses.engine.query import search
 from ses.api._utils import get_page_from_request, get_limit_from_request

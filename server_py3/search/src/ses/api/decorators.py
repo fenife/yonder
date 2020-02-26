@@ -5,7 +5,7 @@ import json
 
 from sim.exceptions import abort
 from sim.context import AppRequestContext
-from . import app, cache_pool
+from ses import app, cache_pool
 
 
 API_CACHE_EXPIRED = 10 * 60
