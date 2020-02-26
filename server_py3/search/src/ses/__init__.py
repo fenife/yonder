@@ -33,7 +33,7 @@ def create_app(config_name):
     print(f"env mode: {config_name}")
     print('-' * 50)
 
-    app = Application('yonder_search')
+    app = Application('yonder.search')
 
     config[config_name].init_app(app)
 
