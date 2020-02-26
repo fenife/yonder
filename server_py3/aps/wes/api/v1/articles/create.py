@@ -7,7 +7,7 @@ from wes.consts import RespCode, Permission, ARTICLE
 from wes.api.decorators import permission_required
 from wes.api.desc import ApiDescBase, api_desc_wrapper
 from .. import api_group
-from wes.api._utils import clear_cache_data, to_int
+from wes.api._utils import clear_cache_data, to_int, build_search_index
 
 
 @api_group.route('/article/create', methods=('POST', ))
@@ -65,6 +65,9 @@ def article_create(ctx: AppRequestContext):
     # 创建新文章后，清除文章列表等缓存，以展示最新的文章
     clear_cache_data('/api/article*')
     clear_cache_data('/api/archive*')
+
+    # 创建搜索服务的索引
+    build_search_index(article.id)
 
     return article
 
