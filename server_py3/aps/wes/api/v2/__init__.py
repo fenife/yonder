@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from sim.application import RouteGroup
-from .. import app
+from wes import app
 
 api_group_v2 = RouteGroup(app, base_rule='/api/v2')
 
