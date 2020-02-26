@@ -11,12 +11,9 @@ from platform import python_implementation
 # from wsgiref.simple_server import ServerHandler
 from wsgiref.simple_server import SimpleHandler
 
-# logging.basicConfig(level=logging.DEBUG)
-# from .log import logger
+# from .log import get_mod_log_name
 
 logger = logging.getLogger(__name__)
-# logger.addHandler(logging.StreamHandler())
-# logger.setLevel(logging.DEBUG)
 
 __version__ = "0.2"
 

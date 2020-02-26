@@ -3,8 +3,8 @@
 import logging
 import json
 from http.cookies import SimpleCookie
-# from .log import logger
 from .exceptions import abort
+# from .log import get_mod_log_name
 
 logger = logging.getLogger(__name__)
 

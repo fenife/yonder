@@ -10,8 +10,7 @@ import MySQLdb
 import logging
 
 from .pretty import dictList2Table
-# from .log import logger
-from .exceptions import abort
+# from .log import get_mod_log_name
 
 logger = logging.getLogger(__name__)
 

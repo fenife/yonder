@@ -3,9 +3,20 @@
 import sys
 import logging
 
+_BASE_LOG_NAME = 'yonder'
+
 # 指定logger输出格式
 _fmt = "\n%(asctime)s||lv=%(levelname)s||f=%(filename)s||func=%(funcName)s||line=%(lineno)d:: %(message)s"
 _formatter = logging.Formatter(_fmt, datefmt='%Y-%m-%d %H:%M:%S')
+
+
+def get_log_namespace():
+    return _BASE_LOG_NAME
+
+
+def get_mod_log_name(mod_name):
+    n = _BASE_LOG_NAME + '.' + mod_name
+    return n
 
 
 def init_stdout_logger(name, level=logging.DEBUG):
@@ -28,7 +39,7 @@ def init_stdout_logger(name, level=logging.DEBUG):
 # logger = init_stdout_logger('yonder')
 
 
-def create_logger(name):
+def create_sim_logger(name):
     lgr = logging.getLogger(name)
     fmt = logging.Formatter(
         "\n[%(asctime)s] [%(levelname)s] [%(name)s]"

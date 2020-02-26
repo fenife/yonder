@@ -5,6 +5,7 @@ import os
 import logging
 from logging.handlers import TimedRotatingFileHandler
 from sim.application import Application
+from sim.log import get_log_namespace
 
 env = os.getenv('YONDER_CONFIG') or 'dev'
 
@@ -16,9 +17,7 @@ else:
 
 class BaseConfig(object):
     # logger配置
-    fmt = "\n%(asctime)s||lv=%(levelname)s||f=%(filename)s||func=%(funcName)s||line=%(lineno)d:: %(message)s"
     # fmt = "\n%(asctime)s||lv=%(levelname)s||f=%(filename)s||func=%(funcName)s||line=%(lineno)d:: %(message)s"
-    # " [%(process)s: %(threadName)s]" \
     formatter = logging.Formatter(
         "[%(asctime)s] [%(levelname)-5s]"
         " [%(threadName)s]"
@@ -52,11 +51,7 @@ class BaseConfig(object):
         app.update_config(cls.configs)
 
         cls.setup_logger(app.logger)
-
-        sim_logger = logging.getLogger('sim')
-        sim_logger.handlers = []
-        cls.setup_logger(sim_logger)
-        # app.logger = sim_logger
+        cls.setup_logger(logging.getLogger('sim'))
 
 
 class DevConfig(BaseConfig):

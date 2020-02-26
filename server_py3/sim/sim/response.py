@@ -5,7 +5,7 @@ import logging
 from http.cookies import SimpleCookie
 
 from .status import code2name, code2status
-# from .log import logger
+# from .log import get_mod_log_name
 
 logger = logging.getLogger(__name__)
 

@@ -5,6 +5,7 @@ import os
 import logging
 from logging.handlers import TimedRotatingFileHandler
 from sim.application import Application
+from sim.log import BASE_LOG_NAME
 
 env = os.getenv('YONDER_CONFIG') or 'dev'
 
