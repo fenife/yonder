@@ -146,7 +146,7 @@ class ApiDescBase(object):
 
     @property
     def example(self):
-        """请求实例，格式自定义"""
+        """请求示例，格式自定义"""
         raise NotImplementedError("example method must be implemented")
 
     def __call__(self, *args, **kwargs):
@@ -184,8 +184,8 @@ def api_desc_wrapper():
         def wrapper(ctx, *args, **kwargs):
             assert issubclass(api_desc_class, ApiDescBase)
 
-            desc = api_desc_class(ctx)
-            resp = desc(*args, **kwargs)
+            desc = api_desc_class(ctx)      # 实例化
+            resp = desc(*args, **kwargs)    # 调用__call__
             return resp
 
         return wrapper

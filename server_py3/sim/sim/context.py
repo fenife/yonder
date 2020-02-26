@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 
 
+import logging
 from http.cookies import SimpleCookie
 
 from .request import Request
-from .log import logger
+# from .log import logger
+
+logger = logging.getLogger(__name__)
 
 
 class AppRequestContext(object):

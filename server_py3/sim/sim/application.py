@@ -15,11 +15,12 @@ from .tree import Tree
 from .exceptions import (AppBaseException, MethodNotAllowed, NotFound, InternalServerError)
 from .context import AppRequestContext
 from .response import Response
-from .log import logger
 
 
 class Application(object):
-    def __init__(self):
+    def __init__(self, name):
+        self.name = name
+
         # debug mode
         self.debug = False
 
@@ -46,7 +47,7 @@ class Application(object):
         self.after_request_funcs = []
 
         # this logger is for higher application
-        self.logger: logging.Logger = logger
+        self.logger: logging.Logger = logging.getLogger(name)
 
         # configs
         self.config = {}

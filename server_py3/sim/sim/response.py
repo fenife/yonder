@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 
 import json
+import logging
 from http.cookies import SimpleCookie
 
 from .status import code2name, code2status
-from .log import logger
+# from .log import logger
+
+logger = logging.getLogger(__name__)
 
 
 class Response(object):
