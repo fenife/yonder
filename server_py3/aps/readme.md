@@ -5,6 +5,10 @@ sim: simple micro framework
 ydr: yonder
 
 ## todo
+    build index when start app
+    filter article status (can show or not)
+
+## done
     models:
     user
     
@@ -19,5 +23,3 @@ ydr: yonder
 
     middleware:
     auth
-
-## done

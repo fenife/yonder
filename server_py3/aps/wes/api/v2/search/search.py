@@ -9,9 +9,8 @@ from wes.model import User, Category, Article
 from wes.consts import RespCode, Permission, RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
 from wes.api.decorators import permission_required, login_required
 from wes.api.desc import ApiDescBase, api_desc_wrapper
-from wes.api._utils import get_page_from_request, get_limit_from_request
+from wes.api._utils import call_ses_query
 from .. import api_group_v2
-from .ext import call_ses_query
 
 
 @api_group_v2.route('/search')
@@ -24,9 +23,9 @@ def search(ctx: AppRequestContext):
 
     page = ctx.request.get_uri_arg('page')
     limit = ctx.request.get_uri_arg('limit')
+
     resp = call_ses_query(kw, page, limit)
 
-    # resp = []
     return resp
 
 

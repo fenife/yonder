@@ -9,7 +9,7 @@ from wes.consts import RespCode, Permission
 from wes.api.decorators import permission_required
 from wes.api.desc import ApiDescBase, api_desc_wrapper
 from .. import app, api_group
-from wes.api._utils import to_int, clear_cache_data
+from wes.api._utils import to_int, clear_cache_data, build_search_index
 from ._internal import content_hash, get_aid_from_request
 
 
@@ -84,6 +84,9 @@ def article_update(ctx: AppRequestContext):
 
         # 更新成功后，清除该文章详情的缓存
         clear_cache_data(f"/api/article/{article.id}*")
+
+        # 更新搜索服务的索引
+        build_search_index(article.id)
 
         return article
 
