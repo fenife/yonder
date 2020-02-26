@@ -12,6 +12,16 @@ from ses.engine.store import store_save
 
 @api_group.route('/index/update', methods=('POST',))
 def update(ctx: AppRequestContext):
+    """
+    新建或更新索引
+    :param ctx:
+    http body json required:
+    {
+        "title": "test",
+        "id": 2
+    }
+    :return:
+    """
     input_json = ctx.request.json()
     if not input_json:
         abort(RespCode.error, "body is empty")

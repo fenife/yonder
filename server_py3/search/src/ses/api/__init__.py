@@ -6,4 +6,5 @@ from .. import app
 api_group = RouteGroup(app, base_rule='/search')
 
 # 让Python加载模块，否则app.route装饰器不会运行，无法添加路由
+from . import decorators
 from . import index, query
