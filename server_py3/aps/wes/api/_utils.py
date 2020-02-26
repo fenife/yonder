@@ -3,8 +3,8 @@
 import markdown
 from sim.context import AppRequestContext
 from sim.exceptions import abort
-from .. import app, cache_pool
-from ..consts import RespCode
+from wes import app, cache_pool
+from wes.consts import RespCode
 
 
 # 每页展示的文章数目
