@@ -16,6 +16,7 @@ from sim.cache import AppCachePool
 
 from ses.config import config
 
+APP_NAME = 'ses'
 
 db = Database()
 cache_pool = AppCachePool()
@@ -33,7 +34,7 @@ def create_app(config_name):
     print(f"env mode: {config_name}")
     print('-' * 50)
 
-    app = Application('yonder.search')
+    app = Application(APP_NAME)
 
     config[config_name].init_app(app)
 
