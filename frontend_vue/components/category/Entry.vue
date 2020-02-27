@@ -3,7 +3,7 @@
     <Card>
       {{cate.name}}
       <ButtonGroup class="cate-tool">
-        <Button :size="buttonSize" @click="toEditPage"><Icon type="ios-code" /></Button>
+        <Button :size="buttonSize" @click="toEditPage"><Icon type="md-create" /></Button>
         <Button :size="buttonSize" @click="deleteConfirm = true"><Icon type="ios-close" /></Button>
         <Modal
           v-model="deleteConfirm"

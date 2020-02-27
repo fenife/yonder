@@ -1,7 +1,7 @@
 <template>
   <div>
     <ButtonGroup >
-      <Button :size="buttonSize" @click="updateArticle"><Icon type="ios-code" /></Button>
+      <Button :size="buttonSize" @click="updateArticle"><Icon type="md-create" /></Button>
       <Button :size="buttonSize" @click="confirm = true"><Icon type="ios-close" /></Button>
       <Modal
         v-model="confirm"

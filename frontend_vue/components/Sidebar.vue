@@ -6,7 +6,8 @@
         <p slot="title" class="card-title">操作</p>
         <ButtonGroup>
           <Button :size="buttonSize" @click="toCreateArticle">
-            <Icon type="md-create" />
+<!--            <Icon type="md-create" />-->
+            <Icon type="md-add" />
           </Button>
           <Button :size="buttonSize" @click="toTrashPage">
             <!--<Icon type="md-create" />-->
@@ -21,7 +22,7 @@
         <p slot="title" class="card-title">文章分类</p>
         <ButtonGroup slot="extra" v-if="isAdmin">
           <Button :size="buttonSize" @click="toCateList"><Icon type="ios-code" /></Button>
-          <Button :size="buttonSize" @click="toCreateCate"><Icon type="md-create" /></Button>
+          <Button :size="buttonSize" @click="toCreateCate"><Icon type="md-add" /></Button>
         </ButtonGroup>
 
         <cate-item
