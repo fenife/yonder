@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<style type="text/css">
+    .content {
+        background:#eee;
+        padding-bottom: 8px;
+        width: 1080px;
+        margin: 8px auto;
+        min-height: 300px;
+    }
+</style>
+
+<head>
+<meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="./test.css">
+    <link rel="stylesheet" type="text/css" href="./detail.css">
+</head>
+
+<body>
+<div class="content">
+    <-- converted HTML contents go here -->
+    <h2 id="_1">概述</h2>
+<p>我们知道，Python语法简单，但运行速度相对C、java等语言还是比较慢的；在CPU密集型程序中，
+为了提高运行速度，有时候需要我们写Python的C扩展；
+本文给出一个简单的Python调用C扩展的demo示例。</p>
+<h2 id="_2">依赖</h2>
+<p>Python3
+virtualenv    </p>
+<h2 id="_3">流程</h2>
+<h3 id="_4">准备目录及环境</h3>
+<p>在个人工作目录下新建一个目录存放源文件，比如我的工作目录为：<code>/icode/learn/cpy/</code>，</p>
+<p>进入工作目录：
+cd /icode/learn/cpy/</p>
+<p>新建目录：
+mkdir demo</p>
+<p>进入该目录，后续所有操作都在该目录进行：
+cd demo</p>
+<p>新起一个独立的Python运行环境：
+virtualenv venv --python=python3</p>
+<p>新建的Python环境放在当前的<code>venv</code>目录下，进入该环境：
+source venv/bin/activate</p>
+<h3 id="c">C源码</h3>
+<p>新建一个文件<code>demo.c</code>，写入以下C代码（代码中各API的含义后面再分析）：</p>
+<div class="codehilite"><pre><span></span><span class="cp">#include</span> <span class="cpf">&quot;Python.h&quot;</span><span class="cp"></span>
+
+<span class="k">static</span> <span class="n">PyObject</span> <span class="o">*</span><span class="nf">py_hello</span><span class="p">(</span><span class="n">PyObject</span> <span class="o">*</span><span class="n">self</span><span class="p">,</span> <span class="n">PyObject</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+    <span class="cm">/* print hello */</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;hello</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+
+    <span class="cm">/* return None */</span>
+    <span class="k">return</span> <span class="n">Py_BuildValue</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/* Module method table */</span>
+<span class="k">static</span> <span class="n">PyMethodDef</span> <span class="n">DemoMethods</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="p">{</span><span class="s">&quot;hello&quot;</span><span class="p">,</span> <span class="n">py_hello</span><span class="p">,</span>   <span class="n">METH_VARARGS</span><span class="p">,</span> <span class="s">&quot;hello&quot;</span><span class="p">},</span>
+  <span class="p">{</span> <span class="nb">NULL</span><span class="p">,</span>   <span class="nb">NULL</span><span class="p">,</span>       <span class="mi">0</span><span class="p">,</span>            <span class="nb">NULL</span><span class="p">}</span>
+<span class="p">};</span>
+
+<span class="cm">/* Module structure */</span>
+<span class="k">static</span> <span class="k">struct</span> <span class="n">PyModuleDef</span> <span class="n">demomodule</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="n">PyModuleDef_HEAD_INIT</span><span class="p">,</span>
+
+  <span class="s">&quot;demo&quot;</span><span class="p">,</span>           <span class="cm">/* name of module */</span>
+  <span class="s">&quot;A demo module&quot;</span><span class="p">,</span>  <span class="cm">/* Doc string (may be NULL) */</span>
+  <span class="o">-</span><span class="mi">1</span><span class="p">,</span>               <span class="cm">/* Size of per-interpreter state or -1 */</span>
+  <span class="n">DemoMethods</span>       <span class="cm">/* Method table */</span>
+<span class="p">};</span>
+
+<span class="cm">/* Module initialization function */</span>
+<span class="n">PyMODINIT_FUNC</span>
+<span class="nf">PyInit_demo</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="n">PyModule_Create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">demomodule</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h3 id="_5">编译</h3>
+<ol>
+<li>新建<code>setup.py</code>以构建函数库，代码如下：</li>
+</ol>
+<div class="codehilite"><pre><span></span><span class="kn">from</span> <span class="nn">distutils.core</span> <span class="kn">import</span> <span class="n">setup</span><span class="p">,</span> <span class="n">Extension</span>
+
+<span class="n">demomodule</span> <span class="o">=</span> <span class="n">Extension</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span>
+                       <span class="n">sources</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;demo.c&#39;</span><span class="p">])</span>
+
+<span class="n">setup</span> <span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;demo&#39;</span><span class="p">,</span>
+       <span class="n">version</span> <span class="o">=</span> <span class="s1">&#39;1.0&#39;</span><span class="p">,</span>
+       <span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;This is a demo package&#39;</span><span class="p">,</span>
+       <span class="n">ext_modules</span> <span class="o">=</span> <span class="p">[</span><span class="n">demomodule</span><span class="p">])</span>
+</pre></div>
+
+
+<ol>
+<li>编译，生成共享库</li>
+</ol>
+<div class="codehilite"><pre><span></span><span class="o">(</span>venv<span class="o">)</span>$ python setup.py build
+running build
+running build_ext
+building <span class="s1">&#39;demo&#39;</span> extension
+creating build
+creating build/temp.linux-x86_64-3.6
+x86_64-linux-gnu-gcc -pthread -DNDEBUG -g -fwrapv -O2 -Wall -g 
+    -fstack-protector-strong -Wformat -Werror<span class="o">=</span>format-security -Wdate-time 
+    -D_FORTIFY_SOURCE<span class="o">=</span><span class="m">2</span> -fPIC -I/usr/include/python3.6m 
+    -I/icode/learn/cpy/demo/venv/include/python3.6m -c demo.c 
+    -o build/temp.linux-x86_64-3.6/demo.o
+creating build/lib.linux-x86_64-3.6
+x86_64-linux-gnu-gcc -pthread -shared -Wl,-O1 -Wl,-Bsymbolic-functions 
+    -Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-Bsymbolic-functions -Wl,-z,relro 
+    -g -fstack-protector-strong -Wformat -Werror<span class="o">=</span>format-security -Wdate-time 
+    -D_FORTIFY_SOURCE<span class="o">=</span><span class="m">2</span> build/temp.linux-x86_64-3.6/demo.o 
+    -o build/lib.linux-x86_64-3.6/demo.cpython-36m-x86_64-linux-gnu.so
+</pre></div>
+
+
+<p>可见，生成的共享库文件<code>demo.cpython-36m-x86_64-linux-gnu.so</code>被放在子目录<code>build/lib.system</code>下。
+​    </p>
+<h3 id="_6">安装</h3>
+<p>编译好后，但是该子目录<code>build</code>不在环境变量<code>PYTHONPATH</code>中，所以还不能在Python代码中导入该共享库（模块），
+可以手动添加该子目录到<code>PYTHONPATH</code>中，但如果每次新建C扩展都要修改<code>PYTHONPATH</code>，就太麻烦了。所以Python提供了命令，把新生成的共享库文件安装到Python环境的<code>site-packages</code>下，相当于安装第三方的包，这样就可以直接在Python代码中导入。
+有两种安装方式：</p>
+<h4 id="setuppy">执行<code>setup.py</code>安装</h4>
+<p>执行<code>python setup.py install</code>即可。</p>
+<p>如果后续想要从<code>site-packages</code>中删除上面安装的包文件，可以先用下面的命令把包路径记录到文件中：</p>
+<div class="codehilite"><pre><span></span><span class="o">(</span>venv<span class="o">)</span>$ python setup.py install --record files.txt
+running install
+running build
+running build_ext
+running install_lib
+copying build/lib.linux-x86_64-3.6/demo.cpython-36m-x86_64-linux-gnu.so -&gt; 
+    /icode/learn/cpy/demo/venv/lib/python3.6/site-packages
+running install_egg_info
+Writing /icode/learn/cpy/demo/venv/lib/python3.6/site-packages/demo-1.0.egg-info
+writing list of installed files to <span class="s1">&#39;files.txt&#39;</span>
+</pre></div>
+
+
+<p>看下<code>files.txt</code>中的内容是什么：</p>
+<div class="codehilite"><pre><span></span><span class="o">(</span>venv<span class="o">)</span>$ cat files.txt 
+/icode/learn/cpy/demo/venv/lib/python3.6/site-packages/demo.cpython-36m-x86_64-linux-gnu.so
+/icode/learn/cpy/demo/venv/lib/python3.6/site-packages/demo-1.0.egg-info
+</pre></div>
+
+
+<p>可以看到，上面记录的就是安装包的绝对路径</p>
+<p>这种方式如何删除包？可执行下面的命令：</p>
+<div class="codehilite"><pre><span></span>xargs rm -rf &lt; files.txt
+</pre></div>
+
+
+<h4 id="pip">用pip安装</h4>
+<p>可直接在当前目录下执行：</p>
+<div class="codehilite"><pre><span></span><span class="o">(</span>venv<span class="o">)</span>$ pip install .
+Looking in indexes: https://mirrors.aliyun.com/pypi/simple
+Processing /icode/learn/cpy/demo
+Building wheels <span class="k">for</span> collected packages: demo
+  Building wheel <span class="k">for</span> demo <span class="o">(</span>setup.py<span class="o">)</span> ... <span class="k">done</span>
+  Created wheel <span class="k">for</span> demo: <span class="nv">filename</span><span class="o">=</span>demo-1.0-cp36-cp36m-linux_x86_64.whl 
+    <span class="nv">size</span><span class="o">=</span><span class="m">12892</span> <span class="nv">sha256</span><span class="o">=</span>add10d...
+  Stored in directory: /tmp/pip-ephem-wheel-cache-ed29mpkc/wheels/2f/a0/71/b24...
+Successfully built demo
+Installing collected packages: demo
+Successfully installed demo-1.0
+</pre></div>
+
+
+<p>看是否安装成功了：</p>
+<div class="codehilite"><pre><span></span><span class="o">(</span>venv<span class="o">)</span>$ ls venv/lib/python3.6/site-packages/demo*
+venv/lib/python3.6/site-packages/demo.cpython-36m-x86_64-linux-gnu.so
+
+venv/lib/python3.6/site-packages/demo-1.0.dist-info:
+INSTALLER  METADATA  RECORD  top_level.txt  WHEEL
+
+<span class="o">(</span>venv<span class="o">)</span>$ pip list <span class="p">|</span> grep demo
+demo       <span class="m">1</span>.0   
+</pre></div>
+
+
+<p>从上面的结果看，确实已经安装好了。</p>
+<p>可直接通过<code>pip</code>卸载该包？</p>
+<div class="codehilite"><pre><span></span><span class="o">(</span>venv<span class="o">)</span>$ pip uninstall demo
+Uninstalling demo-1.0:
+  Would remove:
+    /icode/learn/cpy/demo/venv/lib/python3.6/site-packages/demo-1.0.dist-info/*
+    /icode/learn/cpy/demo/venv/lib/python3.6/site-packages/demo.cpython-36m-x86_64-linux-gnu.so
+Proceed <span class="o">(</span>y/n<span class="o">)</span>? y
+  Successfully uninstalled demo-1.0
+</pre></div>
+
+
+<h3 id="python">Python中调用</h3>
+<p>新建<code>pydemo.py</code>测试，调用上面生成的<code>demo.*.so</code>包，代码如下：</p>
+<div class="codehilite"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">demo</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">demo</span><span class="o">.</span><span class="n">hello</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;c return:&#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+
+<p>然后执行该代码：</p>
+<div class="codehilite"><pre><span></span><span class="o">(</span>venv<span class="o">)</span>$ python pydemo.py
+hello
+c <span class="k">return</span>: None
+</pre></div>
+
+
+<p>可以看到：Python代码中成功调用了C语言中的函数。</p>
+<h2 id="_7">分析</h2>
+<div class="codehilite"><pre><span></span><span class="err">看完上面的例子后，我们来分析下写Python的C扩展的步骤，及用到的API</span>
+</pre></div>
+
+
+<h2 id="_8">参考：</h2>
+<ol>
+<li>
+<p><a href="https://docs.python.org/3.7/extending/building.html">Building C and C++ Extensions</a></p>
+</li>
+<li>
+<p><a href="https://docs.microsoft.com/en-us/visualstudio/python/working-with-c-cpp-python-in-visual-studio?view=vs-2019">Create a C++ extension for Python</a></p>
+</li>
+</ol>
+</div>
+</body>
+</html>
