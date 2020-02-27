@@ -15,6 +15,8 @@ from sim.cache import AppCachePool
 from wes.config import config
 
 
+APP_NAME = 'wes'
+
 db = Database()
 cache_pool = AppCachePool()
 
@@ -31,7 +33,7 @@ def create_app(config_name):
     print(f"env mode: {config_name}")
     print('-' * 50)
 
-    app = Application("app")
+    app = Application(APP_NAME)
 
     config[config_name].init_app(app)
 

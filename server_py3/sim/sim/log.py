@@ -2,6 +2,7 @@
 
 import sys
 import logging
+from logging.handlers import TimedRotatingFileHandler
 
 _BASE_LOG_NAME = 'yonder'
 
@@ -54,4 +55,39 @@ def create_sim_logger(name):
     lgr.setLevel(logging.DEBUG)
 
     return lgr
+
+
+#
+# logger setting
+#
+
+
+default_formatter = logging.Formatter(
+        "[%(asctime)s] [%(levelname)-5s]"
+        " [%(threadName)s]"
+        " [%(name)s]"
+        " [%(filename)s:%(funcName)s:%(lineno)d]"
+        " -- %(message)s",
+        datefmt='%Y-%m-%d %H:%M:%S'
+    )
+
+
+def setup_logger(logger, level=logging.DEBUG, log_file=None, fmt=None):
+    # logger配置
+    formatter = fmt or default_formatter
+
+    # 指定日志的最低输出级别
+    logger.setLevel(level)
+
+    # 控制台日志
+    ch = logging.StreamHandler(sys.stdout)
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
+
+    # 写日志到文件中
+    if log_file:
+        fn = log_file
+        fh = TimedRotatingFileHandler(filename=fn, when='MIDNIGHT')
+        fh.setFormatter(formatter)
+        logger.addHandler(fh)
 

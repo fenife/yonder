@@ -5,7 +5,7 @@ import os
 import logging
 from logging.handlers import TimedRotatingFileHandler
 from sim.application import Application
-from sim.log import get_log_namespace
+from sim.log import setup_logger
 
 env = os.getenv('YONDER_CONFIG') or 'dev'
 
@@ -16,42 +16,15 @@ else:
 
 
 class BaseConfig(object):
-    # logger配置
-    # fmt = "\n%(asctime)s||lv=%(levelname)s||f=%(filename)s||func=%(funcName)s||line=%(lineno)d:: %(message)s"
-    formatter = logging.Formatter(
-        "[%(asctime)s] [%(levelname)-5s]"
-        " [%(threadName)s]"
-        " [%(name)s]"
-        " [%(filename)s:%(funcName)s:%(lineno)d]" 
-        " -- %(message)s",
-        datefmt='%Y-%m-%d %H:%M:%S'
-    )
     log_level = logging.DEBUG
-
     configs = configs
-
-    @classmethod
-    def setup_logger(cls, logger):
-        # 指定日志的最低输出级别
-        logger.setLevel(cls.log_level)
-
-        # 控制台日志
-        ch = logging.StreamHandler(sys.stdout)
-        ch.setFormatter(cls.formatter)
-        logger.addHandler(ch)
-
-        # 写日志到文件中
-        fn = cls.configs['LOG_FILE']
-        fh = TimedRotatingFileHandler(filename=fn, when='MIDNIGHT')
-        fh.setFormatter(cls.formatter)
-        logger.addHandler(fh)
 
     @classmethod
     def init_app(cls, app: Application):
         app.update_config(cls.configs)
 
-        cls.setup_logger(app.logger)
-        cls.setup_logger(logging.getLogger('sim'))
+        for lgr in [app.logger, logging.getLogger('sim')]:
+            setup_logger(lgr, level=cls.log_level, log_file=cls.configs['LOG_FILE'])
 
 
 class DevConfig(BaseConfig):
