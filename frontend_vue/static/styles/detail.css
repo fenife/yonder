@@ -42,17 +42,18 @@
     color:#fff;
 }
 .article-content a {
-    color: #ea6f5a;
+    /*color: #ea6f5a;*/
 }
 .article-content a:hover {
-    color: #17a2b8;
+    /*color: #f92572;*/
 }
+
 .article-toc {
-    position: fixed;
-    max-width: 20%;
+    /*position: fixed;*/
+    /*max-width: 20%;*/
 }
 .toc ul {
-    padding-left:2em;
+    padding-left:0.5em;
 }
 .toc >ul > li {
     list-style-type: upper-roman;

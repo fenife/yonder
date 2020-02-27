@@ -39,7 +39,18 @@
         </div>
       </div>
     </Card>
-    <!--todo: 添加文章目录 -->
+
+    <!-- 添加文章目录 -->
+    <div class="catalogue">
+      <Card dis-hover>
+        <div v-if="toc" class="article-toc">
+          <div v-html="toc"></div>
+        </div>
+      </Card>
+    </div>
+
+    <Back-top></Back-top>
+
   </div>
 </template>
 
@@ -82,11 +93,13 @@
 
         let result = resp[0].data
         let article = result.article || {}
+        let toc = result.toc
         let pre = result.pre
         let next = result.next
 
         return {
           article: article,
+          toc: toc,
           pre: pre,
           next: next,
         }
@@ -106,7 +119,8 @@
     components: {
       "article-tool": ArticleTool,
     },
-    layout: "nosidebar",
+    // layout: "nosidebar",
+    layout: "detail",
   }
 </script>
 
@@ -144,5 +158,13 @@
   }
   .next-article {
     float: right;
+  }
+
+  .catalogue {
+    position: fixed;
+    top: 70px;
+    right: 0.5rem;
+    cursor: pointer;
+    display: flex;
   }
 </style>
