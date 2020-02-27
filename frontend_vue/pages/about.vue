@@ -16,7 +16,17 @@
         <div v-html="article.content"></div>
       </div>
     </Card>
-    <!--todo: 添加文章目录 -->
+    <!-- 添加文章目录 -->
+    <div v-if="toc" class="catalogue">
+      <Card dis-hover>
+        <div class="article-toc">
+          <div v-html="toc"></div>
+        </div>
+      </Card>
+    </div>
+
+    <Back-top></Back-top>
+
   </div>
 </template>
 
@@ -41,14 +51,16 @@
         })
       ]).then(resp => {
         // console.log("get data:", resp)
-        let result = resp[0]
-
-        if (result.code !== 0) {
+        if (resp[0].code !== 0) {
           ctx.error({ message: "not found", statusCode: 404 })
         }
-        let article = result.data || {}
+
+        let result = resp[0].data
+        let article = result.article || {}
+        let toc = result.toc
         return {
           article: article,
+          toc: toc,
         }
       }).catch(err => {
         // console.log("catch error:", err)
@@ -58,7 +70,7 @@
     components: {
       "article-tool": ArticleTool,
     },
-    layout: "nosidebar",
+    layout: "detail",
   }
 </script>
 
@@ -76,5 +88,13 @@
     p {
       padding: 8px;
     }
+  }
+
+  .catalogue {
+    position: fixed;
+    top: 70px;
+    right: 0.5rem;
+    cursor: pointer;
+    display: flex;
   }
 </style>
