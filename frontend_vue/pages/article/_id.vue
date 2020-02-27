@@ -41,9 +41,9 @@
     </Card>
 
     <!-- 添加文章目录 -->
-    <div class="catalogue">
+    <div v-if="toc" class="catalogue">
       <Card dis-hover>
-        <div v-if="toc" class="article-toc">
+        <div class="article-toc">
           <div v-html="toc"></div>
         </div>
       </Card>
