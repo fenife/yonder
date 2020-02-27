@@ -83,7 +83,10 @@ def article_update(ctx: AppRequestContext):
             abort(RespCode.error, "update article error")
 
         # 更新成功后，清除该文章详情的缓存
-        clear_cache_data(f"/api/article/{article.id}*")
+        clear_cache_data(f"/api/article/detail?aid={article.id}*")
+
+        if article.title == 'about':
+            clear_cache_data(f"/api/about*")
 
         # 更新搜索服务的索引
         build_search_index(article.id)
