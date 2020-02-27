@@ -1,55 +1,29 @@
 #!/usr/bin/env python3
 
+"""
+创建、更新文章的搜索索引
+"""
+
+import os
 import sys
 import logging
 import json
 import requests
 import datetime
-from logging.handlers import TimedRotatingFileHandler
 
+sim_path = os.path.abspath(os.path.join(os.path.dirname(__name__), '..', 'sim'))
+sys.path.append(sim_path)
+
+from sim.log import setup_logger
 from wes import db
 
-
-# logger = logging.getLogger('yonder.build_index')
-logger = logging.getLogger()
-
-
-def setup_logger(logger):
-
-    # logger配置
-    formatter = logging.Formatter(
-        "[%(asctime)s] [%(levelname)-5s]"
-        " [%(threadName)s]"
-        " [%(name)s]"
-        " [%(filename)s:%(funcName)s:%(lineno)d]"
-        " -- %(message)s",
-        datefmt='%Y-%m-%d %H:%M:%S'
-    )
-    log_level = logging.DEBUG
-
-    # 指定日志的最低输出级别
-    logger.setLevel(log_level)
-
-    # 控制台日志
-    ch = logging.StreamHandler(sys.stdout)
-    ch.setFormatter(formatter)
-    logger.addHandler(ch)
-
-    # 写日志到文件中
-    fn = "logs/build_index.log"
-    fh = TimedRotatingFileHandler(filename=fn, when='MIDNIGHT')
-    fh.setFormatter(formatter)
-    logger.addHandler(fh)
-
-    return logger
+log_name = os.path.basename(__file__).split('.')[0]
+logger = logging.getLogger(log_name)
 
 
 def init():
-    setup_logger(logger)
-
-    # sim_logger = logging.getLogger('sim')
-    # sim_logger.handlers = []
-    # setup_logger(sim_logger)
+    for lgr in [logger, logging.getLogger('sim')]:
+        setup_logger(lgr, log_file="logs/build_index.log")
 
 
 def build_search_index():
@@ -57,7 +31,7 @@ def build_search_index():
     更新索引
     :return:
     """
-
+    logger.info('start to build index')
     sql = f"""
     select 
         a.id, a.title, a.created_at, a.updated_at, 
@@ -70,8 +44,16 @@ def build_search_index():
     if not items:
         raise Exception(f"can not get articles")
 
+    success = 0
+    failed = []
     for article in items:
-        r = call_ses_update(article)
+        resp = call_ses_update(article)
+        if not resp or resp['code'] != 0:
+            failed.append(article["id"])
+        else:
+            success += 1
+
+    logger.info(f"end to build index, success: {success}, failed: {failed}")
 
 
 def call_ses_update(article):
@@ -118,7 +100,7 @@ def call_ses_query(kw, page=None, limit=None):
 def test():
     article = {
         "id": 1,
-        "title": "aafdsfdsa",
+        "title": "aafdsfdse",
         "content": "afadasdf",
         "updated_at": datetime.datetime(2020, 2, 26, 17, 27, 42),
         "cate_id": 2
