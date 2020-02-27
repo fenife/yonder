@@ -82,7 +82,7 @@ const apiList = {
 
   // 搜索
   searchArticle: {
-    url: baseUrl + "/search",
+    url: baseUrl + "/v2/search",
     method: "GET"
   },
 

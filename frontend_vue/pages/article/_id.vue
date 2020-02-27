@@ -123,6 +123,8 @@
   .article-content {
     padding: 0 12px;
     font-size: 16px;
+    /*word-wrap:break-word;*/
+    /*word-break:break-all;*/
 
     p {
       padding: 8px;
@@ -133,6 +135,7 @@
       background-color: #f6f6f6;
     }
   }
+
   .pre-next {
     overflow: auto;
   }
