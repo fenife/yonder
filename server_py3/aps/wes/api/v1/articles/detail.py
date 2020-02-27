@@ -21,10 +21,11 @@ def article_detail(ctx: AppRequestContext):
     if not article:
         abort(RespCode.error, "article not found")
 
+    toc = None
     # ct: article content type
     ct = ctx.request.query('ct')
     if ct == 'html' and article.content:
-        article.content = md2html(article.content)
+        article.content, toc = md2html(article.content)
 
     _pre = article.get_pre()
     if _pre:
@@ -38,6 +39,7 @@ def article_detail(ctx: AppRequestContext):
 
     resp = {
         "article": article,
+        "toc": toc,
         "pre": _pre,
         "next": _next,
     }
@@ -112,7 +114,8 @@ class ApiArticleDetailDesc(ApiDescBase):
                         "cate_id": 2,
                         "title": "aafdafds",
                         "status": 1
-                    }
+                    },
+                    "toc": "<div class=\"toc\">\n<ul>\n<li><a href=\"#hello\">hello</a></li>\n</ul>\n</div>\n",
                 },
                 "msg": "OK"
             }

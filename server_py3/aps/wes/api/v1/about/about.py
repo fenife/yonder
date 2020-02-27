@@ -21,11 +21,17 @@ def about(ctx: AppRequestContext):
     article = Article.get_with_more_detail(article.id)
 
     # ct: article content type
+    toc = None
     ct = ctx.request.query('ct')
     if ct == 'html' and article.content:
-        article.content = md2html(article.content)
+        article.content, toc = md2html(article.content)
 
-    return article
+    resp = {
+        "article": article,
+        "toc": toc,
+    }
+
+    return resp
 
 
 @api_group.route('/about/desc', methods=('GET', ))
@@ -52,29 +58,32 @@ class ApiAboutDesc(ApiDescBase):
             "response": {
                 "code": 0,
                 "data": {
-                    "id": 5,
-                    "created_at": "2019-12-20 23:47:51",
-                    "updated_at": "2019-12-27 23:18:35",
-                    "user_id": 1,
-                    "cate_id": 1,
-                    "title": "about",
-                    "content": "<h1 id=\"hello\">hello</h1>\n<p>world</p>",
-                    "status": 2,
-                    "user": {
-                        "id": 1,
-                        "created_at": "2019-12-20 23:38:53",
-                        "updated_at": "2019-12-20 23:38:53",
-                        "name": "admin",
-                        "role_id": 1,
-                        "status": 1
+                    "article": {
+                        "id": 5,
+                        "created_at": "2019-12-20 23:47:51",
+                        "updated_at": "2019-12-27 23:18:35",
+                        "user_id": 1,
+                        "cate_id": 1,
+                        "title": "about",
+                        "content": "<h1 id=\"hello\">hello</h1>\n<p>world</p>",
+                        "status": 2,
+                        "user": {
+                            "id": 1,
+                            "created_at": "2019-12-20 23:38:53",
+                            "updated_at": "2019-12-20 23:38:53",
+                            "name": "admin",
+                            "role_id": 1,
+                            "status": 1
+                        },
+                        "category": {
+                            "id": 1,
+                            "created_at": "2019-12-20 23:46:07",
+                            "updated_at": "2019-12-20 23:46:07",
+                            "name": "aaa",
+                            "status": 1
+                        }
                     },
-                    "category": {
-                        "id": 1,
-                        "created_at": "2019-12-20 23:46:07",
-                        "updated_at": "2019-12-20 23:46:07",
-                        "name": "aaa",
-                        "status": 1
-                    }
+                    "toc": "<div class=\"toc\">\n<ul>\n<li><a href=\"#hello\">hello</a></li>\n</ul>\n</div>\n"
                 },
                 "msg": "OK"
             }

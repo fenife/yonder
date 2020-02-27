@@ -92,15 +92,22 @@ def clear_cache_data(pattern: str):
 
 
 def md2html(content):
-    exts = [
+    md = markdown.Markdown(extensions=[
         'markdown.extensions.extra',
         'markdown.extensions.codehilite',
         'markdown.extensions.tables',
-        'markdown.extensions.toc'
-    ]
-    # markdown covert to html
-    html = markdown.markdown(content, extensions=exts)
-    return html
+        'markdown.extensions.toc',
+    ])
+    html = md.convert(content)
+    toc = md.toc        # top of content
+
+    # print(md.toc_tokens)      # 非html的toc
+
+    if toc == """<div class="toc">\n<ul></ul>\n</div>\n""":
+        # 相当于目录为空
+        toc = None
+
+    return html, toc
 
 
 def build_search_index(aid):
