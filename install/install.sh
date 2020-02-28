@@ -105,6 +105,7 @@ function install_backup() {
 # vi config_live.py
 # cd /work/yonder/server_py3/
 # python3 migrate.py all
+# python3 main.py admin
 
 
 WORK_SERVER_PY3=${PROJECT_DIR}/server_py3
@@ -133,17 +134,62 @@ function install_yonder_server_py3() {
     fi
 
     cd ${WORK_SERVER_PY3}
-    pid=$(ps aux | grep 'main.py' | grep -v grep | awk '{print $2}')
+    pid=$(ps aux | grep 'aps/main.py' | grep -v grep | awk '{print $2}')
     if [ -n "${pid}" ]; then
         echo "${pid}" | xargs sudo kill -9
     fi
 
     python3 ${WORK_SERVER_PY3}/aps/main.py & > /dev/null 2>&1
 
-    ps aux | grep main.py | grep -v grep
+    ps aux | grep "aps/main.py" | grep -v grep
 }
 
+# search service
+# /work/yonder/server_py3/search
+# cd /work/yonder/server_py3/aps/wes/config
+# cp config_dev.py config_live.py
+# vi config_live.py
+# cd /work/yonder/server_py3/
+# python3 migrate.py all
+# python3 main.py admin
 
+
+SEARCH_HOME=${PROJECT_DIR}/server_py3/search
+SEARCH_LOG=${SEARCH_HOME}/logs
+SEARCH_DATA=${SEARCH_HOME}/data
+
+function install_yonder_search_service() {
+    echo ''
+    echo "copy and edit config_live.py first"
+    echo ''
+    sleep 0.5
+
+    export PYTHONPATH=$PYTHONPATH:${WORK_SERVER_PY3}/sim
+    echo $PYTHONPATH
+
+    echo "export YONDER_CONFIG=live"
+    export YONDER_CONFIG=live
+
+    echo "start search service ... "
+
+    if [ ! -d ${SEARCH_LOG} ]; then
+        mkdir ${SEARCH_LOG} -p
+    fi
+
+    if [ ! -d ${SEARCH_DATA} ]; then
+        mkdir ${SEARCH_DATA} -p
+    fi
+
+    cd ${SEARCH_HOME}/src
+    pid=$(ps aux | grep 'ses/main.py' | grep -v grep | awk '{print $2}')
+    if [ -n "${pid}" ]; then
+        echo "${pid}" | xargs sudo kill -9
+    fi
+
+    python3 ${SEARCH_HOME}/src/main.py & > /dev/null 2>&1
+
+    ps aux | grep "search/src/main.py" | grep -v grep
+}
 
 function install_all_without_conf() {
     install_yonder_nginx
@@ -174,11 +220,14 @@ case $1 in
     backup)
         install_backup
         ;;
+    search)
+        install_yonder_search_service
+        ;;
     all)
         install_all_without_conf
         ;;
     *)
-        echo "$0 {nginx|vue|go|config_go|py3|backup|all}"
+        echo "$0 {nginx|vue|go|config_go|py3|backup|search|all}"
         exit 1
         ;;
 esac
