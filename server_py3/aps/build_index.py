@@ -22,7 +22,7 @@ logger = logging.getLogger(log_name)
 
 
 def init():
-    for lgr in [logger, logging.getLogger('sim')]:
+    for lgr in [logger]:
         setup_logger(lgr, log_file="logs/build_index.log")
 
 
