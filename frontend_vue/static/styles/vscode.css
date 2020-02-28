@@ -1,0 +1,67 @@
+/* see:
+ * https://github.com/richleland/pygments-css/pull/20/commits/b10a47e9431d94e72586fac5b6a176d8d14e763d
+ */
+/** Visual Studio Code Syntax highlighting styles */
+.codehilite { background: #1E1E1E; color: #D4D4D4; }
+.highlighter-rouge .codehilite { background: #1E1E1E; }
+.codehilite .c { color: #618A51; }
+.codehilite .err { color: #a61717; background-color: #1E1E1E; }
+.codehilite .k { color: #589CD3; }
+.codehilite .o { font-weight: bold; }
+.codehilite .cm { color: #618A51; }
+.codehilite .cp { color: #999; font-weight: bold; }
+.codehilite .c1 { color: #618A51; }
+.codehilite .cs { color: #999; font-weight: bold; font-style: italic; }
+.codehilite .gd { color: #000; }
+.codehilite .gd .x { color: #000; }
+.codehilite .ge { font-style: italic; }
+.codehilite .gr { color: #a00; }
+.codehilite .gh { color: #999; }
+.codehilite .gi { color: #000; }
+.codehilite .gi .x { color: #000; }
+.codehilite .go { color: #888; }
+.codehilite .gp { color: #555; }
+.codehilite .gs { font-weight: bold; }
+.codehilite .gu { color: #aaa; }
+.codehilite .gt { color: #a00; }
+.codehilite .kc { color: #589CD3; }
+.codehilite .kd { color: #589CD3; }
+.codehilite .kp { color: #589CD3; }
+.codehilite .kr { color: #589CD3; }
+.codehilite .kt { color: #589CD3; }
+.codehilite .m { color: #099; }
+.codehilite .s { color: #CD917A; }
+.codehilite .na { color: #9DDBFB; }
+.codehilite .nb { color: #9DDBFB; }
+.codehilite .nc { color: #54C8B0; }
+.codehilite .no { color: #008080; }
+.codehilite .ni { color: #800080; }
+.codehilite .ne { color: #900; font-weight: bold; }
+.codehilite .nf { color: #DCDCAD; font-weight: bold; }
+.codehilite .nn { color: #54C8B0; }
+.codehilite .nt { color: #54C8B0; }
+.codehilite .nv { color: #008080; }
+.codehilite .ow { color: #589CD3; font-weight: bold; }
+.codehilite .w { color: #bbb; }
+.codehilite .mf { color: #099; }
+.codehilite .mh { color: #099; }
+.codehilite .mi { color: #B5CEA4; }
+.codehilite .mo { color: #099; }
+.codehilite .sb { color: #CD917A; }
+.codehilite .sc { color: #CD917A; }
+.codehilite .sd { color: #CD917A; }
+.codehilite .s2 { color: #CD917A; }
+.codehilite .se { color: #CD917A; }
+.codehilite .sh { color: #CD917A; }
+.codehilite .si { color: #CD917A; }
+.codehilite .sx { color: #CD917A; }
+.codehilite .sr { color: #009926; }
+.codehilite .s1 { color: #CD917A; }
+.codehilite .ss { color: #990073; }
+.codehilite .bp { color: #999; }
+.codehilite .vc { color: #008080; }
+.codehilite .vg { color: #008080; }
+.codehilite .vi { color: #008080; }
+.codehilite .il { color: #099; }
+.codehilite .ld { color: #e6db74; }
+.codehilite .nx { color: #9DDBFB; }
