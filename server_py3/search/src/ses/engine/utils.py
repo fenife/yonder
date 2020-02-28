@@ -2,7 +2,9 @@
 
 import os
 import jieba
+import logging
 
+logger = logging.getLogger(__name__)
 
 NGRAM_N_MIN = 2      # N-Gram, 分词的最小长度
 NGRAM_N_MAX = 5      # N-Gram, 分词的最大长度
@@ -43,6 +45,7 @@ def text_to_tokens(text: str):
     if not text:
         return
 
+    # 先用jieba分词，如果分词太长，还要N-Gram分词
     tokens = jieba.tokenize(text, mode='search')
 
     res = {}
@@ -58,6 +61,7 @@ def text_to_tokens(text: str):
             for tk in ngram_tokens:
                 add_token(res, tk)
 
+    logger.debug(f"tokens: {res}")
     return res
 
 

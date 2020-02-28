@@ -10,10 +10,13 @@ import os
 import sys
 import jieba
 import pprint
+import logging
 from collections import OrderedDict
 
 from .store import total_data, total_index, store_load
 from .utils import text_to_tokens
+
+logger = logging.getLogger(__name__)
 
 
 def search_one_word(keyword):

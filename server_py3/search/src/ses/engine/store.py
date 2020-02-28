@@ -10,6 +10,9 @@ import os
 import sys
 import json
 import pprint
+import logging
+
+logger = logging.getLogger(__name__)
 
 store_path = os.path.abspath(
     os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data')
@@ -35,8 +38,8 @@ def store_save():
         if not os.path.exists(store_path):
             os.mkdir(store_path)
 
-        print("data to save:")
-        pprint.pprint(total_data)
+        # print("data to save:")
+        # pprint.pprint(total_data)
         with open(data_path, 'w') as f:
             json.dump(total_data, f, indent=1)
 
@@ -44,7 +47,7 @@ def store_save():
             json.dump(total_index, f)
 
     except Exception as e:
-        print('save data for search failed')
+        logger.exception('save data for search failed')
         raise
 
 
@@ -61,10 +64,10 @@ def store_load():
             with open(index_path, 'r') as f:
                 total_index.update(json.load(f))
 
-        print('load data for search success')
+        logger.info('load data for search success')
 
     except Exception as e:
-        print('load data for search failed')
+        logger.exception('load data for search failed')
         raise
 
 

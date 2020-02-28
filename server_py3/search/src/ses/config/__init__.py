@@ -23,7 +23,13 @@ class BaseConfig(object):
     def init_app(cls, app: Application):
         app.update_config(cls.configs)
 
-        for lgr in [app.logger, logging.getLogger('sim')]:
+        loggers = [
+            app.logger,
+            logging.getLogger('sim'),
+            logging.getLogger('engine'),
+        ]
+
+        for lgr in loggers:
             setup_logger(lgr, level=cls.log_level, log_file=cls.configs['LOG_FILE'])
 
 

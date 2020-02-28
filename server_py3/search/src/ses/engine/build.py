@@ -9,10 +9,13 @@ tf: term frequency
 import os
 import sys
 import pprint
+import logging
 
 from .store import total_data, total_index, store_save
 from .utils import text_to_tokens
-from ses import app
+# from ses import app
+
+logger = logging.getLogger(__name__)
 
 
 def build_index(doc_id, text):
@@ -72,7 +75,7 @@ def build(article):
     try:
         doc_id, text = str(article['id']), article['title']
     except Exception as e:
-        app.logger.exception("field `id`, `title` not found in article")
+        logger.exception("field `id`, `title` not found in article")
         raise
 
     # 删除已存在的文档索引，为相同id的文档重建索引
@@ -95,7 +98,7 @@ def build(article):
     try:
         build_index(doc_id, text)
     except Exception as e:
-        app.logger.exception("build index failed")
+        logger.exception("build index failed")
         raise
 
     total_data[doc_id] = article
