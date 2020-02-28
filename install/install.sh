@@ -129,15 +129,15 @@ function install_yonder_server_py3() {
         mkdir ${LOG_SERVER_PY3} -p
     fi
 
-    cd ${WORK_SERVER_PY3}
+    cd ${WORK_SERVER_PY3}/src/wes
     pid=$(ps aux | grep 'aps/main.py' | grep -v grep | awk '{print $2}')
     if [ -n "${pid}" ]; then
         echo "${pid}" | xargs sudo kill -9
     fi
 
-    python3 ${WORK_SERVER_PY3}/aps/main.py & > /dev/null 2>&1
+    python3 ${WORK_SERVER_PY3}/aps/src/main.py & > /dev/null 2>&1
 
-    ps aux | grep "aps/main.py" | grep -v grep
+    ps aux | grep "aps/src/main.py" | grep -v grep
 }
 
 # search service

@@ -11,7 +11,7 @@ import json
 import requests
 import datetime
 
-sim_path = os.path.abspath(os.path.join(os.path.dirname(__name__), '..', 'sim'))
+sim_path = os.path.abspath(os.path.join(os.path.dirname(__name__), '..', '..', 'sim'))
 sys.path.append(sim_path)
 
 from sim.log import setup_logger
