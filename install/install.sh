@@ -130,7 +130,7 @@ function install_yonder_server_py3() {
     fi
 
     cd ${WORK_SERVER_PY3}/src/wes
-    pid=$(ps aux | grep 'aps/main.py' | grep -v grep | awk '{print $2}')
+    pid=$(ps aux | grep 'aps/src/main.py' | grep -v grep | awk '{print $2}')
     if [ -n "${pid}" ]; then
         echo "${pid}" | xargs sudo kill -9
     fi
@@ -177,7 +177,7 @@ function install_yonder_search_service() {
     fi
 
     cd ${SEARCH_HOME}/src
-    pid=$(ps aux | grep 'ses/main.py' | grep -v grep | awk '{print $2}')
+    pid=$(ps aux | grep 'search/src/main.py' | grep -v grep | awk '{print $2}')
     if [ -n "${pid}" ]; then
         echo "${pid}" | xargs sudo kill -9
     fi
