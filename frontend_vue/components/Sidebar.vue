@@ -1,9 +1,26 @@
 <template>
   <div>
-    <div class="tool-cell">
+    <div class="person-info">
+      <Card dis-hover>
+        <p slot="title" class="card-title">个人空间</p>
+
+        <Tooltip content="源码" placement="bottom" theme="light">
+          <a class="person-info-item" href="https://github.com/kfrime/yonder.git">
+            <Icon size="30" type="logo-github" />
+          </a>
+        </Tooltip>
+
+        <Poptip trigger="hover" title="邮箱联系" content="kfrime@163.com" placement="top">
+          <Icon class="person-info-item" size="30" type="md-mail" />
+        </Poptip>
+
+      </Card>
+    </div>
+
+    <div v-if="isAdmin" class="tool-cell">
       <!--操作按钮-->
-      <Card dis-hover v-if="isAdmin">
-        <p slot="title" class="card-title">操作</p>
+      <Card dis-hover>
+        <p slot="title" class="card-title">文章操作</p>
         <ButtonGroup>
           <Button :size="buttonSize" @click="toCreateArticle">
 <!--            <Icon type="md-create" />-->
@@ -21,7 +38,7 @@
       <Card dis-hover>
         <p slot="title" class="card-title">文章分类</p>
         <ButtonGroup slot="extra" v-if="isAdmin">
-          <Button :size="buttonSize" @click="toCateList"><Icon type="ios-code" /></Button>
+          <Button :size="buttonSize" @click="toCateList"><Icon type="md-list" /></Button>
           <Button :size="buttonSize" @click="toCreateCate"><Icon type="md-add" /></Button>
         </ButtonGroup>
 
@@ -70,12 +87,22 @@
 </script>
 
 <style scoped>
+  .person-info a {
+    color: inherit;
+  }
+  .person-info-item {
+    /*padding-left: 5px;*/
+    padding-right: 15px;
+    /*margin-right: 15px;*/
+  }
+
   .tool-cell {
     /*padding: 8px;*/
+    padding-top: 8px;
   }
   .cate-cell {
     /*padding: 8px;*/
-    /*padding-top: 8px;*/
+    padding-top: 8px;
   }
   .card-title {
     font-size: 16px;
