@@ -46,11 +46,22 @@ function install_yonder_frontend() {
     echo "start frontend ..."
 
     cd ${WORK_FRONTEND}
-    sudo kill -9 $(ps aux | grep 'yonder_frontend_vue' | grep -v grep | awk '{print $2}')
-    npm i
-    sudo npm run build
-    sudo npm run start & > /dev/null 2>&1
-    ps aux | grep yonder_frontend_vue | grep -v grep 
+
+    # run first time
+    # sudo npm install -g cnpm --registry=https://registry.npm.taobao.org
+    # sudo cnpm install -g pm2
+    # pm2 list|start|restart|stop
+    # sudo pm2 start npm --name "yonder_frontend" -- run start
+
+    # restart project
+    pm2 restart yonder_frontend
+    ps aux | grep yonder_frontend | grep -v grep
+
+    # old command
+    # sudo kill -9 $(ps aux | grep 'yonder_frontend_vue' | grep -v grep | awk '{print $2}')
+    # npm i
+    # sudo npm run build
+    # sudo npm run start & > /dev/null 2>&1
 }
 
 # yonder_server_go
