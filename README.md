@@ -7,7 +7,7 @@
     aps: app service
     ses: search service
 
-## 依赖
+## 技术栈
     后端：
         golang
         Python
@@ -16,6 +16,9 @@
     
     前端：
         npm
+        vue 
+        nuxt
+        服务端渲染
 
 ## 部署
     1. 部署后端
