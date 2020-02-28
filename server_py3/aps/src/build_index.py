@@ -23,7 +23,7 @@ logger = logging.getLogger(log_name)
 
 def init():
     for lgr in [logger]:
-        setup_logger(lgr, log_file="logs/build_index.log")
+        setup_logger(lgr, log_file="/work/yonder/server_py3/aps/logs/build_index.log")
 
 
 def build_search_index():
