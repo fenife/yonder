@@ -37,7 +37,7 @@ configs = {
     "LOGIN_EXPIRED": 30 * 60,
 
     # log file path
-    "LOG_FILE": "/work/yonder/server_py3/search/logs/app.log"
+    "LOG_FILE": "/work/yonder/server_py3/search/logs/ses.log"
 }
 
 
