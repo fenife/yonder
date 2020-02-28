@@ -109,7 +109,7 @@ function install_backup() {
 
 
 WORK_SERVER_PY3=${PROJECT_DIR}/server_py3
-LOG_SERVER_PY3=${LOG_HOME}/server_py3
+LOG_SERVER_PY3=${WORK_SERVER_PY3}/aps/logs
 
 function install_yonder_server_py3() {
     echo ''
@@ -127,10 +127,6 @@ function install_yonder_server_py3() {
 
     if [ ! -d ${LOG_SERVER_PY3} ]; then
         mkdir ${LOG_SERVER_PY3} -p
-    fi
-
-    if [ ! -f ${LOG_SERVER_PY3}/app.log ]; then
-        touch ${LOG_SERVER_PY3}/app.log
     fi
 
     cd ${WORK_SERVER_PY3}
