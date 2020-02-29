@@ -1,4 +1,8 @@
 
+.codehilite {
+    border-radius: 3px;
+}
+
 /* code type: text */
 .codehilite pre {
     padding: .5rem;
