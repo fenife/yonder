@@ -5,7 +5,7 @@ import os
 import logging
 from logging.handlers import TimedRotatingFileHandler
 from sim.application import Application
-from sim.log import setup_logger
+from sim.log import setup_logger, LoggerManager
 
 env = os.getenv('YONDER_CONFIG') or 'dev'
 
@@ -23,8 +23,15 @@ class BaseConfig(object):
     def init_app(cls, app: Application):
         app.update_config(cls.configs)
 
-        for lgr in [app.logger, logging.getLogger('sim')]:
-            setup_logger(lgr, level=cls.log_level, log_file=cls.configs['LOG_FILE'])
+        lgm = LoggerManager(
+            [app.logger, logging.getLogger('sim')],
+            cls.log_level,
+        )
+        lgm.addConsoleHandler()
+        lgm.addTimedFileHandler(filename=cls.configs['LOG_FILE'], backupCount=30)
+
+        # for lgr in [app.logger, logging.getLogger('sim')]:
+        #     setup_logger(lgr, level=cls.log_level, log_file=cls.configs['LOG_FILE'])
 
 
 class DevConfig(BaseConfig):

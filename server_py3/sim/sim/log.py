@@ -4,72 +4,68 @@ import sys
 import logging
 from logging.handlers import TimedRotatingFileHandler
 
-_BASE_LOG_NAME = 'yonder'
-
-# 指定logger输出格式
-_fmt = "\n%(asctime)s||lv=%(levelname)s||f=%(filename)s||func=%(funcName)s||line=%(lineno)d:: %(message)s"
-_formatter = logging.Formatter(_fmt, datefmt='%Y-%m-%d %H:%M:%S')
-
-
-def get_log_namespace():
-    return _BASE_LOG_NAME
-
-
-def get_mod_log_name(mod_name):
-    n = _BASE_LOG_NAME + '.' + mod_name
-    return n
-
-
-def init_stdout_logger(name, level=logging.DEBUG):
-    # 获取logger实例，如果参数为空则返回root logger
-    logger = logging.getLogger(name)
-
-    # 指定日志的最低输出级别
-    logger.setLevel(level)
-
-    # 控制台日志
-    ch = logging.StreamHandler(sys.stdout)
-    ch.setFormatter(_formatter)
-
-    # 为logger添加的日志处理器
-    logger.addHandler(ch)
-
-    return logger
-
-
-# logger = init_stdout_logger('yonder')
-
-
-def create_sim_logger(name):
-    lgr = logging.getLogger(name)
-    fmt = logging.Formatter(
-        "\n[%(asctime)s] [%(levelname)s] [%(name)s]"
-        " [%(filename)s:%(funcName)s:%(lineno)d]"
-        " -- %(message)s",
-        datefmt='%Y-%m-%d %H:%M:%S'
-    )
-    ch = logging.StreamHandler(sys.stdout)
-    ch.setFormatter(fmt)
-
-    lgr.addHandler(ch)
-    lgr.setLevel(logging.DEBUG)
-
-    return lgr
-
-
-#
-# logger setting
-#
-
 
 default_formatter = logging.Formatter(
         "[%(asctime)s] [%(levelname)-5s]"
+        " [%(process)s:%(processName)s]"
         " [%(threadName)s]"
         " [%(name)s]"
         " [%(filename)s:%(funcName)s:%(lineno)d]"
         " -- %(message)s",
         datefmt='%Y-%m-%d %H:%M:%S'
     )
+
+
+class LoggerManager(object):
+    def __init__(self, logger, level=None, fmt=None):
+        if isinstance(logger, logging.Logger):
+            self.loggers = [logger]
+        elif isinstance(logger, (list, tuple)):
+            self.loggers = logger
+        else:
+            raise Exception(f"param logger must be logger/list/tuple, but get a {type(logger)}")
+
+        self.level = level or logging.DEBUG
+        self.fmt = fmt or default_formatter
+
+        for lgr in self.loggers:
+            lgr.setLevel(self.level)
+
+    def addConsoleHandler(self, level=None, fmt=None):
+        """输出到控制台（终端）"""
+        for lgr in self.loggers:
+            assert isinstance(lgr, logging.Logger)
+
+            ch = logging.StreamHandler(sys.stdout)
+            ch.setFormatter(fmt or self.fmt)
+            if level:
+                ch.setLevel(level)
+
+            lgr.addHandler(ch)
+
+    def addFileHandler(self, filename, level=None, fmt=None, **kwargs):
+        """输出到文件"""
+        for lgr in self.loggers:
+            assert isinstance(lgr, logging.Logger)
+
+            fh = logging.FileHandler(filename=filename, **kwargs)
+            fh.setFormatter(fmt or self.fmt)
+            if level:
+                fh.setLevel(level)
+
+            lgr.addHandler(fh)
+
+    def addTimedFileHandler(self, filename, level=None, fmt=None, when='MIDNIGHT', **kwargs):
+        """输出到文件，可以按时间备份"""
+        for lgr in self.loggers:
+            assert isinstance(lgr, logging.Logger)
+
+            fh = TimedRotatingFileHandler(filename=filename, when=when, **kwargs)
+            fh.setFormatter(fmt or self.fmt)
+            if level:
+                fh.setLevel(level)
+
+            lgr.addHandler(fh)
 
 
 def setup_logger(logger, level=logging.DEBUG, log_file=None, fmt=None):
