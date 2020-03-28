@@ -31,7 +31,7 @@ todo:
 
 import os
 import re
-from datetime import datetime
+import datetime
 
 # 导入Fabric API:
 from fabric.api import *
@@ -69,27 +69,7 @@ print(_local_backup_dir)
 
 
 def _now():
-    return datetime.now().strftime('%Y-%m-%d_%H.%M.%S')
-
-
-def backup():
-    """
-    备份数据库，下载到本地
-    """
-    dt = _now()
-    fn = f"backup-yonder-{dt}.sql"
-    target = f"{fn}.tar.gz"
-
-    with cd('/tmp'):
-        cmd = f"mysqldump --user={_db_user} --password={_db_password} " \
-              f"--skip-opt --add-drop-table --default-character-set=utf8 " \
-              f"--quick {_db_name} > {fn}"
-        run(cmd)
-        run(f"tar -czvf {target} {fn}")
-        # 下载到本地的备份目录(_local_backup_dir)中
-        get(target, _local_backup_dir)
-        run(f"rm -f {fn}")
-        run(f"rm -f {target}")
+    return datetime.datetime.now().strftime('%Y-%m-%d_%H.%M.%S')
 
 
 def _check_remote_path(path):
@@ -119,8 +99,36 @@ def _check_local_path(path):
         os.makedirs(path)
 
 
-def build_py3():
-    _prepare_path()
+########################################
+# backup data
+########################################
+
+def backup():
+    """
+    备份数据库，下载到本地
+    """
+    dt = _now()
+    fn = f"backup-yonder-{dt}.sql"
+    target = f"{fn}.tar.gz"
+
+    with cd('/tmp'):
+        cmd = f"mysqldump --user={_db_user} --password={_db_password} " \
+              f"--skip-opt --add-drop-table --default-character-set=utf8 " \
+              f"--quick {_db_name} > {fn}"
+        run(cmd)
+        run(f"tar -czvf {target} {fn}")
+        # 下载到本地的备份目录(_local_backup_dir)中
+        get(target, _local_backup_dir)
+        run(f"rm -f {fn}")
+        run(f"rm -f {target}")
+
+
+########################################
+# Python server
+########################################
+
+def _build_py3():
+    # _prepare_path()
 
     excludes = ['data', 'logs', '*.log', '*.pyc', '*.pyo', '*__pycache__*']
 
@@ -131,10 +139,13 @@ def build_py3():
         local(' '.join(cmd))
 
 
-def deploy_py3():
+def py3():
+    """
+    server_py3
+    """
     _prepare_path()
 
-    build_py3()
+    _build_py3()
 
     newdir = f"{_pyfile}-{_now()}"
     run(f"rm -f {_remote_tmp_pyfile}")
@@ -157,7 +168,14 @@ def deploy_py3():
         # sudo('/etc/init.d/nginx reload')
 
 
-def deploy_supervisor():
+########################################
+# supervisor
+########################################
+
+def spv():
+    """
+    supervisor config
+    """
     _check_remote_path(f"{_remote_log_dir}/supervisor/")
     _remote_tmp_supervisor_conf = '/tmp/yonder.conf'
     with cd('/tmp/'):
@@ -166,14 +184,39 @@ def deploy_supervisor():
         sudo(f"supervisorctl reload")
 
 
-def _deploy():
-    with settings(warn_only=True):
-        sudo('supervisorctl stop awesome')
-        sudo('supervisorctl start awesome')
-        sudo('/etc/init.d/nginx reload')
+########################################
+# 前端
+########################################
+
+def vue():
+    """
+    frontend_vue
+    """
+    _remote_vue_dir = f"{_remote_src_dir}/frontend_vue"
+    _check_remote_path(_remote_vue_dir)
+
+    # 压缩到build/
+    # 上传
+    # 解压
+    # npm build
+    # pm2 start
 
 
-def build_vue():
-    pass
+########################################
+# nginx
+########################################
+
+def nginx():
+    """
+    nginx config
+    """
 
 
+########################################
+# golang
+########################################
+
+def go():
+    """
+    server_go
+    """
