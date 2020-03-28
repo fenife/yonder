@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+import os
 import logging
 from logging.handlers import TimedRotatingFileHandler
 
@@ -17,13 +18,31 @@ default_formatter = logging.Formatter(
 
 
 class LoggerManager(object):
-    def __init__(self, logger, level=None, fmt=None):
+    def __init__(self, logger, level=None, fmt=None, exlog=True):
+        """
+        logger 管理器，方便为多个logger添加相同的配置
+        :param logger:  单个logger, logger的list
+        :param level:   log level
+        :param fmt:     log formatter
+        :param exlog:   默认True，把当前库的logger加上；False则默认不加，
+                        但仍可以在`logger`参数中指定
+        usage:
+        >>> log1 = logging.getLogger('log1')
+        >>> log2 = logging.getLogger('log2')
+        >>> lgm = LoggerManager([log1, log2], level=logging.DEBUG)
+        >>> lgm.addConsoleHandler()
+        """
         if isinstance(logger, logging.Logger):
             self.loggers = [logger]
         elif isinstance(logger, (list, tuple)):
             self.loggers = logger
         else:
-            raise Exception(f"param logger must be logger/list/tuple, but get a {type(logger)}")
+            raise Exception(f"params logger should be logger/list/tuple, but get a {type(logger)}")
+
+        self.loggers = set(self.loggers)
+        if exlog:
+            # log name 必须是当前库的顶级目录名，python加载模块时也是用的该名称
+            self.loggers.add(logging.getLogger(os.path.basename(os.getcwd())))
 
         self.level = level or logging.DEBUG
         self.fmt = fmt or default_formatter
@@ -32,7 +51,7 @@ class LoggerManager(object):
             lgr.setLevel(self.level)
 
     def addConsoleHandler(self, level=None, fmt=None):
-        """输出到控制台（终端）"""
+        """输出到控制台"""
         for lgr in self.loggers:
             assert isinstance(lgr, logging.Logger)
 
@@ -44,7 +63,8 @@ class LoggerManager(object):
             lgr.addHandler(ch)
 
     def addFileHandler(self, filename, level=None, fmt=None, **kwargs):
-        """输出到文件"""
+        self._mkdirIfNotExists(filename)
+
         for lgr in self.loggers:
             assert isinstance(lgr, logging.Logger)
 
@@ -56,7 +76,8 @@ class LoggerManager(object):
             lgr.addHandler(fh)
 
     def addTimedFileHandler(self, filename, level=None, fmt=None, when='MIDNIGHT', **kwargs):
-        """输出到文件，可以按时间备份"""
+        self._mkdirIfNotExists(filename)
+
         for lgr in self.loggers:
             assert isinstance(lgr, logging.Logger)
 
@@ -66,6 +87,14 @@ class LoggerManager(object):
                 fh.setLevel(level)
 
             lgr.addHandler(fh)
+
+    @staticmethod
+    def _mkdirIfNotExists(filename):
+        # 检查log目录是否存在，不存在则创建
+        log_path = os.path.dirname(filename)
+        if not os.path.exists(log_path):
+            print(f"mkdir for log: `{log_path}`")
+            os.makedirs(log_path)
 
 
 def setup_logger(logger, level=logging.DEBUG, log_file=None, fmt=None):
