@@ -23,6 +23,7 @@ def start():
 
 def usage():
     print()
+    print(f"sys.argv: {sys.argv}")
     print("usage: %prog [options]")
     print("  python main.py [admin]")
     print("  [admin]: create super admin user")

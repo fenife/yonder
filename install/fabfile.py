@@ -59,6 +59,7 @@ _remote_tmp_pyfile = f'/tmp/{_tar_pyfile}'
 
 # 本地相关目录
 _local_base_dir = os.path.abspath('..')
+_local_src_dir = os.path.join(_local_base_dir, 'src')
 _local_build_dir = os.path.join(_local_base_dir, 'build')
 _local_backup_dir = os.path.join(_local_base_dir, 'backup')
 
@@ -118,22 +119,24 @@ def _check_local_path(path):
         os.makedirs(path)
 
 
-def build_py():
+def build_py3():
     _prepare_path()
 
     excludes = ['data', 'logs', '*.log', '*.pyc', '*.pyo', '*__pycache__*']
 
-    with lcd(os.path.join(_local_base_dir, 'src')):
-        cmd = ["tar", "-czvf", f"{_local_build_dir}/{_tar_pyfile}"]
+    with lcd(os.path.join(_local_base_dir, 'src', 'server_py3')):
+        cmd = ["tar", "-czf", f"{_local_build_dir}/{_tar_pyfile}"]
         cmd.extend(['--exclude=\'%s\'' % ex for ex in excludes])
-        cmd.extend(['server_py3'])
+        cmd.extend(['.'])
         local(' '.join(cmd))
 
 
-def deploy_py():
+def deploy_py3():
     _prepare_path()
 
-    newdir = f"server-py3-{_now()}"
+    build_py3()
+
+    newdir = f"{_pyfile}-{_now()}"
     run(f"rm -f {_remote_tmp_pyfile}")
     # 把本地打包好的python代码上传到服务器
     put(f"{_local_build_dir}/{_tar_pyfile}", _remote_tmp_pyfile)
@@ -142,13 +145,25 @@ def deploy_py():
         run(f"mkdir {newdir}")
 
     with cd(f"{_remote_src_dir}/{newdir}"):
-        run(f"tar -xzvf {_remote_tmp_pyfile}")
+        run(f"tar -xzf {_remote_tmp_pyfile}")
 
     with cd(_remote_src_dir):
         run(f"rm -f {_pyfile}")
-        run(f"ln -s {newdir}/{_pyfile} {_pyfile}")
+        run(f"ln -s {newdir} {_pyfile}")
 
-    # todo: 启动server_py3
+    with settings(warn_only=True):
+        sudo('supervisorctl restart server_py3')
+        # sudo('supervisorctl stop server_py3')
+        # sudo('/etc/init.d/nginx reload')
+
+
+def deploy_supervisor():
+    _check_remote_path(f"{_remote_log_dir}/supervisor/")
+    _remote_tmp_supervisor_conf = '/tmp/yonder.conf'
+    with cd('/tmp/'):
+        put(f"{_local_src_dir}/supervisor/yonder.conf", _remote_tmp_supervisor_conf)
+        sudo(f"cp {_remote_tmp_supervisor_conf} /etc/supervisor/conf.d/")
+        sudo(f"supervisorctl reload")
 
 
 def _deploy():

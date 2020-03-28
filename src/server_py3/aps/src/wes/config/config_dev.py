@@ -35,7 +35,7 @@ configs = {
     "LOGIN_EXPIRED": 30 * 60,
 
     # log file path
-    "LOG_FILE": f"{os.path.abspath('.').split('/src')[0]}/logs/server_py3/aps/wes.log",
+    "LOG_FILE": "/icode/yonder/logs/server_py3/aps/wes.log",
 }
 
 

@@ -28,7 +28,8 @@ class BaseConfig(object):
             cls.log_level,
         )
         lgm.addConsoleHandler()
-        lgm.addTimedFileHandler(filename=cls.configs['LOG_FILE'], backupCount=30)
+        log_file = cls.configs['LOG_FILE']
+        lgm.addTimedFileHandler(filename=log_file, backupCount=30)
 
         # for lgr in [app.logger, logging.getLogger('sim')]:
         #     setup_logger(lgr, level=cls.log_level, log_file=cls.configs['LOG_FILE'])

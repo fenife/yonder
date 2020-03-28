@@ -3,8 +3,11 @@
 import os
 import sys
 
-sim_path = os.path.abspath(os.path.join(os.path.dirname(__name__), '..', '..', 'sim'))
-print(f"sim_path: {sim_path}")
+
+conf_path = os.path.dirname(os.path.abspath(__file__))
+py_path = conf_path.split('aps')[0]
+sim_path = os.path.abspath(os.path.join(py_path, 'sim'))
+print(f"conf_path: {conf_path}, sim_path: {sim_path}")
 sys.path.append(sim_path)
 
 # ../../sim dir
