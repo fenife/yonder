@@ -1,0 +1,11 @@
+.idea
+.DS_Store
+
+pkg
+config.json
+
+*.log
+server_go
+
+
+
