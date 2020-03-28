@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import logging
 from sim.application import Application
 
@@ -34,7 +35,7 @@ configs = {
     "LOGIN_EXPIRED": 30 * 60,
 
     # log file path
-    "LOG_FILE": "/work/yonder/server_py3/aps/logs/wes.log"
+    "LOG_FILE": f"{os.path.abspath('.').split('/src')[0]}/logs/server_py3/aps/wes.log",
 }
 
 
