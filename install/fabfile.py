@@ -10,23 +10,20 @@ usage:
 2. deploy, see:
     fab -l
 
-todo:
-## support
+## done
+    install supervisor and start server
+    vue
+    nginx
+    restore backup data to local mysql
+
+## todo
+1.
     export YONDER_CONFIG=dev
     or:
     export YONDER_CONFIG=live
 
-## install supervisor and start server
-
-## deploy vue
-
-## deploy nginx
-
-## deploy golang
-
-## restore backup data to local mysql
-
-## restore backup data to remote mysql
+2. deploy golang
+3. restore backup data to remote mysql
 """
 
 import os
@@ -53,6 +50,7 @@ _remote_log_dir = os.path.join(_remote_base_dir, 'logs')
 _remote_src_dir = os.path.join(_remote_base_dir, 'src')
 
 # 本地相关目录
+# ./../
 _local_base_dir = os.path.abspath(
     os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 _local_src_dir = os.path.join(_local_base_dir, 'src')
@@ -104,11 +102,15 @@ def backup():
     """
     备份数据库，下载到本地
     """
+    _remote_backup_dir = f"{_remote_base_dir}/backup"
+
+    _check_remote_path(_remote_backup_dir)
+
     dt = _now()
     fn = f"backup-yonder-{dt}.sql"
     target = f"{fn}.tar.gz"
 
-    with cd('/tmp'):
+    with cd(_remote_backup_dir):
         cmd = f"mysqldump --user={_db_user} --password={_db_password} " \
               f"--skip-opt --add-drop-table --default-character-set=utf8 " \
               f"--quick {_db_name} > {fn}"
@@ -118,6 +120,39 @@ def backup():
         get(target, _local_backup_dir)
         run(f"rm -f {fn}")
         run(f"rm -f {target}")
+
+
+def r2l():
+    """
+    restore database to local
+    """
+    fs = os.listdir(_local_backup_dir)
+    files = [f for f in fs if f.startswith('backup-') and f.endswith('.sql.tar.gz')]
+    files.sort(reverse=True)
+
+    if not files:
+        print('No backup files found.')
+        return
+
+    _restore_tar_file = files[0]
+    _restore_file = _restore_tar_file.split('.tar.gz')[0]
+    print(f"Start restore to local database, file: {_restore_tar_file}")
+    p = input('Input mysql root password: ')
+    sqls = [
+        f"drop database if exists {_db_name};",
+        f"create database {_db_name};",
+    ]
+    _mysql = f"mysql -u{_db_user} -p{_db_password} "
+    for sql in sqls:
+        local(f'{_mysql} -e "{sql}" ')
+
+    with lcd(_local_backup_dir):
+        local(f"tar -zxvf {_restore_tar_file}")
+
+    # local(f"mysql -uroot -p%s awesome < backup/%s" % (p, restore_file[:-7]))
+    local(f"{_mysql} {_db_name} < {_local_backup_dir}/{_restore_file}")
+    with lcd(_local_backup_dir):
+        local(f"rm -f {_restore_file}")
 
 
 ########################################
