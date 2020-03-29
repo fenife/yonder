@@ -2,79 +2,91 @@
 
 """
 usage:
-1. settep YONDER_CONFIG
-    export YONDER_CONFIG=dev
-    or:
-    export YONDER_CONFIG=live
-
-2. deploy, see:
-    fab -l
+1. setup: _deploy_env=dev/live
+2. fab -l
 
 ## done
+    server_py3
     install supervisor and start server
     vue
     nginx
     restore backup data to local mysql
+    setup deploy env
 
 ## todo
-1.
-    export YONDER_CONFIG=dev
-    or:
-    export YONDER_CONFIG=live
-
-2. deploy golang
-3. restore backup data to remote mysql
-4. deploy etc conf
-5. move nginx config and supervisor config to yonder/etc/
+    deploy golang
+    restore backup data to remote mysql
+    deploy etc conf
+    move nginx config and supervisor config to yonder/etc/
 """
 
 import os
 import sys
 import datetime
-from collections import OrderedDict
+import collections
+import pprint
 
 # 导入Fabric API:
 from fabric.api import *
 
+# 要部署到哪个环境 (dev,live)
+_deploy_env = 'dev'
+
 # 本地相关目录
 # ./../
-_local_base_dir = os.path.abspath(os.path.abspath(__file__).split('/install', 1)[0])
-_local_src_dir = os.path.join(_local_base_dir, 'src')
-_local_build_dir = os.path.join(_local_base_dir, 'build')
+_local_base_dir   = os.path.abspath(os.path.abspath(__file__).split('/install', 1)[0])
+_local_src_dir    = os.path.join(_local_base_dir, 'src')
+_local_build_dir  = os.path.join(_local_base_dir, 'build')
 _local_backup_dir = os.path.join(_local_base_dir, 'backup')
 
 # todo: 根据变量读取相应的配置文件，部署到哪个环境？
-_config_file = f"{_local_base_dir}/etc/server/yonder.conf"
+_server_config_file = f"{_local_base_dir}/etc/server/yonder_{_deploy_env}.conf"
+# _local_conf_file    = f"{_local_base_dir}/etc/server/yonder.conf"
 
 # 读取配置文件
-with open(_config_file, 'r') as f:
+with open(_server_config_file, 'r') as f:
     conf = eval(f.read())
+
+# with open(_local_conf_file, 'r') as f:
+#     lconf = eval(f.read())
 
 _debug_mode = True if conf.get('DEBUG_MODE') else False
 
+# 远程服务器的数据库配置
+_remote_db_user     = conf.get('DB_USER')
+_remote_db_password = conf.get('DB_PASSWORD')
+_remote_db_name     = conf.get('DB_NAME')
+
+# 本地的备份数据库配置
+_backup_db_user      = conf.get('BACKUP_DB_USER')
+_backup_db_password  = conf.get('BACKUP_DB_PASSWORD')
+_backup_db_name      = conf.get('BACKUP_DB_NAME')
+
 # 远程相关目录
 _remote_base_dir = "/icode/yonder"
-_remote_log_dir = os.path.join(_remote_base_dir, 'logs')
-_remote_src_dir = os.path.join(_remote_base_dir, 'src')
+_remote_log_dir  = os.path.join(_remote_base_dir, 'logs')
+_remote_src_dir  = os.path.join(_remote_base_dir, 'src')
+
 
 # 服务器地址，可以有多个，依次部署:
-env.hosts = ['192.168.0.107']
+env.hosts = conf.get('SSH_HOSTS')
 # 服务器登录用户名:
-env.user = 'feng'
+env.user = conf.get('SSH_USER')
 # sudo用户为root:
-env.sudo_user = 'root'
+env.sudo_user = conf.get('SSH_SUDO_USER')
 
-_db_user = "test"
-_db_password = "test"
-_db_name = "test"
+# pprint.pprint(conf)
 
 # 打印部分选项
-dct = OrderedDict({
-    "conf file": _config_file,
+dct = collections.OrderedDict({
+    "deploy env": _deploy_env,
     "env mode": conf.get('ENV_MODE'),
+    "conf file": _server_config_file,
+    # "conf file for local": _local_conf_file,
     'debug mode': _debug_mode,
     'local base dir': _local_base_dir,
     'remote base dir': _remote_base_dir,
+    'ssh server host': env.hosts,
 })
 _fl = max(map(len, dct.keys()))     # 为了左边对齐展示
 print()
@@ -133,9 +145,9 @@ def backup():
     target = f"{fn}.tar.gz"
 
     with cd(_remote_backup_dir):
-        cmd = f"mysqldump --user={_db_user} --password={_db_password} " \
+        cmd = f"mysqldump --user={_remote_db_user} --password={_remote_db_password} " \
               f"--skip-opt --add-drop-table --default-character-set=utf8 " \
-              f"--quick {_db_name} > {fn}"
+              f"--quick {_remote_db_name} > {fn}"
         run(cmd)
         run(f"tar -czvf {target} {fn}")
         # 下载到本地的备份目录(_local_backup_dir)中
@@ -160,10 +172,10 @@ def r2l():
     _restore_file = _restore_tar_file.split('.tar.gz')[0]
     print(f"Start restore to local database, file: {_restore_tar_file}")
     sqls = [
-        f"drop database if exists {_db_name};",
-        f"create database {_db_name};",
+        f"drop database if exists {_backup_db_name};",
+        f"create database {_backup_db_name};",
     ]
-    _mysql = f"mysql -u{_db_user} -p{_db_password} "
+    _mysql = f"mysql -u{_backup_db_user} -p{_backup_db_password} "
     for sql in sqls:
         local(f'{_mysql} -e "{sql}" ')
 
@@ -171,7 +183,7 @@ def r2l():
         local(f"tar -zxvf {_restore_tar_file}")
 
     # local(f"mysql -uroot -p%s awesome < backup/%s" % (p, restore_file[:-7]))
-    local(f"{_mysql} {_db_name} < {_local_backup_dir}/{_restore_file}")
+    local(f"{_mysql} {_backup_db_name} < {_local_backup_dir}/{_restore_file}")
     with lcd(_local_backup_dir):
         local(f"rm -f {_restore_file}")
 
@@ -318,6 +330,27 @@ def nginx():
     # 重启
     sudo("sudo nginx -t")
     sudo("sudo nginx -s reload")
+
+
+########################################
+# etc config
+########################################
+def etc():
+    """
+    yonder etc server config
+    """
+    _local_etc_dir  = f"{_local_base_dir}/etc/server"
+    _remote_etc_dir = f"{_remote_base_dir}/etc/server"
+    _conf_file = f"yonder_{_deploy_env}.conf"
+
+    _check_remote_path(_remote_etc_dir)
+
+    # 上传到 yonder/etc
+    put(f"{_local_etc_dir}/{_conf_file}", f"{_remote_etc_dir}/{_conf_file}")
+
+    # 复制并重命名
+    with cd(_remote_etc_dir):
+        sudo(f"cp {_conf_file} yonder.conf")
 
 
 ########################################
