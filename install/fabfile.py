@@ -24,14 +24,38 @@ usage:
 
 2. deploy golang
 3. restore backup data to remote mysql
+4. deploy etc conf
+5. move nginx config and supervisor config to yonder/etc/
 """
 
 import os
 import sys
 import datetime
+from collections import OrderedDict
 
 # 导入Fabric API:
 from fabric.api import *
+
+# 本地相关目录
+# ./../
+_local_base_dir = os.path.abspath(os.path.abspath(__file__).split('/install', 1)[0])
+_local_src_dir = os.path.join(_local_base_dir, 'src')
+_local_build_dir = os.path.join(_local_base_dir, 'build')
+_local_backup_dir = os.path.join(_local_base_dir, 'backup')
+
+# todo: 根据变量读取相应的配置文件，部署到哪个环境？
+_config_file = f"{_local_base_dir}/etc/server/yonder.conf"
+
+# 读取配置文件
+with open(_config_file, 'r') as f:
+    conf = eval(f.read())
+
+_debug_mode = True if conf.get('DEBUG_MODE') else False
+
+# 远程相关目录
+_remote_base_dir = "/icode/yonder"
+_remote_log_dir = os.path.join(_remote_base_dir, 'logs')
+_remote_src_dir = os.path.join(_remote_base_dir, 'src')
 
 # 服务器地址，可以有多个，依次部署:
 env.hosts = ['192.168.0.107']
@@ -44,23 +68,21 @@ _db_user = "test"
 _db_password = "test"
 _db_name = "test"
 
-# 远程相关目录
-_remote_base_dir = "/icode/yonder"
-_remote_log_dir = os.path.join(_remote_base_dir, 'logs')
-_remote_src_dir = os.path.join(_remote_base_dir, 'src')
-
-# 本地相关目录
-# ./../
-_local_base_dir = os.path.abspath(
-    os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
-_local_src_dir = os.path.join(_local_base_dir, 'src')
-_local_build_dir = os.path.join(_local_base_dir, 'build')
-_local_backup_dir = os.path.join(_local_base_dir, 'backup')
-
-print(_remote_log_dir)
-print(_local_base_dir)
-print(_local_build_dir)
-print(_local_backup_dir)
+# 打印部分选项
+dct = OrderedDict({
+    "conf file": _config_file,
+    "env mode": conf.get('ENV_MODE'),
+    'debug mode': _debug_mode,
+    'local base dir': _local_base_dir,
+    'remote base dir': _remote_base_dir,
+})
+_fl = max(map(len, dct.keys()))     # 为了左边对齐展示
+print()
+print('-' * 50)
+for k, v in dct.items():
+    print("{k:>{fl}} : {v}".format(fl=_fl, k=k, v=v))
+print('-' * 50)
+print()
 
 
 def _now():
@@ -137,7 +159,6 @@ def r2l():
     _restore_tar_file = files[0]
     _restore_file = _restore_tar_file.split('.tar.gz')[0]
     print(f"Start restore to local database, file: {_restore_tar_file}")
-    p = input('Input mysql root password: ')
     sqls = [
         f"drop database if exists {_db_name};",
         f"create database {_db_name};",
@@ -154,6 +175,11 @@ def r2l():
     with lcd(_local_backup_dir):
         local(f"rm -f {_restore_file}")
 
+
+def restore2remote():
+    """
+    restore database to remote
+    """
 
 ########################################
 # Python server
