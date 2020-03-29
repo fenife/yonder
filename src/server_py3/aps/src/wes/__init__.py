@@ -15,7 +15,7 @@ from sim.application import Application
 from sim.norm import Database
 from sim.cache import AppCachePool
 
-from wes.config import config
+from wes.config import AppConfig
 
 
 APP_NAME = 'wes'
@@ -24,21 +24,14 @@ db = Database()
 cache_pool = AppCachePool()
 
 
-def create_app(config_name):
+def create_app():
     """
     :param config_name: dev/live
     :return:
     """
-    if not config_name:
-        config_name = 'dev'
-
-    print('-' * 50)
-    print(f"env mode: {config_name}")
-    print('-' * 50)
-
     app = Application(APP_NAME)
 
-    config[config_name].init_app(app)
+    AppConfig.init_app(app)
 
     db.init_app(app)
     cache_pool.init_app(app)
@@ -46,7 +39,7 @@ def create_app(config_name):
     return app
 
 
-app = create_app(os.getenv('YONDER_CONFIG') or 'dev')
+app = create_app()
 
 # 让Python加载模块，否则app.route装饰器不会运行，无法添加路由
 from . import api
