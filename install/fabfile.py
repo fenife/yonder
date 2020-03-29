@@ -52,11 +52,6 @@ _remote_base_dir = "/icode/yonder"
 _remote_log_dir = os.path.join(_remote_base_dir, 'logs')
 _remote_src_dir = os.path.join(_remote_base_dir, 'src')
 
-# 打包的python代码文件
-_pyfile = "server_py3"
-_tar_pyfile = f"{_pyfile}.tar.gz"
-_remote_tmp_pyfile = f'/tmp/{_tar_pyfile}'
-
 # 本地相关目录
 _local_base_dir = os.path.abspath('..')
 _local_src_dir = os.path.join(_local_base_dir, 'src')
@@ -127,25 +122,24 @@ def backup():
 # Python server
 ########################################
 
-def _build_py3():
-    # _prepare_path()
+def py3():
+    """
+    server_py3
+    """
+    # 打包的python代码文件
+    _pyfile = "server_py3"
+    _tar_pyfile = f"{_pyfile}.tar.gz"
+    _remote_tmp_pyfile = f'/tmp/{_tar_pyfile}'
 
+    _prepare_path()
+
+    # 打包
     excludes = ['data', 'logs', '*.log', '*.pyc', '*.pyo', '*__pycache__*']
-
     with lcd(os.path.join(_local_base_dir, 'src', 'server_py3')):
         cmd = ["tar", "-czf", f"{_local_build_dir}/{_tar_pyfile}"]
         cmd.extend(['--exclude=\'%s\'' % ex for ex in excludes])
         cmd.extend(['.'])
         local(' '.join(cmd))
-
-
-def py3():
-    """
-    server_py3
-    """
-    _prepare_path()
-
-    _build_py3()
 
     newdir = f"{_pyfile}-{_now()}"
     run(f"rm -f {_remote_tmp_pyfile}")
@@ -192,14 +186,46 @@ def vue():
     """
     frontend_vue
     """
+    _vue_file = "frontend_vue"
+    _tar_vue_file = f"{_vue_file}.tar.gz"
+
     _remote_vue_dir = f"{_remote_src_dir}/frontend_vue"
+    _remote_tar_vue_file = f'{_remote_src_dir}/{_tar_vue_file}'
+
     _check_remote_path(_remote_vue_dir)
 
     # 压缩到build/
+    excludes = ['logs', '*.log', '.nuxt', 'node_modules']
+    with lcd(os.path.join(_local_src_dir, 'frontend_vue')):
+        cmd = ["tar", "-czf", f"{_local_build_dir}/{_tar_vue_file}"]
+        cmd.extend(['--exclude=\'%s\'' % ex for ex in excludes])
+        cmd.extend(['.'])
+        local(' '.join(cmd))
+
+    # 删除
+    run(f"rm -rf {_remote_tar_vue_file}")
+
     # 上传
-    # 解压
-    # npm build
-    # pm2 start
+    put(f"{_local_build_dir}/{_tar_vue_file}", _remote_tar_vue_file)
+
+    with cd(_remote_src_dir):
+        # 删除旧的备份文件
+        run(f"rm -rf {_remote_vue_dir}_bak")
+        # 重命名、备份原来的代码(mv)
+        run(f"mv {_remote_vue_dir} {_remote_vue_dir}_bak")
+        # 新建文件夹
+        run(f"mkdir {_remote_vue_dir}")
+
+    with cd(f"{_remote_vue_dir}"):
+        # 解压
+        run(f"tar -xzf {_remote_tar_vue_file}")
+        # run(f"npm install")
+        run(f"npm run build")
+
+    with settings(warn_only=True):
+        # 重启
+        # 这里的frontend_vue要跟第一次启动vue项目的名称一致
+        run(f"pm2 restart frontend_vue")
 
 
 ########################################
