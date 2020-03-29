@@ -306,16 +306,20 @@ def vue():
         # 新建文件夹
         run(f"mkdir {_remote_vue_dir}")
 
-    with cd(f"{_remote_vue_dir}"):
+    with cd(_remote_vue_dir):
         # 解压
         run(f"tar -xzf {_remote_tar_vue_file}")
-        # run(f"npm install")
+        run(f"npm install")
         run(f"npm run build")
 
     with settings(warn_only=True):
-        # 重启
-        # 这里的frontend_vue要跟第一次启动vue项目的名称一致
-        run(f"pm2 restart frontend_vue")
+        # 必须进入package.json所在的目录再用pm2重启，否则启动的不是我们想要的进程
+        with cd(_remote_vue_dir):
+            # 重启
+            # 这里的frontend_vue要跟第一次启动vue项目的名称一致
+            run(f"pm2 stop frontend_vue")
+            run(f"pm2 delete frontend_vue")
+            run(f'pm2 start npm --name "frontend_vue" -- run start')
 
 
 ########################################
