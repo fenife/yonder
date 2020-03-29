@@ -30,7 +30,7 @@ todo:
 """
 
 import os
-import re
+import sys
 import datetime
 
 # 导入Fabric API:
@@ -53,12 +53,14 @@ _remote_log_dir = os.path.join(_remote_base_dir, 'logs')
 _remote_src_dir = os.path.join(_remote_base_dir, 'src')
 
 # 本地相关目录
-_local_base_dir = os.path.abspath('..')
+_local_base_dir = os.path.abspath(
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 _local_src_dir = os.path.join(_local_base_dir, 'src')
 _local_build_dir = os.path.join(_local_base_dir, 'build')
 _local_backup_dir = os.path.join(_local_base_dir, 'backup')
 
 print(_remote_log_dir)
+print(_local_base_dir)
 print(_local_build_dir)
 print(_local_backup_dir)
 
@@ -211,7 +213,7 @@ def vue():
     with cd(_remote_src_dir):
         # 删除旧的备份文件
         run(f"rm -rf {_remote_vue_dir}_bak")
-        # 重命名、备份原来的代码(mv)
+        # 重命名、备份原来的代码
         run(f"mv {_remote_vue_dir} {_remote_vue_dir}_bak")
         # 新建文件夹
         run(f"mkdir {_remote_vue_dir}")
@@ -236,6 +238,25 @@ def nginx():
     """
     nginx config
     """
+    _remote_nginx_log_dir = f"{_remote_log_dir}/nginx"
+    _remote_nginx_dir = f"{_remote_src_dir}/nginx"
+    _remote_nginx_conf = f"{_remote_nginx_dir}/yonder.conf"
+
+    _local_nginx_conf = f"{_local_src_dir}/nginx/yonder.conf"
+
+    _check_remote_path(_remote_nginx_log_dir)
+    _check_remote_path(_remote_nginx_dir)
+
+    # 上传到src/nginx
+    put(_local_nginx_conf, _remote_nginx_conf)
+
+    # 复制到etc
+    with cd(_remote_nginx_dir):
+        sudo(f"cp {_remote_nginx_conf} /etc/nginx/conf.d/yonder.conf")
+
+    # 重启
+    sudo("sudo nginx -t")
+    sudo("sudo nginx -s reload")
 
 
 ########################################

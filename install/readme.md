@@ -11,8 +11,8 @@
 
 ## 远程部署(dev)
     安装supervisor
-    
     安装pm2
+    安装nginx
 
 ## 远程部署(live)
 
