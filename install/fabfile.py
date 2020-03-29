@@ -38,6 +38,7 @@ _local_base_dir   = os.path.abspath(os.path.abspath(__file__).split('/install', 
 _local_src_dir    = os.path.join(_local_base_dir, 'src')
 _local_build_dir  = os.path.join(_local_base_dir, 'build')
 _local_backup_dir = os.path.join(_local_base_dir, 'backup')
+_local_etc_dir = os.path.join(_local_base_dir, 'etc')
 
 # todo: 根据变量读取相应的配置文件，部署到哪个环境？
 _server_config_file = f"{_local_base_dir}/etc/server/yonder_{_deploy_env}.conf"
@@ -66,6 +67,7 @@ _backup_db_name      = conf.get('BACKUP_DB_NAME')
 _remote_base_dir = "/icode/yonder"
 _remote_log_dir  = os.path.join(_remote_base_dir, 'logs')
 _remote_src_dir  = os.path.join(_remote_base_dir, 'src')
+_remote_etc_dir  = os.path.join(_remote_base_dir, 'etc')
 
 
 # 服务器地址，可以有多个，依次部署:
@@ -245,12 +247,25 @@ def spv():
     """
     supervisor config
     """
-    _check_remote_path(f"{_remote_log_dir}/supervisor/")
-    _remote_tmp_supervisor_conf = '/tmp/yonder.conf'
-    with cd('/tmp/'):
-        put(f"{_local_src_dir}/supervisor/yonder.conf", _remote_tmp_supervisor_conf)
-        sudo(f"cp {_remote_tmp_supervisor_conf} /etc/supervisor/conf.d/")
-        sudo(f"supervisorctl reload")
+    _remote_supervisor_log_dir = f"{_remote_log_dir}/supervisor"
+    _remote_supervisor_dir = f"{_remote_etc_dir}/supervisor"
+    _remote_supervisor_conf = f"{_remote_supervisor_dir}/yonder_supervisor.conf"
+
+    _local_supervisor_conf = f"{_local_etc_dir}/supervisor/yonder_supervisor.conf"
+
+    _check_remote_path(_remote_supervisor_log_dir)
+    _check_remote_path(_remote_supervisor_dir)
+
+    # 上传到 yonder/etc/supervisor
+    put(_local_supervisor_conf, _remote_supervisor_conf)
+
+    # 复制
+    with cd(_remote_supervisor_dir):
+        sudo(f"cp {_remote_supervisor_conf} /etc/supervisor/conf.d/")
+
+    sudo(f"supervisorctl reload")
+    # sudo(f"sudo supervisorctl restart server_py3")
+    sudo(f"supervisorctl status")
 
 
 ########################################
@@ -312,10 +327,10 @@ def nginx():
     nginx config
     """
     _remote_nginx_log_dir = f"{_remote_log_dir}/nginx"
-    _remote_nginx_dir = f"{_remote_src_dir}/nginx"
-    _remote_nginx_conf = f"{_remote_nginx_dir}/yonder.conf"
+    _remote_nginx_dir = f"{_remote_etc_dir}/nginx"
+    _remote_nginx_conf = f"{_remote_nginx_dir}/yonder_nginx.conf"
 
-    _local_nginx_conf = f"{_local_src_dir}/nginx/yonder.conf"
+    _local_nginx_conf = f"{_local_etc_dir}/nginx/yonder_nginx.conf"
 
     _check_remote_path(_remote_nginx_log_dir)
     _check_remote_path(_remote_nginx_dir)
@@ -325,7 +340,7 @@ def nginx():
 
     # 复制到etc
     with cd(_remote_nginx_dir):
-        sudo(f"cp {_remote_nginx_conf} /etc/nginx/conf.d/yonder.conf")
+        sudo(f"cp {_remote_nginx_conf} /etc/nginx/conf.d/yonder_nginx.conf")
 
     # 重启
     sudo("sudo nginx -t")
@@ -339,17 +354,17 @@ def etc():
     """
     yonder etc server config
     """
-    _local_etc_dir  = f"{_local_base_dir}/etc/server"
-    _remote_etc_dir = f"{_remote_base_dir}/etc/server"
+    _local_etc_server_dir  = f"{_local_etc_dir}/server"
+    _remote_etc_server_dir = f"{_remote_etc_dir}/server"
     _conf_file = f"yonder_{_deploy_env}.conf"
 
-    _check_remote_path(_remote_etc_dir)
+    _check_remote_path(_remote_etc_server_dir)
 
     # 上传到 yonder/etc
-    put(f"{_local_etc_dir}/{_conf_file}", f"{_remote_etc_dir}/{_conf_file}")
+    put(f"{_local_etc_server_dir}/{_conf_file}", f"{_remote_etc_server_dir}/{_conf_file}")
 
     # 复制并重命名
-    with cd(_remote_etc_dir):
+    with cd(_remote_etc_server_dir):
         sudo(f"cp {_conf_file} yonder.conf")
 
 
