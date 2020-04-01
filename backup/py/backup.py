@@ -1,5 +1,4 @@
-#usr/bin/env python3
-# coding: utf-8
+#!usr/bin/env python3
 
 import sys
 
@@ -8,5 +7,5 @@ def main():
     pass
 
 
-if if __name__ == "__main__":
+if __name__ == "__main__":
     main()
