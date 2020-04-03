@@ -1,42 +1,62 @@
 package main
 
-// read config
-// logger
-
 import (
-	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis/v7"
-	yconf "yonder/config"
-	yutil "yonder/utils"
+	"os"
+	"yonder/router"
 )
 
-// redis client
-var rds = redis.NewClient(&redis.Options{
-	Addr: "localhost:6379",
-})
+// read config
+// logger
+// grom
 
-func hello(c *gin.Context) {
-	v, _ := rds.Get("hello").Result()
-	c.JSON(200, gin.H{
-		"value": v,
-		"msg":   "hello world",
-	})
+import (
+	_ "fmt"
+	"github.com/gin-gonic/gin"
+	"io"
+	"log"
+	yconf "yonder/config"
+)
+
+func logInit() {
+	logPath := yconf.Conf.LogPath + "/server_go"
+	logFile := logPath + "/srv.log"
+	if err := os.MkdirAll(logPath, os.ModePerm); err != nil {
+		panic(err)
+	}
+
+	//fp, err := os.Create(logFile)
+	fp, err := os.OpenFile(logFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		panic(err)
+	}
+	// gin logger
+	w := io.MultiWriter(fp, os.Stdout)
+	gin.DefaultWriter = w
+
+	// std logger
+	log.SetOutput(gin.DefaultWriter)
+	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 }
 
+
 func main() {
-	// 创建一个默认的路由引擎
-	r := gin.Default()
+	logInit()
 
-	// GET /hello 时，会执行hello函数
-	r.GET("/hello", hello)
+	// Creates a router without any middleware by default
+	app := gin.New()
 
-	v, err := rds.Set("hello", "world", 0).Result()
-	fmt.Println(v, err)
+	// Global middleware
+	// Logger middleware will write the logs to gin.DefaultWriter even if you set with GIN_MODE=release.
+	// By default gin.DefaultWriter = os.Stdout
+	app.Use(gin.Logger())
 
-	// 启动HTTP服务，默认在0.0.0.0:6060启动服务
-	r.Run(":6060")
-	//fmt.Println()
-	yutil.PrettyPrint(yconf.Conf)
-	//ReadConf()
+	// Recovery middleware recovers from any panics and writes a 500 if there was one.
+	app.Use(gin.Recovery())
+
+	router.Route(app)
+
+	err := app.Run(":6060")
+	if err != nil {
+		panic(err.Error())
+	}
 }
