@@ -1,20 +1,16 @@
 package main
 
-import (
-	"os"
-	"yonder/router"
-)
-
 // read config
 // logger
 // grom
 
 import (
-	_ "fmt"
 	"github.com/gin-gonic/gin"
 	"io"
 	"log"
+	"os"
 	yconf "yonder/config"
+	"yonder/router"
 )
 
 func logInit() {
