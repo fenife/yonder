@@ -63,6 +63,14 @@ func loadConf() {
 	}
 }
 
+func IsDev() bool {
+	return Conf.EnvMode == "dev"
+}
+
+func IsDebugMode() bool {
+	return Conf.DebugMode == 1
+}
+
 func init()  {
 	loadConf()
 }
