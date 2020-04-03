@@ -10,19 +10,17 @@ import (
 	"yonder/utils"
 )
 
-
 // for article list
 type SimpleArticle struct {
-	ID        uint				`json:"id"`
-	CreatedAt utils.JSONTime	`json:"created_at"`
-	UpdatedAt utils.JSONTime 	`json:"updated_at"`
-	Title 	  string			`json:"title"`
-	UserId 	  uint				`json:"user_id"`
-	UserName  string			`json:"user_name"`
-	CateId 	  uint				`json:"cate_id"`
-	CateName  string 			`json:"cate_name"`	// sql field: cate_name
+	ID        uint           `json:"id"`
+	CreatedAt utils.JSONTime `json:"created_at"`
+	UpdatedAt utils.JSONTime `json:"updated_at"`
+	Title     string         `json:"title"`
+	UserId    uint           `json:"user_id"`
+	UserName  string         `json:"user_name"`
+	CateId    uint           `json:"cate_id"`
+	CateName  string         `json:"cate_name"` // sql field: cate_name
 }
-
 
 func paginate(x []SimpleArticle, skip int, size int) []SimpleArticle {
 	if skip > len(x) {
@@ -34,11 +32,11 @@ func paginate(x []SimpleArticle, skip int, size int) []SimpleArticle {
 		end = len(x)
 	}
 
-	return x[skip: end]
+	return x[skip:end]
 }
 
 // 根据标题搜索文章
-func SearchArticle(c *gin.Context)  {
+func SearchArticle(c *gin.Context) {
 	var err error
 	var al []SimpleArticle
 	var page, limit int
@@ -84,11 +82,10 @@ func SearchArticle(c *gin.Context)  {
 	}
 
 	SendResp(c, gin.H{
-		"al": paginate(al, (page - 1) * limit, limit),
+		"al":    paginate(al, (page-1)*limit, limit),
 		"total": len(al),
 	})
 }
-
 
 func Hello(c *gin.Context) {
 	rds := redis.NewClient(&redis.Options{
@@ -101,4 +98,3 @@ func Hello(c *gin.Context) {
 		"msg":   "hello world",
 	})
 }
-

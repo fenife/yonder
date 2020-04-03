@@ -2,14 +2,13 @@ package utils
 
 import (
 	"fmt"
-	"github.com/jinzhu/gorm"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jinzhu/gorm"
 	"time"
 	yconf "yonder/config"
 )
 
 var DB *gorm.DB
-
 
 func initDB() {
 	//var dc = config.AllConfig.Database

@@ -5,7 +5,7 @@ import (
 	yapi "yonder/api"
 )
 
-func Route(router *gin.Engine)  {
+func Route(router *gin.Engine) {
 	apiGrp := router.Group("/api")
 
 	// 搜索

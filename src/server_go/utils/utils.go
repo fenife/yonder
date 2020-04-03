@@ -17,7 +17,6 @@ func PrettyPrint(v interface{}) {
 	}
 }
 
-
 // Clone deep-copies src to dst
 // src, dst must be pointer
 func Deepcopy(src, dst interface{}) error {

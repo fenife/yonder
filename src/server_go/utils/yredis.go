@@ -12,8 +12,8 @@ func NewRedisClient() *redis.Client {
 
 	addr := fmt.Sprintf("%s:%d", yc.RedisHost, yc.RedisPort)
 	client := redis.NewClient(&redis.Options{
-		Addr:     addr,
-		DB:       0,  // use default DB
+		Addr: addr,
+		DB:   0, // use default DB
 	})
 
 	_, err := client.Ping().Result()

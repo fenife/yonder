@@ -38,7 +38,6 @@ func logInit() {
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 }
 
-
 func main() {
 	logInit()
 

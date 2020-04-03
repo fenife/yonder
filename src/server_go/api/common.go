@@ -10,27 +10,26 @@ import (
 
 type errCode struct {
 	SUCCESS int
-	ERROR 	int
+	ERROR   int
 }
 
 var ErrCode = errCode{
 	SUCCESS: 0,
-	ERROR: 	 1,
+	ERROR:   1,
 }
 
 // 发送正确请求
 func SendResp(c *gin.Context, data gin.H) {
 	c.JSON(http.StatusOK, gin.H{
 		"code": ErrCode.SUCCESS,
-		"msg": "success",
+		"msg":  "success",
 		"data": data,
 	})
 }
 
-
 // args: errNo, ...
 // 如果服务器出错，返回错误信息和错误码
-func SendErrResp(c *gin.Context, msg string, args ...interface{})  {
+func SendErrResp(c *gin.Context, msg string, args ...interface{}) {
 
 	var errNo = ErrCode.ERROR
 	if len(args) != 0 {
@@ -43,7 +42,7 @@ func SendErrResp(c *gin.Context, msg string, args ...interface{})  {
 
 	c.JSON(http.StatusOK, gin.H{
 		"code": errNo,
-		"msg": msg,
+		"msg":  msg,
 		"data": gin.H{},
 	})
 
