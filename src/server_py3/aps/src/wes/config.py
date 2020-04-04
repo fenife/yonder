@@ -37,5 +37,5 @@ class AppConfig(object):
             cls.log_level,
         )
         lgm.addConsoleHandler()
-        log_file = cls.configs['LOG_FILE']
+        log_file = f"{cls.configs['LOG_PATH']}/server_py3/aps/wes.log"
         lgm.addTimedFileHandler(filename=log_file, backupCount=30)
