@@ -219,9 +219,6 @@ def py3():
     _remote_py_dir = f"{_remote_src_dir}/{_py_file}"
     _remote_tar_py_file = f"{_remote_src_dir}/{_tar_py_file}"
 
-    _remote_tmp_py_file = f'/tmp/{_tar_py_file}'
-
-    # _prepare_path()
     _check_remote_path(_remote_log_dir)
     _check_remote_path(_remote_py_dir)
 
@@ -250,14 +247,11 @@ def py3():
         if _remote_os_exist(_remote_py_dir):
             run(f"mv {_remote_py_dir} {_remote_bak_py_dir}")
 
-        # run(f"mkdir {_remote_py_dir}")
-
-    # 解压
-    with cd(_remote_src_dir):
+        # 解压
         run(f"tar -xzf {_remote_tar_py_file}")
 
     # 上传 supervisor conf 文件
-    # _spv_for('py3')
+    _spv_for('py3')
 
     # 重启服务
     with settings(warn_only=True):
@@ -334,18 +328,19 @@ def vue():
     """
     _vue_file = "frontend_vue"
     _tar_vue_file = f"{_vue_file}.tar.gz"
+    _local_vue_dir = f"{_local_src_dir}/{_vue_file}"
 
-    _remote_vue_dir = f"{_remote_src_dir}/frontend_vue"
+    _remote_vue_dir = f"{_remote_src_dir}/{_vue_file}"
     _remote_tar_vue_file = f'{_remote_src_dir}/{_tar_vue_file}'
 
     _check_remote_path(_remote_vue_dir)
 
     # 压缩到build/
     excludes = ['logs', '*.log', '.nuxt', 'node_modules']
-    with lcd(os.path.join(_local_src_dir, 'frontend_vue')):
+    with lcd(_local_src_dir):
         cmd = ["tar", "-czf", f"{_local_build_dir}/{_tar_vue_file}"]
         cmd.extend(['--exclude=\'%s\'' % ex for ex in excludes])
-        cmd.extend(['.'])
+        cmd.extend([f"{_vue_file}"])
         local(' '.join(cmd))
 
     # 删除
@@ -354,17 +349,21 @@ def vue():
     # 上传
     put(f"{_local_build_dir}/{_tar_vue_file}", _remote_tar_vue_file)
 
+    _remote_bak_vue_dir = f"{_remote_vue_dir}_bak"
     with cd(_remote_src_dir):
         # 删除旧的备份文件
-        run(f"rm -rf {_remote_vue_dir}_bak")
-        # 重命名、备份原来的代码
-        run(f"mv {_remote_vue_dir} {_remote_vue_dir}_bak")
-        # 新建文件夹
-        run(f"mkdir {_remote_vue_dir}")
+        if _remote_os_exist(_remote_bak_vue_dir):
+            run(f"rm -rf {_remote_bak_vue_dir}")
 
-    with cd(_remote_vue_dir):
+        # 重命名、备份原来的代码
+        if _remote_os_exist(_remote_vue_dir):
+            run(f"mv {_remote_vue_dir} {_remote_bak_vue_dir}")
+
         # 解压
         run(f"tar -xzf {_remote_tar_vue_file}")
+
+    with cd(_remote_vue_dir):
+        # 上面删除了所有前端构建代码，这里要重新安装
         run(f"npm install")
         run(f"npm run build")
 
