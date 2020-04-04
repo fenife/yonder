@@ -1,13 +1,8 @@
-# not json
-#  1. use json like format
-#  2. can add comments with #
-#  3. use 1/0 for true/false
-#     because boolean type is different in different languages
-#
-# Python: use `eval()` to parse it
-# golang: ?
+#!/usr/bin/env python3
 
-{
+import json
+
+conf = {
     # dev/live
     "ENV_MODE": "dev",
 
@@ -47,8 +42,6 @@
     "LOGIN_EXPIRED": 1800,
 
     # log file path
-    # todo: should only be a log path, not a file for different server
-    "LOG_FILE": "/icode/yonder/logs/server_py3/aps/wes.log",
     "LOG_PATH": "/icode/yonder/logs",
 
     # local backup database config
@@ -59,3 +52,9 @@
     "BACKUP_DB_NAME": "test",
     "BACKUP_DB_CHARSET": "utf8"
 }
+
+
+if __name__ == "__main__":
+    # 将配置文件转换为json文件
+    with open('./yonder.json', 'w') as f:
+        json.dump(conf, f, ensure_ascii=False, indent=2)
