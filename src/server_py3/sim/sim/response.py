@@ -20,7 +20,7 @@ class Response(object):
 
     def __init__(self, data=None, code=None, msg=None, headers=None):
         self.data = data
-        self.status_code = code or self.default_status_code
+        self.status_code = int(code) or self.default_status_code
         self._msg = msg
         self.mimetype = self.default_mimetype
         self.headers = headers or [('Content-Type', 'text/json')]

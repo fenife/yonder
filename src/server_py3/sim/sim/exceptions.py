@@ -27,6 +27,7 @@ class AppBaseException(Exception):
 
 
 def abort(code, msg=None):
+    assert isinstance(code, int)
     raise AppBaseException(code, msg)
 
 
