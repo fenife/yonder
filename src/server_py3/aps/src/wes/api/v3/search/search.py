@@ -9,11 +9,11 @@ from wes.model import User, Category, Article
 from wes.consts import RespCode, Permission, RoleUser, RoleAdmin, Roles, USER, CATEGORY, ARTICLE
 from wes.api.decorators import permission_required, login_required
 from wes.api.desc import ApiDescBase, api_desc_wrapper
-from wes.api._utils import call_ses_query
-from .. import api_group_v2
+from wes.api._utils import call_go_search
+from .. import api_group_v3
 
 
-@api_group_v2.route('/search')
+@api_group_v3.route('/search')
 def search(ctx: AppRequestContext):
     """搜索"""
     # 参数处理
@@ -24,12 +24,12 @@ def search(ctx: AppRequestContext):
     page = ctx.request.get_uri_arg('page')
     limit = ctx.request.get_uri_arg('limit')
 
-    res = call_ses_query(kw, page, limit)
+    res = call_go_search(kw, page, limit)
     resp = Response(data=res['data'], code=res['code'], msg=res['msg'])
     return resp
 
 
-@api_group_v2.route('/search/desc', methods=('GET', ))
+@api_group_v3.route('/search/desc', methods=('GET', ))
 @api_desc_wrapper()
 class ApiSearchDesc(ApiDescBase):
     name = "搜索"
