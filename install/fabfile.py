@@ -14,14 +14,15 @@ usage:
     setup deploy env
     deploy etc conf
     move nginx config and supervisor config to yonder/etc/
+    deploy golang
 
 ## todo
-    deploy golang
     restore backup data to remote mysql
 """
 
 import os
 import sys
+import json
 import datetime
 import collections
 import pprint
@@ -29,8 +30,10 @@ import pprint
 # 导入Fabric API:
 from fabric.api import *
 
-# 要部署到哪个环境 (dev,live)
-_deploy_env = 'dev'
+# 要部署到哪个环境 (test,live)
+# 此变量对应配置文件的后缀
+# `dev`一般为本地开发环境，不需要远程部署
+_deploy_env = 'test'
 
 # 本地相关目录
 # ./../
@@ -39,17 +42,15 @@ _local_src_dir    = os.path.join(_local_base_dir, 'src')
 _local_build_dir  = os.path.join(_local_base_dir, 'build')
 _local_backup_dir = os.path.join(_local_base_dir, 'backup')
 _local_etc_dir = os.path.join(_local_base_dir, 'etc')
-
-# todo: 根据变量读取相应的配置文件，部署到哪个环境？
-_server_config_file = f"{_local_base_dir}/etc/server/yonder_{_deploy_env}.conf"
-# _local_conf_file    = f"{_local_base_dir}/etc/server/yonder.conf"
+_local_etc_server_dir = os.path.join(_local_etc_dir, 'server')
 
 # 读取配置文件
-with open(_server_config_file, 'r') as f:
-    conf = eval(f.read())
-
-# with open(_local_conf_file, 'r') as f:
-#     lconf = eval(f.read())
+_conf_pyfile = f"yonder_{_deploy_env}.py"
+_conf_json   = f"yonder_{_deploy_env}.json"
+with lcd(f"{_local_etc_server_dir}"):
+    local(f"python3 {_conf_pyfile}")    # 生成json文件
+    with open(f"{_local_etc_server_dir}/{_conf_json}", 'r') as f:
+        conf = json.load(f)
 
 _debug_mode = True if conf.get('DEBUG_MODE') else False
 
@@ -83,7 +84,7 @@ env.sudo_user = conf.get('SSH_SUDO_USER')
 dct = collections.OrderedDict({
     "deploy env": _deploy_env,
     "env mode": conf.get('ENV_MODE'),
-    "conf file": _server_config_file,
+    "conf file": f"{_local_etc_server_dir}/{_conf_pyfile}",
     # "conf file for local": _local_conf_file,
     'debug mode': _debug_mode,
     'local base dir': _local_base_dir,
@@ -365,18 +366,17 @@ def etc():
     """
     yonder etc server config
     """
-    _local_etc_server_dir  = f"{_local_etc_dir}/server"
     _remote_etc_server_dir = f"{_remote_etc_dir}/server"
-    _conf_file = f"yonder_{_deploy_env}.conf"
 
     _check_remote_path(_remote_etc_server_dir)
 
     # 上传到 yonder/etc
-    put(f"{_local_etc_server_dir}/{_conf_file}", f"{_remote_etc_server_dir}/{_conf_file}")
+    put(f"{_local_etc_server_dir}/{_conf_pyfile}", f"{_remote_etc_server_dir}/{_conf_pyfile}")
+    put(f"{_local_etc_server_dir}/Makefile", f"{_remote_etc_server_dir}/Makefile")
 
-    # 复制并重命名
+    # 生成json配置并重命名
     with cd(_remote_etc_server_dir):
-        sudo(f"cp {_conf_file} yonder.conf")
+        run(f"make {_deploy_env}")
 
 
 ########################################
