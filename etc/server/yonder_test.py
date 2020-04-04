@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
-import json
 
 conf = {
     # dev/live
-    "ENV_MODE": "test",
+    "ENV_MODE": "dev",
 
     # 远程部署时ssh登陆的配置，密码在部署时会要求从命令行输入
     # /etc/hosts
@@ -55,6 +54,10 @@ conf = {
 
 
 if __name__ == "__main__":
+    import json
+    import os
+
     # 将配置文件转换为json文件
-    with open('./yonder.json', 'w') as f:
+    fn = f"{os.path.basename(__file__).split('.')[0]}.json"
+    with open(fn, 'w') as f:
         json.dump(conf, f, ensure_ascii=False, indent=2)
