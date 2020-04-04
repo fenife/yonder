@@ -38,7 +38,7 @@ func paginate(x []SimpleArticle, skip int, size int) []SimpleArticle {
 // 根据标题搜索文章
 func SearchArticle(c *gin.Context) {
 	var err error
-	var al []SimpleArticle
+	var articles []SimpleArticle
 	var page, limit int
 
 	pageStr := c.Query("page")
@@ -47,7 +47,7 @@ func SearchArticle(c *gin.Context) {
 		page = 1
 	} else if page, err = strconv.Atoi(pageStr); err != nil {
 		log.Println(err)
-		SendErrResp(c, "param page no is not valid")
+		SendErrResp(c, "param `page` is not valid")
 		return
 	}
 
@@ -56,11 +56,15 @@ func SearchArticle(c *gin.Context) {
 		limit = yconf.Conf.PageSize
 	} else if limit, err = strconv.Atoi(limitStr); err != nil {
 		log.Println(err)
-		SendErrResp(c, "param limit is not valid")
+		SendErrResp(c, "param `limit` is not valid")
 		return
 	}
 
 	kw := c.Query("kw")
+	if kw == "" {
+		SendErrResp(c, "param `kw` is required")
+		return
+	}
 	// add % to q
 	fq := fmt.Sprintf("%%%s%%", kw)
 	var sql = `
@@ -75,15 +79,15 @@ func SearchArticle(c *gin.Context) {
     and a.title like ?
     order by a.id desc`
 
-	if err := utils.DB.Raw(sql, fq).Scan(&al).Error; err != nil {
+	if err := utils.DB.Raw(sql, fq).Scan(&articles).Error; err != nil {
 		log.Println(err)
 		SendErrResp(c, "can not get article list")
 		return
 	}
 
 	SendResp(c, gin.H{
-		"al":    paginate(al, (page-1)*limit, limit),
-		"total": len(al),
+		"articles":    paginate(articles, (page-1)*limit, limit),
+		"total": len(articles),
 	})
 }
 

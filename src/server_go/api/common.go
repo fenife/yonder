@@ -15,14 +15,14 @@ type errCode struct {
 
 var ErrCode = errCode{
 	SUCCESS: 0,
-	ERROR:   1,
+	ERROR:   -1,
 }
 
 // 发送正确请求
 func SendResp(c *gin.Context, data gin.H) {
 	c.JSON(http.StatusOK, gin.H{
 		"code": ErrCode.SUCCESS,
-		"msg":  "success",
+		"msg":  "OK",
 		"data": data,
 	})
 }
@@ -43,7 +43,7 @@ func SendErrResp(c *gin.Context, msg string, args ...interface{}) {
 	c.JSON(http.StatusOK, gin.H{
 		"code": errNo,
 		"msg":  msg,
-		"data": gin.H{},
+		"data": nil,
 	})
 
 	c.Abort()
