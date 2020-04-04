@@ -251,25 +251,54 @@ def py3():
 # supervisor
 ########################################
 
-def spv():
-    """
-    supervisor config
-    """
-    _remote_supervisor_log_dir = f"{_remote_log_dir}/supervisor"
-    _remote_supervisor_dir = f"{_remote_etc_dir}/supervisor"
-    _remote_supervisor_conf = f"{_remote_supervisor_dir}/yonder_supervisor.conf"
+_remote_spv_log_dir = f"{_remote_log_dir}/supervisor"
+_remote_spv_dir = f"{_remote_etc_dir}/supervisor"
 
-    _local_supervisor_conf = f"{_local_etc_dir}/supervisor/yonder_supervisor.conf"
+_tar_spv_file = f"supervisor.tar.gz"
 
-    _check_remote_path(_remote_supervisor_log_dir)
-    _check_remote_path(_remote_supervisor_dir)
+_local_spv_dir = f"{_local_etc_dir}/supervisor"
+
+
+def _spv_for(srv):
+    """
+    supervisor config for one server
+    :param srv: py3/go
+    :return:
+    """
+    _check_remote_path(_remote_spv_log_dir)
+    _check_remote_path(_remote_spv_dir)
+
+    _spv_conf_file = f"server_{srv}.conf"
 
     # 上传到 yonder/etc/supervisor
-    put(_local_supervisor_conf, _remote_supervisor_conf)
+    put(f"{_local_spv_dir}/{_spv_conf_file}", f"{_remote_spv_dir}/{_spv_conf_file}")
 
     # 复制
-    with cd(_remote_supervisor_dir):
-        sudo(f"cp {_remote_supervisor_conf} /etc/supervisor/conf.d/")
+    with cd(_remote_spv_dir):
+        sudo(f"cp {_spv_conf_file} /etc/supervisor/conf.d/")
+
+    sudo(f"supervisorctl reload")
+    # sudo(f"sudo supervisorctl restart server_py3")
+    sudo(f"supervisorctl status")
+
+
+def spv():
+    """
+    all supervisor config
+    """
+
+    _check_remote_path(_remote_spv_log_dir)
+    _check_remote_path(_remote_spv_dir)
+
+    # 上传到 yonder/etc/supervisor
+    with lcd(_local_spv_dir):
+        files = os.listdir(_local_spv_dir)
+        for fn in files:
+            put(f"{_local_spv_dir}/{fn}", f"{_remote_spv_dir}/{fn}")
+
+    # 复制
+    with cd(_remote_spv_dir):
+        sudo(f"cp ./* /etc/supervisor/conf.d/")
 
     sudo(f"supervisorctl reload")
     # sudo(f"sudo supervisorctl restart server_py3")
@@ -424,7 +453,10 @@ def go():
         # 解压
         run(f"tar -xzf {_remote_tar_go_file}")
 
-    # 重启
+    # 上传 supervisor conf 文件
+    _spv_for('go')
+
+    # 重启服务
     with settings(warn_only=True):
         sudo('supervisorctl restart server_go')
         # sudo('supervisorctl stop server_py3')

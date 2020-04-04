@@ -57,7 +57,7 @@ if __name__ == "__main__":
     import json
     import os
 
-    # 将配置文件转换为json文件
+    # 将配置文件转换为同名的json文件
     fn = f"{os.path.basename(__file__).split('.')[0]}.json"
     with open(fn, 'w') as f:
         json.dump(conf, f, ensure_ascii=False, indent=2)
