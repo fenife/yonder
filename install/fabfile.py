@@ -104,7 +104,7 @@ def _now():
     return datetime.datetime.now().strftime('%Y-%m-%d_%H.%M.%S')
 
 
-def _os_exist(path):
+def _remote_os_exist(path):
     result = run(f" [ -e '{path}' ] && echo 1 || echo 0")
     exist = int(result.stdout.strip('\n'))
     return exist
@@ -113,7 +113,7 @@ def _os_exist(path):
 def _check_remote_path(path):
     # result = run(f" [ -e '{path}' ] && echo 1 || echo 0")
     # exist = int(result.stdout.strip('\n'))
-    exist = _os_exist(path)
+    exist = _remote_os_exist(path)
     if not exist:
         print(f"[remote] `{path}` not exists, create it")
         sudo(f"mkdir -p {path}")
@@ -212,35 +212,54 @@ def py3():
     server_py3
     """
     # 打包的python代码文件
-    _pyfile = "server_py3"
-    _tar_pyfile = f"{_pyfile}.tar.gz"
-    _remote_tmp_pyfile = f'/tmp/{_tar_pyfile}'
+    _py_file = "server_py3"
+    _tar_py_file = f"{_py_file}.tar.gz"
+    _local_py_dir = f"{_local_src_dir}/{_py_file}"
 
-    _prepare_path()
+    _remote_py_dir = f"{_remote_src_dir}/{_py_file}"
+    _remote_tar_py_file = f"{_remote_src_dir}/{_tar_py_file}"
+
+    _remote_tmp_py_file = f'/tmp/{_tar_py_file}'
+
+    # _prepare_path()
+    _check_remote_path(_remote_log_dir)
+    _check_remote_path(_remote_py_dir)
 
     # 打包
     excludes = ['data', 'logs', '*.log', '*.pyc', '*.pyo', '*__pycache__*']
-    with lcd(os.path.join(_local_base_dir, 'src', 'server_py3')):
-        cmd = ["tar", "-czf", f"{_local_build_dir}/{_tar_pyfile}"]
+    with lcd(_local_src_dir):
+        cmd = ["tar", "-czf", f"{_local_build_dir}/{_tar_py_file}"]
         cmd.extend(['--exclude=\'%s\'' % ex for ex in excludes])
-        cmd.extend(['.'])
+        cmd.extend([f"{_py_file}"])
         local(' '.join(cmd))
 
-    newdir = f"{_pyfile}-{_now()}"
-    run(f"rm -f {_remote_tmp_pyfile}")
+    # 删除
+    if _remote_os_exist(_remote_tar_py_file):
+        run(f"rm -rf {_remote_tar_py_file}")
+
     # 把本地打包好的python代码上传到服务器
-    put(f"{_local_build_dir}/{_tar_pyfile}", _remote_tmp_pyfile)
+    put(f"{_local_build_dir}/{_tar_py_file}", f"{_remote_tar_py_file}")
 
+    _remote_bak_py_dir = f"{_remote_py_dir}_bak"
     with cd(_remote_src_dir):
-        run(f"mkdir {newdir}")
+        # 删除旧的备份文件
+        if _remote_os_exist(_remote_bak_py_dir):
+            run(f"rm -rf {_remote_bak_py_dir}")
 
-    with cd(f"{_remote_src_dir}/{newdir}"):
-        run(f"tar -xzf {_remote_tmp_pyfile}")
+        # 重命名、备份原来的代码
+        if _remote_os_exist(_remote_py_dir):
+            run(f"mv {_remote_py_dir} {_remote_bak_py_dir}")
 
+        # run(f"mkdir {_remote_py_dir}")
+
+    # 解压
     with cd(_remote_src_dir):
-        run(f"rm -f {_pyfile}")
-        run(f"ln -s {newdir} {_pyfile}")
+        run(f"tar -xzf {_remote_tar_py_file}")
 
+    # 上传 supervisor conf 文件
+    # _spv_for('py3')
+
+    # 重启服务
     with settings(warn_only=True):
         sudo('supervisorctl restart server_py3')
         # sudo('supervisorctl stop server_py3')
@@ -443,11 +462,11 @@ def go():
     _remote_bak_go_exe_file = f"{_remote_go_exe_file}_bak"
     with cd(_remote_go_dir):
         # 删除旧的备份文件
-        if _os_exist(_remote_bak_go_exe_file):
+        if _remote_os_exist(_remote_bak_go_exe_file):
             run(f"rm -rf {_remote_bak_go_exe_file}")
 
         # 重命名、备份原来的代码
-        if _os_exist(_remote_go_exe_file):
+        if _remote_os_exist(_remote_go_exe_file):
             run(f"mv {_remote_go_exe_file} {_remote_bak_go_exe_file}")
 
         # 解压
