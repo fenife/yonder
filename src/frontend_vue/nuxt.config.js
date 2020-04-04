@@ -30,14 +30,13 @@ module.exports = {
     '@nuxtjs/axios',
     '@nuxtjs/proxy'
   ],
-  proxy: [
-    [
-      '/api',{
+  proxy: {
+    '/api': {
       target: 'http://localhost:6070',
-      // target: 'https://elm-api.caibowen.net',
       changeOrigin: true,
-      // pathRewrite: { '^/api' : '/' }
-    }
-    ]
-  ]
+      // pathRewrite: {
+      //   '^/api': '/',
+      // }
+    },
+  }
 }

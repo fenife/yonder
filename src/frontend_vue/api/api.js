@@ -1,8 +1,12 @@
-let config = require('~/config')
+// let config = require('~/config')
+import config from '~/config'
+
 let baseUrl = config.baseUrl
+// let gourl = config.gourl
 
 if (typeof window === 'undefined') {
-  baseUrl = config.backendURl
+  baseUrl = config.pyurl
+  // gourl = config.gourl
 }
 
 const apiList = {
@@ -82,7 +86,8 @@ const apiList = {
 
   // 搜索
   searchArticle: {
-    url: baseUrl + "/v2/search",
+    // url: baseUrl + "/v2/search",
+    url: baseUrl + "/v3/search",
     method: "GET"
   },
 
