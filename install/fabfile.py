@@ -12,12 +12,12 @@ usage:
     nginx
     restore backup data to local mysql
     setup deploy env
+    deploy etc conf
+    move nginx config and supervisor config to yonder/etc/
 
 ## todo
     deploy golang
     restore backup data to remote mysql
-    deploy etc conf
-    move nginx config and supervisor config to yonder/etc/
 """
 
 import os
@@ -103,9 +103,16 @@ def _now():
     return datetime.datetime.now().strftime('%Y-%m-%d_%H.%M.%S')
 
 
-def _check_remote_path(path):
+def _os_exist(path):
     result = run(f" [ -e '{path}' ] && echo 1 || echo 0")
     exist = int(result.stdout.strip('\n'))
+    return exist
+
+
+def _check_remote_path(path):
+    # result = run(f" [ -e '{path}' ] && echo 1 || echo 0")
+    # exist = int(result.stdout.strip('\n'))
+    exist = _os_exist(path)
     if not exist:
         print(f"[remote] `{path}` not exists, create it")
         sudo(f"mkdir -p {path}")
@@ -380,3 +387,45 @@ def go():
     """
     server_go
     """
+    _go_execute_file = "yonder_server_go"
+    _tar_go_execute_file = f"{_go_execute_file}.tar.gz"
+
+    _remote_go_dir = f"{_remote_src_dir}/server_go"
+    _remote_tar_go_file = f'{_remote_go_dir}/{_tar_go_execute_file}'
+    _remote_go_exe_file = f"{_remote_go_dir}/{_go_execute_file}"
+
+    _check_remote_path(_remote_go_dir)
+
+    # 压缩到 build/
+    with lcd(os.path.join(_local_src_dir, 'server_go')):
+        # build
+        local("make build-linux")
+        # tar
+        cmd = ["tar", "-czvf", f"{_local_build_dir}/{_tar_go_execute_file}"]
+        cmd.extend([_go_execute_file])
+        local(' '.join(cmd))
+
+    # 删除
+    run(f"rm -rf {_remote_tar_go_file}")
+
+    # 上传
+    put(f"{_local_build_dir}/{_tar_go_execute_file}", _remote_tar_go_file)
+
+    _remote_bak_go_exe_file = f"{_remote_go_exe_file}_bak"
+    with cd(_remote_go_dir):
+        # 删除旧的备份文件
+        if _os_exist(_remote_bak_go_exe_file):
+            run(f"rm -rf {_remote_bak_go_exe_file}")
+
+        # 重命名、备份原来的代码
+        if _os_exist(_remote_go_exe_file):
+            run(f"mv {_remote_go_exe_file} {_remote_bak_go_exe_file}")
+
+        # 解压
+        run(f"tar -xzf {_remote_tar_go_file}")
+
+    # 重启
+    with settings(warn_only=True):
+        sudo('supervisorctl restart server_go')
+        # sudo('supervisorctl stop server_py3')
+        # sudo('/etc/init.d/nginx reload')
