@@ -2,7 +2,7 @@ package main
 
 // read config
 // logger
-// grom
+// gorm
 
 import (
 	"github.com/gin-gonic/gin"

@@ -40,7 +40,7 @@ type serverConfig struct {
 	BackupDBCharset  string `json:"BACKUP_DB_CHARSET"`
 }
 
-const confFile = "/icode/yonder/etc/server/yonder.conf"
+const confFile = "/icode/yonder/etc/server/yonder.json"
 
 var Conf serverConfig
 
