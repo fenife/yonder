@@ -3,7 +3,6 @@ package config
 import (
 	"encoding/json"
 	"io/ioutil"
-	"regexp"
 )
 
 type serverConfig struct {
@@ -50,12 +49,6 @@ func loadConf() {
 	if err != nil {
 		panic(err.Error())
 	}
-
-	// 去掉以#开头的注释，去掉注释后，剩余的内容应该符合json格式
-	confStr := string(data)
-	reg := regexp.MustCompile(`#.*`)
-	confStr = reg.ReplaceAllString(confStr, "")
-	data = []byte(confStr)
 
 	if err := json.Unmarshal(data, &Conf); err != nil {
 		panic(err.Error())
