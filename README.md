@@ -13,16 +13,12 @@
         Python
         mysql
         redis
+        nginx
     
     前端：
-        npm
         vue 
         nuxt
-        服务端渲染
-
+        npm
+        
 ## 部署
-    1. 部署后端
-
-    2. 部署前端
-
-    3. 准备nginx
+    参考：`yonder/install/install.md`
