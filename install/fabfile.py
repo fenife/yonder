@@ -40,7 +40,8 @@ _deploy_env = 'test'
 _local_base_dir   = os.path.abspath(os.path.abspath(__file__).split('/install', 1)[0])
 _local_src_dir    = os.path.join(_local_base_dir, 'src')
 _local_build_dir  = os.path.join(_local_base_dir, 'build')
-_local_backup_dir = os.path.join(_local_base_dir, 'backup')
+# 数据备份，区分不同环境
+_local_backup_dir = os.path.join(_local_base_dir, 'backup', _deploy_env)
 _local_etc_dir = os.path.join(_local_base_dir, 'etc')
 _local_etc_server_dir = os.path.join(_local_etc_dir, 'server')
 
@@ -69,7 +70,7 @@ _remote_base_dir = "/icode/yonder"
 _remote_log_dir  = os.path.join(_remote_base_dir, 'logs')
 _remote_src_dir  = os.path.join(_remote_base_dir, 'src')
 _remote_etc_dir  = os.path.join(_remote_base_dir, 'etc')
-
+_remote_backup_dir = f"{_remote_base_dir}/backup"
 
 # 服务器地址，可以有多个，依次部署:
 env.hosts = conf.get('SSH_HOSTS')
@@ -146,7 +147,7 @@ def backup():
     """
     备份数据库，下载到本地
     """
-    _remote_backup_dir = f"{_remote_base_dir}/backup"
+    local(f"mkdir -p {_local_backup_dir}")
 
     _check_remote_path(_remote_backup_dir)
 
@@ -156,7 +157,7 @@ def backup():
 
     with cd(_remote_backup_dir):
         cmd = f"mysqldump --user={_remote_db_user} --password={_remote_db_password} " \
-              f"--skip-opt --add-drop-table --default-character-set=utf8 " \
+              f"--skip-opt --add-drop-table --default-character-set=utf8mb4 " \
               f"--quick {_remote_db_name} > {fn}"
         run(cmd)
         run(f"tar -czvf {target} {fn}")
@@ -200,8 +201,40 @@ def r2l():
 
 def restore2remote():
     """
-    restore database to remote
+    恢复最近一次备份的数据
     """
+    fs = os.listdir(_local_backup_dir)
+    files = [f for f in fs if f.startswith('backup-') and f.endswith('.sql.tar.gz')]
+    files.sort(reverse=True)
+
+    if not files:
+        print('No backup files found.')
+        return
+
+    _restore_tar_file = files[0]
+    _restore_file = _restore_tar_file.split('.tar.gz')[0]
+    print(f"\nStart restore to remote database, file: {_restore_tar_file}\n")
+
+    # 上传
+    put(f"{_local_backup_dir}/{_restore_tar_file}", f"{_remote_backup_dir}/{_restore_tar_file}")
+
+    sqls = [
+        f"drop database if exists {_remote_db_name};",
+        f"create database {_remote_db_name};",
+    ]
+    _mysql = f"mysql -u{_remote_db_user} -p{_remote_db_password} "
+    for sql in sqls:
+        run(f'{_mysql} -e "{sql}" ')
+
+    with cd(_remote_backup_dir):
+        # 解压
+        run(f"tar -zxvf {_restore_tar_file}")
+        # local(f"mysql -uroot -p%s awesome < backup/%s" % (p, restore_file[:-7]))
+        # 还原
+        run(f"{_mysql} {_remote_db_name} < {_remote_backup_dir}/{_restore_file}")
+        # 删除sql
+        run(f"rm -f {_restore_file}")
+        run(f"rm -rf {_restore_tar_file}")
 
 ########################################
 # Python server
