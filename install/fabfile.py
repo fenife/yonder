@@ -4,20 +4,6 @@
 usage:
 1. setup: _deploy_env=dev/live
 2. fab -l
-
-## done
-    server_py3
-    install supervisor and start server
-    vue
-    nginx
-    restore backup data to local mysql
-    setup deploy env
-    deploy etc conf
-    move nginx config and supervisor config to yonder/etc/
-    deploy golang
-
-## todo
-    restore backup data to remote mysql
 """
 
 import os
