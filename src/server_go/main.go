@@ -14,8 +14,9 @@ import (
 )
 
 func logInit() {
+	// todo: TimedRotatingFileHandler
 	logPath := yconf.Conf.LogPath + "/server_go"
-	logFile := logPath + "/srv.log"
+	logFile := logPath + "/srv.log"		// todo: rename
 	if err := os.MkdirAll(logPath, os.ModePerm); err != nil {
 		panic(err)
 	}
