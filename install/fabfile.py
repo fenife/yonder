@@ -123,14 +123,14 @@ def _check_remote_path(path):
         print(f"[remote] `{path}` exists\n")
 
 
-def _prepare_path():
+def prepare():
     """
     准备工作目录
     :return:
     """
     with cd('/'):
-        _check_remote_path(_remote_log_dir)
-        _check_remote_path(_remote_src_dir)
+        sudo(f"mkdir -p {_remote_base_dir}")
+        sudo(f"chown -R {env.user}:{env.user} {_remote_base_dir}")
 
 
 def _check_local_path(path):
@@ -211,6 +211,8 @@ def restore2remote():
         print('No backup files found.')
         return
 
+    _check_remote_path(_remote_backup_dir)
+
     _restore_tar_file = files[0]
     _restore_file = _restore_tar_file.split('.tar.gz')[0]
     print(f"\nStart restore to remote database, file: {_restore_tar_file}\n")
@@ -240,16 +242,31 @@ def restore2remote():
 # Python server
 ########################################
 
+_py_file = "server_py3"
+_local_py_dir = f"{_local_src_dir}/{_py_file}"
+_remote_py_dir = f"{_remote_src_dir}/{_py_file}"
+
+
+def pip():
+    """
+    pip install requirements for server_py3
+    :return:
+    """
+    _req_file = f"requirements.txt"
+    _local_pip_req_file = f"{_local_py_dir}/{_req_file}"
+    _remote_pip_req_file = f"{_remote_py_dir}/{_req_file}"
+
+    put(_local_pip_req_file, _remote_pip_req_file)
+    with cd(_remote_py_dir):
+        sudo(f"pip3 install -r {_req_file}")
+
+
 def py3():
     """
     server_py3
     """
     # 打包的python代码文件
-    _py_file = "server_py3"
     _tar_py_file = f"{_py_file}.tar.gz"
-    _local_py_dir = f"{_local_src_dir}/{_py_file}"
-
-    _remote_py_dir = f"{_remote_src_dir}/{_py_file}"
     _remote_tar_py_file = f"{_remote_src_dir}/{_tar_py_file}"
 
     _check_remote_path(_remote_log_dir)
