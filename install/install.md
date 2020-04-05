@@ -1,4 +1,4 @@
-# 开发与部署
+# 本地开发与远程部署
 系统：
 ```shell script
 $ cat /etc/os-release
@@ -139,8 +139,28 @@ $ deactivate
 ref:
 https://www.liaoxuefeng.com/wiki/1016959663602400/1019273143120480
 
+### 启动服务
+1. 配置文件
 进入`yonder/etc/server`目录，编辑好`yonder_dev.py`配置文件后，
 执行：`make dev`生成json文件
+
+2. 启动python后端
+```shell script
+$ cd /icode/yonder/src/server_py3/aps/src
+$ python main.py
+```
+
+3. 启动go后端
+```shell script
+$ cd /icode/yonder/src/server_go
+$ go run main.go
+```
+
+4. 启动vue前端
+```shell script
+$ cd /icode/yonder/src/frontend_vue
+$ npm run dev
+```
 
 ## 远程部署(test)
 ### 安装supervisor (后端服务进程管理)
