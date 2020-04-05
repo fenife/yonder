@@ -89,7 +89,7 @@ def article_update(ctx: AppRequestContext):
             clear_cache_data(f"/api/about*")
 
         # 更新搜索服务的索引
-        build_search_index(article.id)
+        # build_search_index(article.id)
 
         return article
 

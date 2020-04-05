@@ -67,7 +67,7 @@ def article_create(ctx: AppRequestContext):
     clear_cache_data('/api/archive*')
 
     # 创建搜索服务的索引
-    build_search_index(article.id)
+    # build_search_index(article.id)
 
     return article
 
