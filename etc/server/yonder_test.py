@@ -7,7 +7,7 @@ conf = {
 
     # 远程部署时ssh登陆的配置，密码在部署时会要求从命令行输入
     # /etc/hosts
-    "SSH_HOSTS": ["192.168.0.92"],
+    "SSH_HOSTS": ["test.yonder.com"],
     "SSH_USER": "feng",
     "SSH_SUDO_USER": "root",
 

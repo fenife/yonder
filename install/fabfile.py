@@ -20,6 +20,7 @@ from fabric.api import *
 # 此变量对应配置文件的后缀
 # `dev`一般为本地开发环境，不需要远程部署
 _deploy_env = 'test'
+# _deploy_env = 'live'
 
 # 本地相关目录
 # ./../

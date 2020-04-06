@@ -218,6 +218,9 @@ $ fab -l
 # 准备工作目录
 fab prepare 
 
+# 备份远程数据库到本地
+fab backup
+
 # 部署配置文件
 $ fab etc
 
