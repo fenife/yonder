@@ -5,18 +5,19 @@ package main
 // gorm
 
 import (
-	"github.com/gin-gonic/gin"
 	"io"
 	"log"
 	"os"
 	yconf "yonder/config"
 	"yonder/router"
+
+	"github.com/gin-gonic/gin"
 )
 
 func logInit() {
 	// todo: TimedRotatingFileHandler
 	logPath := yconf.Conf.LogPath + "/server_go"
-	logFile := logPath + "/srv.log"		// todo: rename
+	logFile := logPath + "/srv.log" // todo: rename
 	if err := os.MkdirAll(logPath, os.ModePerm); err != nil {
 		panic(err)
 	}
