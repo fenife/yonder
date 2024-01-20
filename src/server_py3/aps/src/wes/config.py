@@ -7,8 +7,9 @@ import logging
 from sim.application import Application
 from sim.log import setup_logger, LoggerManager
 
-YONDER_HOME = os.path.abspath(__file__).split('/src', 1)[0]
-CONF_FILE   = f"{YONDER_HOME}/etc/server/yonder.json"
+# YONDER_HOME = os.path.abspath(__file__).split('/src', 1)[0]
+# CONF_FILE   = f"{YONDER_HOME}/etc/server/yonder.json"
+CONF_FILE   = f"yonder.json"
 
 with open(CONF_FILE, 'r') as f:
     configs = json.load(f)

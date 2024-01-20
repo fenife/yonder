@@ -1,0 +1,22 @@
+
+# FROM node:20.10.0
+FROM node:8.10.0
+
+RUN npm install -g cnpm --registry=https://registry.npm.taobao.org 
+RUN cnpm install -g pm2
+
+RUN mkdir /frontend_vue 
+WORKDIR /frontend_vue
+
+# 先安装依赖包
+COPY src/frontend_vue/package*.json ./
+RUN npm install
+
+# 复制源码
+COPY src/frontend_vue .
+
+EXPOSE 3000
+
+RUN npm run build
+
+CMD [ "npm", "run", "start" ]
