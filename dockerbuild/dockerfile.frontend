@@ -1,9 +1,4 @@
-
-# FROM node:20.10.0
-FROM node:8.10.0
-
-RUN npm install -g cnpm --registry=https://registry.npm.taobao.org 
-RUN cnpm install -g pm2
+FROM ubuntu-base
 
 RUN mkdir /frontend_vue 
 WORKDIR /frontend_vue
@@ -15,7 +10,7 @@ RUN npm install
 # 复制源码
 COPY src/frontend_vue .
 
-EXPOSE 3000
+EXPOSE 6050
 
 RUN npm run build
 

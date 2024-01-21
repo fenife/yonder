@@ -1,0 +1,66 @@
+version: '3'
+
+networks:
+  yonder-net:
+    # external: true
+    driver: bridge
+
+services:
+  mysql:
+    image: mysql:8.3.0
+    container_name: yonder-mysql
+    restart: always
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: test
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+    # ports:
+    #   - "3306:3306"
+    networks:
+      - yonder-net
+    healthcheck:
+        test: "/usr/bin/mysql --user=test --password=test --execute \"SHOW DATABASES;\""
+        interval: 2s
+        timeout: 20s
+        retries: 10
+
+  redis:
+    image: redis:7.0
+    container_name: yonder-redis
+    restart: always
+    # ports:
+    #   - "6379:6379"
+    networks:
+      - yonder-net
+
+  backend:
+    image: server-py3:latest
+    container_name: yonder-backend
+    restart: always
+    ports:
+      - "6070:6070"
+    networks:
+      - yonder-net
+    depends_on:
+      mysql:
+        condition: service_healthy
+      # redis
+      #   condition: service_completed_successfully
+
+
+  frontend:
+    image: yonder-frontend:latest
+    container_name: yonder-frontend
+    restart: always
+    # build:
+    #   context: ..       # 指定设定上下文根目录
+    #   dockerfile: dockerfile.frontend
+    ports:
+      - "6050:6050"
+    depends_on:
+      - backend
+    networks:
+      - yonder-net
+
