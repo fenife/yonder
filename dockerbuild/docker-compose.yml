@@ -40,8 +40,8 @@ services:
     image: server-py3:latest
     container_name: yonder-backend
     restart: always
-    ports:
-      - "6070:6070"
+    # ports:
+    #   - "6070:6070"
     networks:
       - yonder-net
     depends_on:
@@ -55,9 +55,6 @@ services:
     image: yonder-frontend:latest
     container_name: yonder-frontend
     restart: always
-    # build:
-    #   context: ..       # 指定设定上下文根目录
-    #   dockerfile: dockerfile.frontend
     ports:
       - "6050:6050"
     depends_on:
