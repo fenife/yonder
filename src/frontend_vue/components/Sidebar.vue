@@ -5,12 +5,12 @@
         <p slot="title" class="card-title">个人空间</p>
 
         <Tooltip content="源码" placement="bottom" theme="light">
-          <a class="person-info-item" href="https://github.com/kfrime/yonder.git">
+          <a class="person-info-item" href="https://github.com/fenife/yonder.git">
             <Icon size="30" type="logo-github" />
           </a>
         </Tooltip>
 
-        <Poptip trigger="hover" title="邮箱联系" content="kfrime@163.com" placement="top">
+        <Poptip trigger="hover" title="邮箱联系" content="fenife@163.com" placement="top">
           <Icon class="person-info-item" size="30" type="md-mail" />
         </Poptip>
 
