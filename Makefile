@@ -41,4 +41,5 @@ as:
 
 
 up: bu bf bs
+	bash start.sh
 	docker compose -f dockerbuild/docker-compose.yml up
