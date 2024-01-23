@@ -1,0 +1,33 @@
+{
+  "ENV_MODE": "dev",
+  "SSH_HOSTS": [
+    "192.168.0.107"
+  ],
+  "SSH_USER": "feng",
+  "SSH_SUDO_USER": "root",
+  "DEBUG_MODE": 1,
+
+  "DB_HOST": "mysql",
+  "DB_PORT": 3306,
+  "DB_USER": "test",
+  "DB_PASSWORD": "test",
+  "DB_NAME": "test",
+  "DB_CHARSET": "utf8",
+
+  "REDIS_HOST": "redis",
+  "REDIS_PORT": 6379,
+
+  "SECRET_KEY": "a key hard to guess",
+  "ADMIN_USERNAME": "admin",
+  "ADMIN_PASSWORD": "admin",
+
+  "PAGE_SIZE": 10,
+  "LOGIN_EXPIRED": 1800,
+  "LOG_PATH": "/var/yonder/logs",
+  "BACKUP_DB_HOST": "mysql",
+  "BACKUP_DB_PORT": 3306,
+  "BACKUP_DB_USER": "test",
+  "BACKUP_DB_PASSWORD": "test",
+  "BACKUP_DB_NAME": "test",
+  "BACKUP_DB_CHARSET": "utf8"
+}

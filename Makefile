@@ -1,7 +1,4 @@
 
-# docker run -it python:3.7 bash
-# docker run -it ubuntu:20.10 bash
-
 ubuntu-base = ubuntu-base
 frontend-image = yonder-frontend
 server-py3 = server-py3
@@ -17,7 +14,7 @@ eu:
 # frontend
 
 bf:
-	docker build -f dockerbuild/dockerfile.frontend -t $(frontend-image) .
+	docker build -f dockerbuild/dockerfile.frontend -t $(frontend-image) --build-arg .
 
 rf:
 	docker run --name $(frontend-image) --rm -it -p 6050:6050 $(frontend-image) 
@@ -28,7 +25,7 @@ ef:
 # server
 
 bs:
-	docker build -f dockerbuild/dockerfile.server.py3 -t $(server-py3) .
+	docker build -f dockerbuild/dockerfile.server.py3 -t $(server-py3) --build-arg .
 
 rs:
 	docker run --name $(server-py3) --rm -it -p 6070:6070 $(server-py3) 
@@ -39,7 +36,14 @@ es:
 as: 
 	docker exec -it yonder-backend /bin/bash
 
-
 up: bu bf bs
 	bash start.sh
 	docker compose -f dockerbuild/docker-compose.yml up
+
+upd:
+	bash start.sh
+	docker compose -f dockerbuild/docker-compose.yml up -d
+
+down:
+	docker compose -f dockerbuild/docker-compose.yml down
+	

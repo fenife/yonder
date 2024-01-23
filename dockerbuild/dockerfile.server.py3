@@ -7,9 +7,9 @@ RUN mkdir -p ${SERVER_PY3_DIR}
 WORKDIR ${SERVER_PY3_DIR}
 
 COPY src/server_py3/requirements.txt ${SERVER_PY3_DIR}/
-RUN pip3 install -r requirements.txt
+RUN pip3 install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
-COPY etc/server/yonder.json ${SERVER_PY3_DIR}/
+COPY etc/server/yonder.json ${SERVER_PY3_DIR}/yonder.json
 
 COPY src/server_py3 .
 

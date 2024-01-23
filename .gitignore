@@ -117,3 +117,8 @@ venv.bak/
 backup
 
 .vscode
+
+# config
+*prod*
+**/yonder.json
+**/.env
