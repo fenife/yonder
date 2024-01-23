@@ -14,7 +14,7 @@ eu:
 # frontend
 
 bf:
-	docker build -f dockerbuild/dockerfile.frontend -t $(frontend-image) --build-arg .
+	docker build -f dockerbuild/dockerfile.frontend -t $(frontend-image) .
 
 rf:
 	docker run --name $(frontend-image) --rm -it -p 6050:6050 $(frontend-image) 
@@ -25,7 +25,7 @@ ef:
 # server
 
 bs:
-	docker build -f dockerbuild/dockerfile.server.py3 -t $(server-py3) --build-arg .
+	docker build -f dockerbuild/dockerfile.server.py3 -t $(server-py3) .
 
 rs:
 	docker run --name $(server-py3) --rm -it -p 6070:6070 $(server-py3) 
