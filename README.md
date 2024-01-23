@@ -23,7 +23,21 @@
         nuxt
         
 ## 部署
-    参考：`yonder/install/install.md`
+执行以下的命令启动服务：
+```bash
+# 前台运行
+make up
+
+# 后台运行
+make upd
+```
+
+服务停止：
+```bash
+make down
+```
+
+命令参考：`Makefile`
 
 ## 部分缩写
     sim: simple micro framework
