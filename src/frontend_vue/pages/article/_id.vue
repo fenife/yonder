@@ -13,7 +13,7 @@
       <div slot="title">
         <h1 class="article-title">{{article.title}}</h1>
         <div class="article-info">
-          <span>{{article.user.name}}</span>
+          <span>{{article.user.name}}</span> | 
           <span>{{article.created_at}}</span>
         </div>
       </div>

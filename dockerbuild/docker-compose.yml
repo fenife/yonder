@@ -43,7 +43,7 @@ services:
     ports:
       - "6070:6070"
     volumes:
-      - /var/yonder/logs:/var/lib/logs
+      - /var/yonder/logs:/var/yonder/logs
     networks:
       - yonder-net
     depends_on:

@@ -45,3 +45,13 @@ make down
     wes: web service
     aps: app service
     ses: search service
+
+## TODO
+- 不显示id，用md5
+- 顶栏固定，不随文章详情滚动
+- 支持图片浏览
+- 支持 plantuml 画图
+- 浏览次数统计
+- 支持全文搜索
+- 注册
+- 评论

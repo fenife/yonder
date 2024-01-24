@@ -8,7 +8,7 @@ from sim.context import AppRequestContext
 from ses import app, cache_pool
 
 
-API_CACHE_EXPIRED = 10 * 60
+API_CACHE_EXPIRED = 1 * 60
 
 
 def api_cache(ex=API_CACHE_EXPIRED):
