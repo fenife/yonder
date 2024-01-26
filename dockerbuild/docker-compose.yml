@@ -5,6 +5,7 @@ networks:
     driver: bridge
 
 services:
+  # 在服务中连接时，host部分直接用这里的名称mysql即可
   mysql:
     image: mysql:8.3.0
     container_name: yonder-mysql
