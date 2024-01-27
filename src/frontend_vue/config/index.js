@@ -1,7 +1,7 @@
 const config = {
   baseUrl: "/api",
   // pyurl: "http://127.0.0.1:6070/api",
-  pyurl: "http://backend:6070/api",
+  pyurl: "http://server:6070/api",
   // pyurl: "http://192.168.0.102:6070/api",
   gourl: "http://127.0.0.1:6060/api",
   // tokenExpires: 0.01,  // day
