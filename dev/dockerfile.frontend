@@ -1,0 +1,4 @@
+FROM ubuntu-base
+
+WORKDIR /yonder/frontend_vue
+
