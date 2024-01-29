@@ -1,7 +1,7 @@
 <template>
   <div class="year-cell">
     <Card>
-      <p slot="title" class="card-title">{{artOfTheYear.year}} 年</p>
+      <p slot="title" class="card-title">{{artOfTheYear.year}} 年（{{artOfTheYear.count}} 篇）</p>
       <Timeline>
         <TimelineItem v-for="art in artOfTheYear.art_list" :key="art.id" class="time-item">
           <span class="time">{{art.created_at}}</span>
