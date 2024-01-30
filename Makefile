@@ -36,14 +36,14 @@ es:
 as: 
 	docker exec -it yonder-server /bin/bash
 
+# all
 up: bu bf bs
 	bash start.sh
 	docker compose -f dockerbuild/docker-compose.yml up
 
-upd:
+upd: bu bf bs
 	bash start.sh
 	docker compose -f dockerbuild/docker-compose.yml up -d
 
 down:
 	docker compose -f dockerbuild/docker-compose.yml down
-	
