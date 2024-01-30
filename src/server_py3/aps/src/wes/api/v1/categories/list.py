@@ -27,6 +27,7 @@ def category_list(ctx: AppRequestContext):
         # 该分类下可展示文章的数目
         cate.article_count = counts.get(cate.id, 0)
     
+    # 按文章数目、名称排序
     data = sorted(data, key=lambda d: (d.article_count, d.name), reverse=True)
     return data
 
