@@ -34,7 +34,7 @@ es:
 	docker run --rm -it $(server-py3) /bin/bash
 
 as: 
-	docker exec -it yonder-backend /bin/bash
+	docker exec -it yonder-server /bin/bash
 
 up: bu bf bs
 	bash start.sh

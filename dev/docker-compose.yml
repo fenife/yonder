@@ -1,0 +1,74 @@
+version: '3'
+
+networks:
+  yonder-net:
+    driver: bridge
+
+volumes:
+  node_modules: 
+
+services:
+  # 在服务中连接时，host部分直接用这里的名称mysql即可
+  mysql:
+    image: mysql:8.3.0
+    container_name: yonder-mysql-dev
+    restart: always
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    ports:
+      - "3307:3306"
+    volumes:
+      - /var/yonder/mysql:/var/lib/mysql
+    networks:
+      - yonder-net
+    healthcheck:
+        test: "/usr/bin/mysql --user=${MYSQL_USER} --password=${MYSQL_PASSWORD} --execute \"SHOW DATABASES;\""
+        interval: 2s
+        timeout: 20s
+        retries: 10
+
+  redis:
+    image: redis:7.0
+    container_name: yonder-redis-dev
+    restart: always
+    ports:
+      - "6380:6379"
+    networks:
+      - yonder-net
+
+  # 只启动基本运行环境，不启动具体应用程序，后面再exec进入容器内启动
+  server:
+    image: yonder-server-py3:dev
+    container_name: yonder-server-dev
+    restart: always
+    ports:
+      - "6070:6070"
+    volumes:
+      - /var/yonder/logs:/var/yonder/logs
+      - ../src/server_py3:/yonder/server_py3
+    command: /bin/bash -c "while true;do sleep 1;done"
+    networks:
+      - yonder-net
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  frontend:
+    image: yonder-frontend:dev
+    container_name: yonder-frontend-dev
+    restart: always
+    ports:
+      - "6050:6050"
+    volumes:
+      - ../src/frontend_vue:/yonder/frontend_vue
+      # 缓存packages
+      - node_modules:/yonder/frontend_vue/node_modules
+    command: ./start-dev.sh 
+    environment:
+      NODE_ENV: 'development'
+    networks:
+      - yonder-net

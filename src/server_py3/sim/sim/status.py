@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from .http import HTTP_STATUS_CODES
+from .httpx import HTTP_STATUS_CODES
 
 
 DB_STATUS_CODES = {
