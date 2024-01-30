@@ -1,4 +1,0 @@
-# 
-1 1 * * * /work/yonder/data_backup/sh/backup.sh
-
-# end line
