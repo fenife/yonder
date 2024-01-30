@@ -1,5 +1,5 @@
 
-.PHONY: dev
+.PHONY: dev stop as 
 
 dev: 
 	docker build -f ../dockerbuild/dockerfile.ubuntu -t ubuntu-base ..
