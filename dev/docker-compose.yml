@@ -64,7 +64,7 @@ services:
     ports:
       - "6050:6050"
     volumes:
-      - ../src/frontend_vue:/yonder/frontend_vue
+      - ../frontend_vue:/yonder/frontend_vue
       # 缓存packages
       - node_modules:/yonder/frontend_vue/node_modules
     command: ./start-dev.sh 

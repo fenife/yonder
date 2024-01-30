@@ -20,7 +20,7 @@ cp dev/example.env dev/.env
 cd dev
 
 # 运行mysql、redis、前端服务
-make up
+make dev
 
 # 进入后端容器
 make as
