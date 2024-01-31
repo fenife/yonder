@@ -1,0 +1,22 @@
+{
+  "ENV_MODE": "dev",
+  "DEBUG_MODE": 1,
+
+  "DB_HOST": "mysql",
+  "DB_PORT": 3306,
+  "DB_USER": "test",
+  "DB_PASSWORD": "test",
+  "DB_NAME": "test",
+  "DB_CHARSET": "utf8",
+
+  "REDIS_HOST": "redis",
+  "REDIS_PORT": 6379,
+
+  "ADMIN_USERNAME": "admin",
+  "ADMIN_PASSWORD": "admin",
+
+  "SECRET_KEY": "a key hard to guess",
+  "PAGE_SIZE": 10,
+  "LOGIN_EXPIRED": 1800,
+  "LOG_PATH": "/var/yonder/logs"
+}

@@ -20,7 +20,7 @@ cp dev/example.env dev/.env
 cd dev
 
 # 运行mysql、redis、前端服务
-make up
+make dev
 
 # 进入后端容器
 make as
@@ -46,10 +46,10 @@ make down
 cp dockerbuild/example.env dockerbuild/.env
 
 # 后端服务配置文件
-cp etc/server/yonder-example.json etc/server/yonder.json
+cp server_py/config/yonder-example.json server_py/config/yonder.json
 ```
 
-2. 填写`dockerbuild/.env`和`etc/server/yonder.json`对应的配置项目
+2. 填写`dockerbuild/.env`和`server_py/config/yonder.json`对应的配置项目
 
 3. 执行以下的命令启动服务：
 ```bash
@@ -131,4 +131,7 @@ make down
         - '\r': command not found
 
     - docker compose 中通过 python watchdog 监控文件变化，自动重启服务，方便开发
+
+    - docker ignore
+
 

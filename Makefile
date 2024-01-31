@@ -1,37 +1,37 @@
 
 ubuntu-base = ubuntu-base
-frontend-image = yonder-frontend
-server-py3 = server-py3
+yonder-frontend = yonder-frontend
+yonder-server-py = yonder-server-py
 
 # ubuntu base
 
 bu:
 	docker build -f dockerbuild/dockerfile.ubuntu -t $(ubuntu-base) .
 
-eu:
+eu: bu
 	docker run --rm -it $(ubuntu-base) bash 
 
 # frontend
 
 bf:
-	docker build -f dockerbuild/dockerfile.frontend -t $(frontend-image) .
+	docker build -f dockerbuild/dockerfile.frontend -t $(yonder-frontend) .
 
-rf:
-	docker run --name $(frontend-image) --rm -it -p 6050:6050 $(frontend-image) 
+rf: bf
+	docker run --name $(yonder-frontend) --rm -it -p 6050:6050 $(yonder-frontend) 
 
-ef:
-	docker run --rm -it $(frontend-image) bash
+ef: bf
+	docker run --rm -it $(yonder-frontend) bash
 
 # server
 
-bs:
-	docker build -f dockerbuild/dockerfile.server.py3 -t $(server-py3) .
+bs: bs
+	docker build -f dockerbuild/dockerfile.server.py -t $(yonder-server-py) .
 
-rs:
-	docker run --name $(server-py3) --rm -it -p 6070:6070 $(server-py3) 
+rs: bs
+	docker run --name $(yonder-server-py) --rm -it -p 6070:6070 $(yonder-server-py) 
 
-es:
-	docker run --rm -it $(server-py3) /bin/bash
+es: bs
+	docker run --rm -it $(yonder-server-py) /bin/bash
 
 as: 
 	docker exec -it yonder-server /bin/bash

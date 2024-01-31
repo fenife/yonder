@@ -1,0 +1,8 @@
+.idea
+.DS_Store
+
+.nuxt
+node_modules
+dist
+stash
+

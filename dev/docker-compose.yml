@@ -42,14 +42,15 @@ services:
 
   # 只启动基本运行环境，不启动具体应用程序，后面再exec进入容器内启动
   server:
-    image: yonder-server-py3:dev
+    image: yonder-server-py:dev
     container_name: yonder-server-dev
     restart: always
     ports:
       - "6070:6070"
     volumes:
       - /var/yonder/logs:/var/yonder/logs
-      - ../src/server_py3:/yonder/server_py3
+      - ..:/yonder
+      # - ../pylib:/yonder/pylib
     command: /bin/bash -c "while true;do sleep 1;done"
     networks:
       - yonder-net
@@ -64,7 +65,7 @@ services:
     ports:
       - "6050:6050"
     volumes:
-      - ../src/frontend_vue:/yonder/frontend_vue
+      - ../frontend_vue:/yonder/frontend_vue
       # 缓存packages
       - node_modules:/yonder/frontend_vue/node_modules
     command: ./start-dev.sh 
