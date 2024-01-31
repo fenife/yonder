@@ -118,6 +118,4 @@ backup
 .vscode
 
 # config
-*prod*
-**/yonder.json
 **/.env

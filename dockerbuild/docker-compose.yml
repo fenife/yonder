@@ -38,8 +38,8 @@ services:
       - yonder-net
 
   server:
-    image: server-py3:latest
-    container_name: yonder-server
+    image: yonder-server-py:latest
+    container_name: yonder-server-py
     restart: always
     ports:
       - "6070:6070"

@@ -46,10 +46,10 @@ make down
 cp dockerbuild/example.env dockerbuild/.env
 
 # 后端服务配置文件
-cp etc/server/yonder-example.json etc/server/yonder.json
+cp server_py/config/yonder-example.json server_py/config/yonder.json
 ```
 
-2. 填写`dockerbuild/.env`和`etc/server/yonder.json`对应的配置项目
+2. 填写`dockerbuild/.env`和`server_py/config/yonder.json`对应的配置项目
 
 3. 执行以下的命令启动服务：
 ```bash

@@ -1,17 +1,19 @@
 FROM ubuntu-base
 
-RUN mkdir /frontend_vue 
-WORKDIR /frontend_vue
+ARG FRONTEND_DIR=/yonder/frontend_vue
+
+RUN mkdir -p ${FRONTEND_DIR}
+WORKDIR ${FRONTEND_DIR}
 
 # 先安装依赖包
-COPY src/frontend_vue/package*.json ./
+COPY frontend_vue/package*.json ./
 # RUN npm config set strict-ssl false && npm install --registry=https://registry.npm.taobao.org 
 RUN npm config set strict-ssl false  \
     && npm config set registry https://registry.npm.taobao.org \
     && npm install
 
 # 复制源码
-COPY src/frontend_vue .
+COPY frontend_vue .
 
 EXPOSE 6050
 
