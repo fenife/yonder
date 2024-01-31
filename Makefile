@@ -34,7 +34,7 @@ es: bs
 	docker run --rm -it $(yonder-server-py) /bin/bash
 
 as: 
-	docker exec -it yonder-server /bin/bash
+	docker exec -it $(yonder-server-py) /bin/bash
 
 # all
 up: bu bf bs

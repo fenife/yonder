@@ -36,7 +36,6 @@ make as
 make down
 ```
 
-
 ## 部署
 本服务包含了前端渲染服务、后端接口服务、mysql、redis等多个应用服务，如果直接部署在云服务器上，可能需要比较多的配置，管理起来也比较复杂； 所以这里通过 docker compose 进行容器化部署，对服务器的硬件资源要求会更高一点，但是便于环境隔离、易于迁移，方便后续的管理维护。
 
@@ -76,13 +75,6 @@ make down
     - 语言：javascript
     - 框架：vue、nuxt
 
-## 部分缩写
-- sim: simple micro framework
-- ydr: yonder
-- wes: web service
-- aps: app service
-- ses: search service
-
 ## DONE
 - 业务侧：
     - 用户登陆、管理员角色和权限
@@ -97,7 +89,7 @@ make down
         - 统计每年的文章数
 
 - 技术侧：
-    - 自实现的Web框架sim (Python)
+    - 自实现的Web框架lime (Python)
     - 自实现的ORM框架norm (Python)
     - 通过 docker 构建、docker compose 部署
     - 通过docker和compose搭建本地开发环境，可自动监控本地变化的文件并重启服务
@@ -131,7 +123,5 @@ make down
         - '\r': command not found
 
     - docker compose 中通过 python watchdog 监控文件变化，自动重启服务，方便开发
-
-    - docker ignore
 
 
