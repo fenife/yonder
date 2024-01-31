@@ -132,3 +132,6 @@ make down
 
     - docker compose 中通过 python watchdog 监控文件变化，自动重启服务，方便开发
 
+    - docker ignore
+
+
