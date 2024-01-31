@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import functools
 from lime.context import AppRequestContext
 from app.model import Category
 from app.api.decorators import api_cache
@@ -27,9 +28,25 @@ def category_list(ctx: AppRequestContext):
         # 该分类下可展示文章的数目
         cate.article_count = counts.get(cate.id, 0)
     
-    # 按文章数目、名称排序
-    data = sorted(data, key=lambda d: (d.article_count, d.name), reverse=True)
+    # 按文章数目倒序、名称正序排列
+    data.sort(key=functools.cmp_to_key(cmp_category))
     return data
+
+
+def cmp_category(x, y) -> int:
+    # 按文章数目倒序
+    if x.article_count < y.article_count:
+        return 1
+    elif x.article_count > y.article_count:
+        return -1
+    else:
+        # 按名称正序
+        if x.name > y.name:
+            return 1
+        elif x.name < y.name:   
+            return -1
+    
+    return 0
 
 
 @api_group.route('/category/list/desc', methods=('GET', ))
