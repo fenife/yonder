@@ -9,7 +9,7 @@ from lime.log import setup_logger, LoggerManager
 
 from . import server_path
 
-CONF_FILE   = f"{server_path}/config/yonder.json"
+CONF_FILE   = f"{server_path}/config/server.json"
 
 with open(CONF_FILE, 'r') as f:
     configs = json.load(f)

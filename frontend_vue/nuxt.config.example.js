@@ -9,7 +9,7 @@ module.exports = {
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
     ],
     link: [
-      { rel: 'stylesheet', href: '/styles/monokai.css' },
+      { rel: 'stylesheet', href: '/styles/github.css' },
       { rel: 'stylesheet', href: '/styles/index.css' },
       { rel: 'stylesheet', href: '/styles/detail.css' },
       { rel: 'stylesheet', href: '/styles/iview-3.4.1.css' },
