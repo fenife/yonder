@@ -46,7 +46,7 @@ services:
     container_name: yonder-server-dev
     restart: always
     ports:
-      - "6070:6070"
+      - "8010:8010"
     volumes:
       - /var/yonder/logs:/var/yonder/logs
       - ..:/yonder
@@ -63,7 +63,7 @@ services:
     container_name: yonder-frontend-dev
     restart: always
     ports:
-      - "6050:6050"
+      - "8000:8000"
     volumes:
       - ../frontend_vue:/yonder/frontend_vue
       # 缓存packages

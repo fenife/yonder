@@ -17,7 +17,7 @@ def add_admin():
 
 def start():
     host = '0.0.0.0'
-    port = 6070
+    port = 8010
     app.run(host=host, port=port, show_routes=True)
 
 

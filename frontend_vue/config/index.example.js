@@ -1,7 +1,7 @@
 const config = {
   baseUrl: "/api",
-  pyurl: "http://server:6070/api",
-  gourl: "http://server:6060/api",
+  pyurl: "http://server:8010/api",
+  gourl: "http://server:8020/api",
   tokenExpires: 1,  // day
   pageSize: 10,
 }

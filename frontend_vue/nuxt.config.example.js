@@ -1,6 +1,6 @@
 module.exports = {
   server: {
-    port: 6050,       // default: 3000
+    port: 8000,       // default: 3000
     host: '0.0.0.0',  // default: localhost
   },
   head: {
@@ -32,8 +32,7 @@ module.exports = {
   ],
   proxy: {
     '/api': {
-      // target: 'http://localhost:6070',
-      target: 'http://server:6070',
+      target: 'http://server:8010',
       changeOrigin: true,
       // pathRewrite: {
       //   '^/api': '/',
