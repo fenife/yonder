@@ -36,12 +36,17 @@ es: bs
 as: 
 	docker exec -it $(yonder-server-py) bash
 
+# bash 脚本文件换行符格式化
+format:
+	find . -name "*.sh" | xargs dos2unix
+
 # all
-up: bu bf bs
+up: format bu bf bs
 	bash start.sh
 	docker compose -f dockerbuild/docker-compose.yml up
 
-upd: bu bf bs
+upd: format bu bf bs
+	find . -name "*.sh" | xargs dos2unix
 	bash start.sh
 	docker compose -f dockerbuild/docker-compose.yml up -d
 

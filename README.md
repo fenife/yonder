@@ -9,6 +9,21 @@
 文章详情示例:
 <img src="https://github.com/fenife/yonder_old/blob/master/yonder-detail-example.jpg" alt="文章详情示例" title="文章详情示例">
 
+
+## 创建目录
+创建目录保存数据文件和log
+```bash
+# 数据文件
+sudo mkdir -p /var/yonder/mysql
+# 修改为本用户权限也可以
+sudo chmod 777 /var/yonder/mysql        
+
+# log
+sudo mkdir -p /var/yonder/logs
+# 修改为本用户权限也可以
+sudo chmod 777 /var/yonder/logs
+```
+
 ## 配置文件
 运行项目时需要先增加并修改对应的配置文件
 
@@ -129,11 +144,6 @@ make down
     - 不显示id，用md5
     - 文章列表按created_at排序，方便后续数据导入和恢复
     - 线程池
-
-    - 修复启动错误：
-        - mkdir: cannot create directory ‘/var/yonder’: Permission denied
-        - '\r': command not found
-
     - docker compose 中通过 python watchdog 监控文件变化，自动重启服务，方便开发
 
 
