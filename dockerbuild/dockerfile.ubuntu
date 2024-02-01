@@ -35,4 +35,7 @@ RUN apt-get install -y zsh
 # 安装其他工具
 RUN apt-get install -y dos2unix lsof
 
+# 设置编码，解决中文乱码问题
+ENV LANG C.UTF-8
+
 CMD [ "/bin/zsh" ]
