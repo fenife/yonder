@@ -120,5 +120,5 @@ backup
 
 # config
 *prod*
-**/yonder.json
+**/server.json
 **/.env

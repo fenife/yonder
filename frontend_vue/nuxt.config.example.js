@@ -1,6 +1,6 @@
 module.exports = {
   server: {
-    port: 6050,       // default: 3000
+    port: 8000,       // default: 3000
     host: '0.0.0.0',  // default: localhost
   },
   head: {
@@ -9,7 +9,7 @@ module.exports = {
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
     ],
     link: [
-      { rel: 'stylesheet', href: '/styles/monokai.css' },
+      { rel: 'stylesheet', href: '/styles/github.css' },
       { rel: 'stylesheet', href: '/styles/index.css' },
       { rel: 'stylesheet', href: '/styles/detail.css' },
       { rel: 'stylesheet', href: '/styles/iview-3.4.1.css' },
@@ -32,8 +32,7 @@ module.exports = {
   ],
   proxy: {
     '/api': {
-      // target: 'http://localhost:6070',
-      target: 'http://server:6070',
+      target: 'http://server:8010',
       changeOrigin: true,
       // pathRewrite: {
       //   '^/api': '/',

@@ -9,12 +9,28 @@
 文章详情示例:
 <img src="https://github.com/fenife/yonder_old/blob/master/yonder-detail-example.jpg" alt="文章详情示例" title="文章详情示例">
 
+## 配置文件
+运行项目时需要先增加并修改对应的配置文件
+
+### 后端(server_py)
+```bash
+# 从示例配置中复制一份出来，并修改对应的配置项
+cp server_py/config/server.example.json server_py/config/server.json
+```
+### 前端(frontend_vue)
+```bash
+# 复制并修改以下两个配置文件的内容
+cp frontend_vue/config/index.example.js frontend_vue/config/index.js
+cp frontend_vue/nuxt.config.example.js frontend_vue/nuxt.config.js
+```
+
 ## 本地开发
-1. 进入项目目录后，新增本地开发配置文件：
+1. 新增上面后端、前端的配置文件
+2. 复制并修改以下 docker compose 的环境变量文件：
 ```bash
 cp dev/example.env dev/.env
 ```
-2. 填写`dev/.env`对应的配置项目
+
 3. 进入`dev`目录执行以下的命令启动服务：
 ```bash
 cd dev
@@ -36,21 +52,14 @@ make as
 make down
 ```
 
-
 ## 部署
 本服务包含了前端渲染服务、后端接口服务、mysql、redis等多个应用服务，如果直接部署在云服务器上，可能需要比较多的配置，管理起来也比较复杂； 所以这里通过 docker compose 进行容器化部署，对服务器的硬件资源要求会更高一点，但是便于环境隔离、易于迁移，方便后续的管理维护。
 
-1. 进入项目目录后，新增配置文件：
+1. 进入项目目录后，新增上面后端、前端的配置文件
+2. 复制并修改以下 docker compose 的环境变量文件：
 ```bash
-# docker compose 中 mysql 等服务的配置文件
 cp dockerbuild/example.env dockerbuild/.env
-
-# 后端服务配置文件
-cp server_py/config/yonder-example.json server_py/config/yonder.json
 ```
-
-2. 填写`dockerbuild/.env`和`server_py/config/yonder.json`对应的配置项目
-
 3. 执行以下的命令启动服务：
 ```bash
 # 前台运行
@@ -76,13 +85,6 @@ make down
     - 语言：javascript
     - 框架：vue、nuxt
 
-## 部分缩写
-- sim: simple micro framework
-- ydr: yonder
-- wes: web service
-- aps: app service
-- ses: search service
-
 ## DONE
 - 业务侧：
     - 用户登陆、管理员角色和权限
@@ -95,9 +97,11 @@ make down
     - 归档页：
         - 文章按时间线显示
         - 统计每年的文章数
+    - 分类标签列表：
+        - 按文章数目倒序、名称正序排列
 
 - 技术侧：
-    - 自实现的Web框架sim (Python)
+    - 自实现的Web框架lime (Python)
     - 自实现的ORM框架norm (Python)
     - 通过 docker 构建、docker compose 部署
     - 通过docker和compose搭建本地开发环境，可自动监控本地变化的文件并重启服务
@@ -131,7 +135,5 @@ make down
         - '\r': command not found
 
     - docker compose 中通过 python watchdog 监控文件变化，自动重启服务，方便开发
-
-    - docker ignore
 
 

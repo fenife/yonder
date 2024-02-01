@@ -6,3 +6,8 @@ node_modules
 dist
 stash
 
+# config
+
+config/index.js
+nuxt.config.js
+

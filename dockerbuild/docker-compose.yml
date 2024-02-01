@@ -42,7 +42,7 @@ services:
     container_name: yonder-server-py
     restart: always
     ports:
-      - "6070:6070"
+      - "8010:8010"
     volumes:
       - /var/yonder/logs:/var/yonder/logs
     networks:
@@ -59,7 +59,7 @@ services:
     restart: always
     # 对外开放访问的端口
     ports:
-      - "6050:6050"
+      - "8000:8000"
     depends_on:
       - server
     networks:
