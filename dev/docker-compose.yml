@@ -50,8 +50,7 @@ services:
     volumes:
       - /var/yonder/logs:/var/yonder/logs
       - ..:/yonder
-      # - ../pylib:/yonder/pylib
-    command: /bin/bash -c "while true;do sleep 1;done"
+    command: /bin/bash -c "while true;do sleep 600;done"
     networks:
       - yonder-net
     depends_on:

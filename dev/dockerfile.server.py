@@ -6,4 +6,4 @@ RUN pip3 install -r /tmp/requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/s
 
 WORKDIR /yonder/server_py
 
-# CMD [ "/bin/bash", "-c", "while true;do sleep 1;done"]
+# CMD [ "/bin/bash", "-c", "while true;do sleep 600;done"]

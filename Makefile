@@ -31,10 +31,10 @@ rs: bs
 	docker run --name $(yonder-server-py) --rm -it -p 6070:6070 $(yonder-server-py) 
 
 es: bs
-	docker run --rm -it $(yonder-server-py) /bin/bash
+	docker run --rm -it $(yonder-server-py) bash
 
 as: 
-	docker exec -it $(yonder-server-py) /bin/bash
+	docker exec -it $(yonder-server-py) bash
 
 # all
 up: bu bf bs
