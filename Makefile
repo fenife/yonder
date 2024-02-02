@@ -42,12 +42,10 @@ format:
 
 # all
 up: format bu bf bs
-	bash start.sh
 	docker compose -f dockerbuild/docker-compose.yml up
 
 upd: format bu bf bs
 	find . -name "*.sh" | xargs dos2unix
-	bash start.sh
 	docker compose -f dockerbuild/docker-compose.yml up -d
 
 down:
