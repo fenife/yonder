@@ -4,15 +4,8 @@
 api app server
 """
 
-
 import sys
-
-from app import app, db
-from app.model import User, Category, Article, create_admin_user
-
-
-def add_admin():
-    return create_admin_user()
+from app import app
 
 
 def start():
@@ -24,25 +17,13 @@ def start():
 def usage():
     print()
     print(f"sys.argv: {sys.argv}")
-    print("usage: %prog [options]")
-    print("  python main.py [admin]")
-    print("  [admin]: create super admin user")
+    print("usage: ")
+    print("  python main.py")
     print()
 
 
 def main():
-    if len(sys.argv) > 2:
-        usage()
-        return
-
-    if len(sys.argv) == 2:
-        if sys.argv[1] == 'admin':
-            add_admin()
-        else:
-            usage()
-            return
-    else:
-        start()
+    start()
 
 
 if __name__ == "__main__":
