@@ -7,8 +7,9 @@
 """
 
 import threading
-import logging
 from collections import OrderedDict
+
+from logx import logger
 
 from .httpserver import run_simple
 from .tree import Tree
@@ -47,7 +48,7 @@ class Application(object):
         self.after_request_funcs = []
 
         # this logger is for higher application
-        self.logger: logging.Logger = logging.getLogger(name)
+        self.logger = logger
 
         # configs
         self.config = {}

@@ -7,12 +7,10 @@ support current_timestamp
 
 import datetime
 import MySQLdb
-import logging
+from logx import logger
 
 from .pretty import dictList2Table
 # from .log import get_mod_log_name
-
-logger = logging.getLogger(__name__)
 
 ERROR_CODE = -2
 

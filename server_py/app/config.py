@@ -5,7 +5,6 @@ import os
 import json
 import logging
 from lime.application import Application
-from lime.log import setup_logger, LoggerManager
 
 from . import server_path
 
@@ -33,10 +32,5 @@ class AppConfig(object):
     def init_app(cls, app: Application):
         app.update_config(cls.configs)
 
-        lgm = LoggerManager(
-            [app.logger, logging.getLogger('sim')],
-            cls.log_level,
-        )
-        lgm.addConsoleHandler()
-        log_file = f"{cls.configs['LOG_PATH']}/server_py3/aps/wes.log"
-        lgm.addTimedFileHandler(filename=log_file, backupCount=30)
+        # logger初始化
+    

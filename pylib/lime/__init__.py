@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-import logging
-# from .log import get_mod_log_name, create_sim_logger
+import os
 
-logging.getLogger(__name__).addHandler(logging.NullHandler())
+cur_path = os.path.dirname(os.path.abspath(__file__))
+pylib_path = os.path.join(cur_path, "..")
+
