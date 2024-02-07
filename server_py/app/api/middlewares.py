@@ -3,6 +3,7 @@
 from functools import wraps
 from lime.exceptions import abort
 from lime.context import AppRequestContext
+from lime.response import Response
 from app import app
 from app.model import User
 from app.consts import RespCode, Permission
@@ -36,3 +37,9 @@ def can_access_api_desc(ctx: AppRequestContext):
         if not user.can(Permission.admin):
             abort(RespCode.error, msg="permission denied")
 
+
+@app.after_request
+def log_ctx(ctx: AppRequestContext, response: Response):
+    app.logger.info(f"method: {ctx.method}, uri: {ctx.uri}, "
+                    f"status: {response.status_code}, code: {response.resp_code}, msg: {response.msg}")
+    return response
