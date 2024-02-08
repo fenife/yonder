@@ -32,7 +32,7 @@ module.exports = {
   ],
   proxy: {
     '/api': {
-      target: 'http://server:8010',
+      target: 'http://server_py:8010',
       changeOrigin: true,
       // pathRewrite: {
       //   '^/api': '/',
