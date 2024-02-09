@@ -1,9 +1,10 @@
 package main
 
 import (
-	"net/http"
-
+	"fmt"
+	"github.com/fenife/yonder/server_go/config"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 func main() {
@@ -13,5 +14,8 @@ func main() {
 			"message": "pong",
 		})
 	})
-	r.Run()
+
+	if err := r.Run(config.Conf.Server.ServerAddr()); err != nil {
+		panic(fmt.Sprintf("run app failed: %v", err))
+	}
 }
