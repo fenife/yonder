@@ -24,6 +24,13 @@ type MysqlConfig struct {
 	Charset  string `json:"charset"`
 }
 
+func (c *MysqlConfig) ConnStr() string {
+	// https://gorm.io/docs/connecting_to_the_database.html#MySQL
+	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		c.User, c.Password, c.Host, c.Port, c.Database,
+	)
+}
+
 type RedisConfig struct {
 	Host string `json:"host"`
 	Port int    `json:"port"`
