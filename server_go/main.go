@@ -2,20 +2,37 @@ package main
 
 import (
 	"fmt"
-	"github.com/fenife/yonder/server_go/config"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"server-go/application"
+	"server-go/config"
+	"server-go/controller/handler"
+	"server-go/infra/persistence"
 )
 
-func main() {
-	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
+func addRouter(engine *gin.Engine) {
+	engine.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
 		})
 	})
 
-	if err := r.Run(config.Conf.Server.ServerAddr()); err != nil {
+	repos, err := persistence.NewRepos(&config.Conf.Mysql)
+	if err != nil {
+		panic(err)
+	}
+	userApp := application.NewUserApp(repos.UserRepo)
+	userHandler := handler.NewUserHandler(userApp)
+
+	engine.POST("/user", userHandler.CreateUser)
+}
+
+func main() {
+	engine := gin.Default()
+
+	addRouter(engine)
+
+	if err := engine.Run(config.Conf.Server.ServerAddr()); err != nil {
 		panic(fmt.Sprintf("run app failed: %v", err))
 	}
 }

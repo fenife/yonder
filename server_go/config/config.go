@@ -46,8 +46,8 @@ type Config struct {
 var Conf Config
 
 func init() {
-	// 相对 main.go 执行文件的路径
-	configFile := "./config/server.json"
+	// 相对 main.go 执行文件的路径，在项目根目录下
+	configFile := "./config.json"
 	data, err := os.ReadFile(configFile)
 	if err != nil {
 		panic(fmt.Sprintf("read config file failed: %v", err))
