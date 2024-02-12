@@ -2,10 +2,12 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"log"
-	"net/http"
 	"server-go/application"
+	"server-go/controller/req"
 	"server-go/domain/entity"
+	"server-go/internal/errorx"
+	"server-go/utils/logx"
+	"server-go/utils/renderx"
 )
 
 type UserHandler struct {
@@ -18,18 +20,11 @@ func NewUserHandler(ua application.IUserApp) *UserHandler {
 	}
 }
 
-type CreateUserReq struct {
-	Name     string `json:"name" binding:"required"`
-	Password string `json:"password" binding:"required"`
-}
-
 func (ctrl *UserHandler) CreateUser(c *gin.Context) {
-	var userReq CreateUserReq
+	var userReq req.CreateUserReq
 	if err := c.ShouldBindJSON(&userReq); err != nil {
-		log.Println("err:", err)
-		c.JSON(http.StatusUnprocessableEntity, gin.H{
-			"invalid_json": "invalid json",
-		})
+		logx.Ctx(c).Errorf("param failed: %v", err)
+		renderx.ErrOutput(c, errorx.ParamInvalid)
 		return
 	}
 
@@ -41,8 +36,8 @@ func (ctrl *UserHandler) CreateUser(c *gin.Context) {
 
 	newUser, err := ctrl.ua.CreateUser(c, &user)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		renderx.ErrOutput(c, err)
 		return
 	}
-	c.JSON(http.StatusOK, newUser)
+	renderx.SuccOutput(c, newUser)
 }

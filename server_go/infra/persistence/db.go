@@ -9,8 +9,8 @@ import (
 )
 
 type Repos struct {
-	UserRepo repo.IUserRepo
 	db       *gorm.DB
+	UserRepo repo.IUserRepo
 }
 
 func NewRepos(mysqlConf *config.MysqlConfig) (*Repos, error) {
@@ -23,7 +23,7 @@ func NewRepos(mysqlConf *config.MysqlConfig) (*Repos, error) {
 	//db.LogMode(true)
 
 	return &Repos{
-		UserRepo: NewUserRepo(db),
 		db:       db,
+		UserRepo: NewUserRepo(db),
 	}, nil
 }

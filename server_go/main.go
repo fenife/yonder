@@ -7,6 +7,7 @@ import (
 	"server-go/application"
 	"server-go/config"
 	"server-go/controller/handler"
+	"server-go/controller/middleware"
 	"server-go/infra/persistence"
 )
 
@@ -29,6 +30,11 @@ func addRouter(engine *gin.Engine) {
 
 func main() {
 	engine := gin.Default()
+
+	engine.Use(
+		//middleware.RequestIdMiddleware(),
+		middleware.LogContext(),
+	)
 
 	addRouter(engine)
 
