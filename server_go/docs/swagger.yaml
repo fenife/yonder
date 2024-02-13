@@ -31,11 +31,11 @@ info:
   title: yonder blog api
   version: "1.0"
 paths:
-  /user:
+  /api/v1/user/signup:
     post:
       consumes:
       - application/json
-      description: 新用户注册
+      description: 创建新用户
       parameters:
       - description: 查询参数
         in: body
@@ -49,7 +49,19 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/renderx.Response'
-      summary: 创建用户
+      summary: 用户注册
       tags:
       - users
+  /ping:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/renderx.Response'
+      summary: ping,检查服务是否正常
+      tags:
+      - ping
 swagger: "2.0"

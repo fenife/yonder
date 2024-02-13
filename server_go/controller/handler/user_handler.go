@@ -11,25 +11,25 @@ import (
 )
 
 type UserHandler struct {
-	ua application.IUserApp
+	userApp application.IUserApp
 }
 
-func NewUserHandler(ua application.IUserApp) *UserHandler {
+func NewUserHandler(userApp application.IUserApp) *UserHandler {
 	return &UserHandler{
-		ua: ua,
+		userApp: userApp,
 	}
 }
 
-// CreateUser godoc
-// @Summary      创建用户
-// @Description  新用户注册
+// UserSignup godoc
+// @Summary      用户注册
+// @Description  创建新用户
 // @Tags         users
 // @Accept       json
 // @Produce      json
 // @Param        object body  req.CreateUserReq	false "查询参数"
 // @Success      200  {object}  renderx.Response
-// @Router       /user [post]
-func (ctrl *UserHandler) CreateUser(c *gin.Context) {
+// @Router       /api/v1/user/signup [post]
+func (ctrl *UserHandler) UserSignup(c *gin.Context) {
 	var userReq req.CreateUserReq
 	if err := c.ShouldBindJSON(&userReq); err != nil {
 		logx.Ctx(c).Errorf("param failed: %v", err)
@@ -43,7 +43,7 @@ func (ctrl *UserHandler) CreateUser(c *gin.Context) {
 		Status:   1,
 	}
 
-	newUser, err := ctrl.ua.CreateUser(c, &user)
+	newUser, err := ctrl.userApp.CreateUser(c, &user)
 	if err != nil {
 		renderx.ErrOutput(c, err)
 		return

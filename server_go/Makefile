@@ -4,7 +4,7 @@
 migrate:
 	go run ./cmd/migrate
 
-run:
+run: swag
 	go run .
 
 swag:

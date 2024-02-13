@@ -16,9 +16,9 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/user": {
+        "/api/v1/user/signup": {
             "post": {
-                "description": "新用户注册",
+                "description": "创建新用户",
                 "consumes": [
                     "application/json"
                 ],
@@ -28,7 +28,7 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "创建用户",
+                "summary": "用户注册",
                 "parameters": [
                     {
                         "description": "查询参数",
@@ -39,6 +39,25 @@ const docTemplate = `{
                         }
                     }
                 ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/renderx.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/ping": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ping"
+                ],
+                "summary": "ping,检查服务是否正常",
                 "responses": {
                     "200": {
                         "description": "OK",
