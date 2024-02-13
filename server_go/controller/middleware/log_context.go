@@ -3,25 +3,44 @@ package middleware
 import (
 	"bytes"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"io"
 	"server-go/utils/logx"
+	"time"
 )
+
+type bodyLogWriter struct {
+	gin.ResponseWriter
+	body *bytes.Buffer
+}
+
+func (w bodyLogWriter) Write(b []byte) (int, error) {
+	w.body.Write(b)
+	return w.ResponseWriter.Write(b)
+}
 
 func LogContext() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		requestId := uuid.New().String()
-		c.Set(ctxKeyReqId, requestId)
+		t := time.Now()
+		// 获取请求body数据
+		bodyData, _ := io.ReadAll(c.Request.Body)
+		c.Request.Body = io.NopCloser(bytes.NewReader(bodyData))
 
-		// req
-		body, _ := io.ReadAll(c.Request.Body)
-		println(string(body))
+		// 双写
+		writer := &bodyLogWriter{body: bytes.NewBufferString(""), ResponseWriter: c.Writer}
+		c.Writer = writer
 
-		c.Request.Body = io.NopCloser(bytes.NewReader(body))
-
+		// 请求处理
 		c.Next()
 
-		// resp
-		logx.Ctx(c).Infof("log context")
+		// log记录请求和响应
+		withArgs := []interface{}{
+			"method", c.Request.Method,
+			"path", c.Request.RequestURI,
+			"body", string(bodyData),
+			"internal", time.Since(t).Milliseconds(), // 毫秒
+			"status", c.Writer.Status(),
+			"response", writer.body.String(),
+		}
+		logx.Ctx(c).With(withArgs...).Infof("")
 	}
 }

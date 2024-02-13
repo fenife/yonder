@@ -12,13 +12,11 @@ const (
 
 func RequestIdMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		requestId := uuid.New().String()
-		if val, ok := c.Get(headerKeyReqId); ok {
-			if reqId, ok := val.(string); ok {
-				requestId = reqId
-			}
+		reqId := c.GetHeader(headerKeyReqId)
+		if reqId == "" {
+			reqId = uuid.New().String()
 		}
-		c.Set(ctxKeyReqId, requestId)
+		c.Set(ctxKeyReqId, reqId)
 		c.Next()
 	}
 }
