@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"github.com/gin-gonic/gin"
 	"io"
-	"server-go/utils/logx"
+	"server-go/pkg/logx"
 	"time"
 )
 
@@ -35,7 +35,8 @@ func LogContext() gin.HandlerFunc {
 		// log记录请求和响应
 		withArgs := []interface{}{
 			"method", c.Request.Method,
-			"path", c.Request.RequestURI,
+			"url", c.Request.RequestURI,
+			"path", c.Request.URL.Path,
 			"body", string(bodyData),
 			"internal", time.Since(t).Milliseconds(), // 毫秒
 			"status", c.Writer.Status(),

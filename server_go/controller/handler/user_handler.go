@@ -4,10 +4,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"server-go/application"
 	"server-go/controller/req"
-	"server-go/domain/entity"
 	"server-go/internal/errorx"
-	"server-go/utils/logx"
-	"server-go/utils/renderx"
+	"server-go/pkg/logx"
+	"server-go/pkg/renderx"
 )
 
 type UserHandler struct {
@@ -37,16 +36,10 @@ func (ctrl *UserHandler) UserSignup(c *gin.Context) {
 		return
 	}
 
-	user := entity.User{
-		Name:     userReq.Name,
-		Password: userReq.Password,
-		Status:   1,
-	}
-
-	newUser, err := ctrl.userApp.CreateUser(c, &user)
+	_, err := ctrl.userApp.CreateUser(c, userReq.Name, userReq.Password)
 	if err != nil {
 		renderx.ErrOutput(c, err)
 		return
 	}
-	renderx.SuccOutput(c, newUser)
+	renderx.SuccOutput(c)
 }

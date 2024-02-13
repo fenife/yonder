@@ -2,7 +2,7 @@ package gormx
 
 import (
 	"gorm.io/gorm/logger"
-	"server-go/utils/logx"
+	"server-go/pkg/logx"
 )
 
 type gormWriter struct{}

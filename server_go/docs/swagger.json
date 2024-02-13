@@ -2,7 +2,7 @@
     "swagger": "2.0",
     "info": {
         "description": "yonder博客的后端API服务",
-        "title": "yonder blog api",
+        "title": "yonder blog api service",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {},
         "version": "1.0"
@@ -92,10 +92,14 @@
             ],
             "properties": {
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 3
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 32,
+                    "minLength": 3
                 }
             }
         }

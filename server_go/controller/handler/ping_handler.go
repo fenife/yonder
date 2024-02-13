@@ -2,7 +2,7 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"server-go/utils/renderx"
+	"server-go/pkg/renderx"
 )
 
 type PingHandler struct{}

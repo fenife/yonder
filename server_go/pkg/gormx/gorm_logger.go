@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 	glogger "gorm.io/gorm/logger"
 	"gorm.io/gorm/utils"
-	"server-go/utils/logx"
+	"server-go/pkg/logx"
 	"strings"
 	"time"
 )

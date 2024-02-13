@@ -98,10 +98,14 @@ const docTemplate = `{
             ],
             "properties": {
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 3
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 32,
+                    "minLength": 3
                 }
             }
         }
@@ -114,7 +118,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:8030",
 	BasePath:         "/",
 	Schemes:          []string{},
-	Title:            "yonder blog api",
+	Title:            "yonder blog api service",
 	Description:      "yonder博客的后端API服务",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

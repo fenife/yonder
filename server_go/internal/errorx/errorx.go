@@ -2,7 +2,7 @@ package errorx
 
 import (
 	"net/http"
-	"server-go/utils/renderx"
+	"server-go/pkg/renderx"
 )
 
 const (

@@ -3,8 +3,8 @@ package main
 import (
 	"github.com/go-gormigrate/gormigrate/v2"
 	"server-go/config"
-	"server-go/utils/gormx"
-	"server-go/utils/logx"
+	"server-go/pkg/gormx"
+	"server-go/pkg/logx"
 )
 
 var migrations = make([]*gormigrate.Migration, 0)

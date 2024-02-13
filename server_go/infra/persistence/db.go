@@ -4,7 +4,7 @@ import (
 	"gorm.io/gorm"
 	"server-go/config"
 	"server-go/domain/repo"
-	"server-go/utils/gormx"
+	"server-go/pkg/gormx"
 )
 
 type Repos struct {

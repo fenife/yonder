@@ -16,8 +16,12 @@ definitions:
   req.CreateUserReq:
     properties:
       name:
+        maxLength: 20
+        minLength: 3
         type: string
       password:
+        maxLength: 32
+        minLength: 3
         type: string
     required:
     - name
@@ -28,7 +32,7 @@ info:
   contact: {}
   description: yonder博客的后端API服务
   termsOfService: http://swagger.io/terms/
-  title: yonder blog api
+  title: yonder blog api service
   version: "1.0"
 paths:
   /api/v1/user/signup:

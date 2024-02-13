@@ -1,6 +1,6 @@
 package req
 
 type CreateUserReq struct {
-	Name     string `json:"name" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	Name     string `json:"name" binding:"required,gte=3,lte=20"`
+	Password string `json:"password" binding:"required,gte=3,lte=32"`
 }
