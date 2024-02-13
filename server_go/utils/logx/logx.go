@@ -9,7 +9,7 @@ type Loggerx interface {
 	Infof(msg string, args ...interface{})
 	Warnf(msg string, args ...interface{})
 	Errorf(msg string, args ...interface{})
-	Panicf(msg string, args ...interface{})
+	Fatalf(msg string, args ...interface{})
 }
 
 var innerLogger *InnerLogger
@@ -19,8 +19,11 @@ func InitLogger() {
 }
 
 func Ctx(ctx context.Context) Loggerx {
-	l := NewInnerLogger()
-	l.ctx = ctx
+	l := &InnerLogger{
+		zapLogger: innerLogger.zapLogger,
+		ctx:       ctx,
+		fields:    make([]interface{}, 0),
+	}
 	return l
 }
 
@@ -40,8 +43,8 @@ func Errorf(msg string, args ...interface{}) {
 	innerLogger.Errorf(msg, args...)
 }
 
-func Panicf(msg string, args ...interface{}) {
-	innerLogger.Panicf(msg, args...)
+func Fatalf(msg string, args ...interface{}) {
+	innerLogger.Fatalf(msg, args...)
 }
 
 func init() {

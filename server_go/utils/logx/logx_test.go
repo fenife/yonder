@@ -12,6 +12,8 @@ func TestLog(t *testing.T) {
 	Ctx(ctx).Infof("info msg")
 
 	Ctx(ctx).With("a", 1).With("b", 2).Warnf("warn msg")
-	ctx = context.WithValue(ctx, ctxReqIdKey, "reqId-123")
+	Ctx(ctx).With("a", 1, "b", 2).Warnf("warn msg2")
+
+	ctx = context.WithValue(ctx, ctxKeyReqId, "reqId-123")
 	Ctx(ctx).With("c", 3).Errorf("error msg")
 }

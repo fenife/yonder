@@ -15,33 +15,19 @@ type InnerLogger struct {
 }
 
 func NewInnerLogger() *InnerLogger {
-	//encoderCfg := zapcore.EncoderConfig{
-	//	TimeKey:       "ts",
-	//	LevelKey:      "level",
-	//	NameKey:       "logger",
-	//	CallerKey:     "caller",
-	//	FunctionKey:   "func",
-	//	MessageKey:    "msg",
-	//	StacktraceKey: "stacktrace",
-	//	LineEnding:    zapcore.DefaultLineEnding,
-	//	EncodeLevel:   zapcore.LowercaseLevelEncoder,
-	//	//EncodeTime:     zapcore.RFC3339TimeEncoder,
-	//	EncodeTime: zapcore.TimeEncoderOfLayout("2006-01-02 15:05:05.000"),
-	//
-	//	EncodeDuration: zapcore.SecondsDurationEncoder,
-	//	EncodeCaller:   zapcore.ShortCallerEncoder,
-	//}
-	//core := zapcore.NewCore(
-	//	zapcore.NewJSONEncoder(encoderCfg),
-	//	os.Stdout,
-	//	zap.DebugLevel,
-	//)
-	//zapLogger := zap.New(core)
 	config := zap.NewProductionConfig()
 	config.EncoderConfig.EncodeTime = zapcore.TimeEncoderOfLayout("2006-01-02 15:05:05.000")
 	config.Level = zap.NewAtomicLevelAt(zap.DebugLevel)
+	config.DisableStacktrace = true
+
+	// log function name
 	//config.EncoderConfig.FunctionKey = "func"
-	zapLogger, err := config.Build()
+	opts := []zap.Option{
+		zap.AddCallerSkip(1),
+		zap.AddCaller(),
+	}
+
+	zapLogger, err := config.Build(opts...)
 	if err != nil {
 		panic(err)
 	}
@@ -58,16 +44,16 @@ func (l *InnerLogger) Ctx(ctx context.Context) Loggerx {
 }
 
 func (l *InnerLogger) With(keyAndValues ...interface{}) Loggerx {
-	if l.ctx != nil {
-		if val, ok := l.ctx.Value(ctxKeyReqId).(string); ok {
-			l.fields = append(l.fields, ctxKeyReqId, val)
-		}
-	}
 	l.fields = append(l.fields, keyAndValues...)
 	return l
 }
 
 func (l *InnerLogger) buildFields() []interface{} {
+	if l.ctx != nil {
+		if val := l.ctx.Value(ctxKeyReqId); val != nil {
+			l.fields = append(l.fields, ctxKeyReqId, val)
+		}
+	}
 	return l.fields
 }
 
@@ -108,7 +94,7 @@ func (l *InnerLogger) Errorf(msg string, args ...interface{}) {
 	}
 }
 
-func (l *InnerLogger) Panicf(msg string, args ...interface{}) {
+func (l *InnerLogger) Fatalf(msg string, args ...interface{}) {
 	//l.zapLogger.Sugar().With(l.buildFields()).Panicf(msg, args...)
 	fields := l.buildFields()
 	if len(fields) > 0 {
