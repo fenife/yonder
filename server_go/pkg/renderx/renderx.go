@@ -20,6 +20,10 @@ type Render struct {
 	Response   Response
 }
 
+func (r *Render) Error() string {
+	return r.Response.Result.Msg
+}
+
 func NewRender(statusCode, code int, msg string, data ...interface{}) *Render {
 	r := &Render{
 		StatusCode: statusCode,

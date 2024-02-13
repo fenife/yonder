@@ -7,6 +7,7 @@ import (
 	"server-go/application"
 	"server-go/config"
 	"server-go/controller/handler"
+	"server-go/domain/service"
 	"server-go/infra/persistence"
 )
 
@@ -20,7 +21,9 @@ func NewControllerHandler() *ControllerHandler {
 	if err != nil {
 		panic(err)
 	}
-	userApp := application.NewUserApp(repos.UserRepo)
+
+	userDomainService := service.NewUserDomainService(repos.UserRepo)
+	userApp := application.NewUserApp(userDomainService)
 
 	return &ControllerHandler{
 		pingHandler: handler.NewPingHandler(),

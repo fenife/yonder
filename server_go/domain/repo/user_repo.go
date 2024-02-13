@@ -7,5 +7,6 @@ import (
 
 type IUserRepo interface {
 	CreateUser(ctx context.Context, user *entity.User) (*entity.User, error)
+	FindByName(ctx context.Context, name string) (*entity.User, error)
 	GetUserList(ctx context.Context) ([]entity.User, error)
 }

@@ -10,7 +10,7 @@ import (
 	_ "server-go/docs" // 导入swag生成的接口文档
 )
 
-// @title yonder blog api
+// @title yonder blog api service
 // @version 1.0
 // @description yonder博客的后端API服务
 // @termsOfService http://swagger.io/terms/

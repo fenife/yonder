@@ -31,13 +31,17 @@ func NewUserHandler(userApp application.IUserApp) *UserHandler {
 func (ctrl *UserHandler) UserSignup(c *gin.Context) {
 	var userReq req.CreateUserReq
 	if err := c.ShouldBindJSON(&userReq); err != nil {
-		logx.Ctx(c).Errorf("param failed: %v", err)
+		logx.Ctx(c).With("error", err).Errorf("param error")
 		renderx.ErrOutput(c, errorx.ParamInvalid)
 		return
 	}
 
 	_, err := ctrl.userApp.CreateUser(c, userReq.Name, userReq.Password)
 	if err != nil {
+		if _, ok := err.(*renderx.Render); !ok {
+			logx.Ctx(c).With("error", err).Errorf("create user failed")
+			err = errorx.UserSignupFailed
+		}
 		renderx.ErrOutput(c, err)
 		return
 	}
