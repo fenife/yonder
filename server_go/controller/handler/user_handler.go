@@ -20,6 +20,15 @@ func NewUserHandler(ua application.IUserApp) *UserHandler {
 	}
 }
 
+// CreateUser godoc
+// @Summary      创建用户
+// @Description  新用户注册
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        object body  req.CreateUserReq	false "查询参数"
+// @Success      200  {object}  renderx.Response
+// @Router       /user [post]
 func (ctrl *UserHandler) CreateUser(c *gin.Context) {
 	var userReq req.CreateUserReq
 	if err := c.ShouldBindJSON(&userReq); err != nil {

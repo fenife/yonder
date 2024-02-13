@@ -1,5 +1,5 @@
 
-.PHONY: migrate run
+.PHONY: migrate run swag
 
 migrate:
 	go run ./cmd/migrate
@@ -7,3 +7,5 @@ migrate:
 run:
 	go run .
 
+swag:
+	swag init
