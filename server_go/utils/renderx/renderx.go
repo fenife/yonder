@@ -65,14 +65,20 @@ func ErrOutput(c *gin.Context, err interface{}) {
 	return
 }
 
-func SuccOutput(c *gin.Context, data interface{}) {
-	r, ok := data.(*Render)
+func SuccOutput(c *gin.Context, data ...interface{}) {
+	if len(data) == 0 {
+		c.JSON(RespOK.StatusCode, RespOK.Response)
+		return
+	}
+
+	d := data[0]
+	r, ok := d.(*Render)
 	if ok {
 		c.JSON(r.StatusCode, r.Response)
 		return
 	}
 
-	r = NewRender(http.StatusOK, ErrCodeOK, "ok", data)
+	r = NewRender(http.StatusOK, ErrCodeOK, "ok", d)
 	c.JSON(r.StatusCode, r.Response)
 	return
 }
