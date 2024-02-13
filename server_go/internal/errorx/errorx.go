@@ -9,7 +9,8 @@ const (
 	ErrCodeOK     = renderx.ErrCodeOK
 	ErrCodeFailed = renderx.ErrCodeFailed
 
-	ErrCodeParamInvalid = 100
+	ErrCodeParamInvalid = 1000
+	ErrCodePermitDeny   = 1001
 )
 
 var (
@@ -17,4 +18,5 @@ var (
 	RespFailed = renderx.RespFailed
 
 	ParamInvalid = renderx.NewRender(http.StatusOK, ErrCodeParamInvalid, "param is invalid")
+	PermitDeny   = renderx.NewRender(http.StatusOK, ErrCodePermitDeny, "permission deny")
 )
