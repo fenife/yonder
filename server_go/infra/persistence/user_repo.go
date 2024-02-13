@@ -15,7 +15,7 @@ func NewUserRepo(db *gorm.DB) *UserRepo {
 	return &UserRepo{db}
 }
 
-// UserRepo implements the repository.UserRepository interface
+// UserRepo implements the repo.UserRepo interface
 var _ repo.IUserRepo = &UserRepo{}
 
 func (repo *UserRepo) CreateUser(ctx context.Context, user *entity.User) (*entity.User, error) {

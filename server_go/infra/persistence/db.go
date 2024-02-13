@@ -1,11 +1,10 @@
 package persistence
 
 import (
-	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 	"server-go/config"
 	"server-go/domain/repo"
+	"server-go/utils/gormx"
 )
 
 type Repos struct {
@@ -14,9 +13,7 @@ type Repos struct {
 }
 
 func NewRepos(mysqlConf *config.MysqlConfig) (*Repos, error) {
-	db, err := gorm.Open(mysql.Open(mysqlConf.ConnStr()), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
-	})
+	db, err := gormx.NewGormMysqlDB(mysqlConf)
 	if err != nil {
 		return nil, err
 	}

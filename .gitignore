@@ -122,6 +122,7 @@ backup
 *prod*
 **/server.json
 **/.env
+**/config.json
 
 # todo
 .todo

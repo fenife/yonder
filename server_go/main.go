@@ -29,11 +29,13 @@ func addRouter(engine *gin.Engine) {
 }
 
 func main() {
-	engine := gin.Default()
+	engine := gin.New()
+	//gin.SetMode(gin.ReleaseMode)
 
 	engine.Use(
-		//middleware.RequestIdMiddleware(),
+		middleware.RequestIdMiddleware(),
 		middleware.LogContext(),
+		gin.Recovery(),
 	)
 
 	addRouter(engine)
