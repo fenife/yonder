@@ -20,10 +20,10 @@ func UserAuthMiddleware(userCache cache.IUserCache) gin.HandlerFunc {
 		if err != nil || !user.IsValid() {
 			logx.Ctx(c).With("error", err).Errorf("user auth failed")
 			renderx.ErrOutput(c, errorx.UserAuthFailed)
+			c.Abort()
 			return
 		}
 		gctx.SetUser(c, user)
-
 		c.Next()
 	}
 }
