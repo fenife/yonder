@@ -8,6 +8,7 @@ import (
 	"server-go/config"
 	"server-go/controller/handler"
 	"server-go/domain/service"
+	"server-go/infra/cache/redisc"
 	"server-go/infra/persistence"
 )
 
@@ -22,7 +23,12 @@ func NewControllerHandler() *ControllerHandler {
 		panic(err)
 	}
 
-	userDomainService := service.NewUserDomainService(repos.UserRepo)
+	caches, err := redisc.NewCaches(&config.Conf.Redis)
+	if err != nil {
+		panic(err)
+	}
+
+	userDomainService := service.NewUserDomainService(repos.UserRepo, caches.UserCache)
 	userApp := application.NewUserApp(userDomainService)
 
 	return &ControllerHandler{

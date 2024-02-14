@@ -28,3 +28,9 @@ func (u *User) GenUserToken() string {
 	// 随机字符串
 	return utils.Md5(uuid.New().String() + strconv.Itoa(time.Now().Second()))
 }
+
+// 检查用户是否正常
+func (u *User) IsValid() bool {
+	// 未删除，且uid>0
+	return u.DeletedAt.Valid == false && u.ID > 0
+}

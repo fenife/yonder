@@ -57,9 +57,10 @@ func (ctrl *UserHandler) UserSignup(c *gin.Context) {
 // @Produce      json
 // @Param        object body  req.SignInReq	false "查询参数"
 // @Success      200  {object}  resp.SignInResp
-// @Failure      2003  integer 	"用户不存在"
-// @Failure      2004  integer 	"用户名或密码不正确"
-// @Failure      2005  integer 	"其他原因导致的登陆失败"
+// @Failure      2101  integer 	"其他原因导致的登陆失败"
+// @Failure      2102  integer 	"用户不存在"
+// @Failure      2103  integer 	"用户名或密码不正确"
+// @Failure      2104  integer 	"用户已登陆"
 // @Router       /api/v1/user/signin [post]
 func (ctrl *UserHandler) UserSignIn(c *gin.Context) {
 	var userReq req.SignInReq

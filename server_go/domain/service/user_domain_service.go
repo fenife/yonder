@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"server-go/domain/cache"
 	"server-go/domain/entity"
 	"server-go/domain/repo"
 	"server-go/internal/errorx"
@@ -19,12 +20,14 @@ type IUserDomainService interface {
 }
 
 type UserDomainService struct {
-	userRepo repo.IUserRepo
+	userRepo  repo.IUserRepo
+	userCache cache.IUserCache
 }
 
-func NewUserDomainService(userRepo repo.IUserRepo) *UserDomainService {
+func NewUserDomainService(userRepo repo.IUserRepo, userCache cache.IUserCache) *UserDomainService {
 	return &UserDomainService{
-		userRepo: userRepo,
+		userRepo:  userRepo,
+		userCache: userCache,
 	}
 }
 
@@ -71,15 +74,13 @@ func (ds *UserDomainService) FindByToken(ctx context.Context, userToken string) 
 }
 
 func (ds *UserDomainService) SignIn(ctx context.Context, name, password string) (user *entity.User, token string, err error) {
-	// todo: 检查用户是否已经登陆
-
 	// 查找用户
 	user, err = ds.userRepo.FindByName(ctx, name)
 	if err != nil {
 		return nil, "", err
 	}
-	// 检查用户是否存在或是否已删除
-	if user.ID <= 0 {
+	// 检查用户是否存在
+	if !user.IsValid() {
 		return nil, "", errorx.UserNotExisted
 	}
 	// 检查密码是否错误
@@ -88,10 +89,19 @@ func (ds *UserDomainService) SignIn(ctx context.Context, name, password string) 
 		logx.Ctx(ctx).Errorf("password is not valid: %s != %s", user.PasswordHash, pwHash)
 		return nil, "", errorx.UserNameOrPasswdNotValid
 	}
+	// 检查是否已经登陆
+	u, err := ds.userCache.GetUserById(ctx, user.ID)
+	if err != nil {
+		return nil, "", err
+	}
+	if u.IsValid() {
+		return nil, "", errorx.UserAlreadySignIn
+	}
 	// 生成用户token
 	token = user.GenUserToken()
-
-	// todo: 缓存
-
+	// 缓存用户信息
+	if err = ds.userCache.CacheUserByToken(ctx, token, user); err != nil {
+		return nil, "", err
+	}
 	return
 }

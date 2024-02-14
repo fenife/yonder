@@ -36,6 +36,10 @@ type RedisConfig struct {
 	Port int    `json:"port"`
 }
 
+func (r *RedisConfig) Addr() string {
+	return fmt.Sprintf("%s:%d", r.Host, r.Port)
+}
+
 type Config struct {
 	Env    string       `json:"env"`
 	Server ServerConfig `json:"server"`

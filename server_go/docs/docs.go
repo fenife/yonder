@@ -46,20 +46,26 @@ const docTemplate = `{
                             "$ref": "#/definitions/resp.SignInResp"
                         }
                     },
-                    "2003": {
+                    "2101": {
+                        "description": "其他原因导致的登陆失败",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    "2102": {
                         "description": "用户不存在",
                         "schema": {
                             "type": "integer"
                         }
                     },
-                    "2004": {
+                    "2103": {
                         "description": "用户名或密码不正确",
                         "schema": {
                             "type": "integer"
                         }
                     },
-                    "2005": {
-                        "description": "其他原因导致的登陆失败",
+                    "2104": {
+                        "description": "用户已登陆",
                         "schema": {
                             "type": "integer"
                         }
