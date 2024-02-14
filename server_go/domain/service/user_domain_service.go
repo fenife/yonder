@@ -9,7 +9,7 @@ import (
 	"server-go/pkg/logx"
 )
 
-type IUserDomainService interface {
+type IUserDomain interface {
 	Signup(ctx context.Context, user *entity.User) (*entity.User, error)
 	FindByName(ctx context.Context, name string) (*entity.User, error)
 	FindById(ctx context.Context, userId uint64) (*entity.User, error)
@@ -19,21 +19,21 @@ type IUserDomainService interface {
 	FindByToken(ctx context.Context, userToken string) (*entity.User, error)
 }
 
-type UserDomainService struct {
+type UserDomain struct {
 	userRepo  repo.IUserRepo
 	userCache cache.IUserCache
 }
 
-func NewUserDomainService(userRepo repo.IUserRepo, userCache cache.IUserCache) *UserDomainService {
-	return &UserDomainService{
+func NewUserDomain(userRepo repo.IUserRepo, userCache cache.IUserCache) *UserDomain {
+	return &UserDomain{
 		userRepo:  userRepo,
 		userCache: userCache,
 	}
 }
 
-var _ IUserDomainService = &UserDomainService{}
+var _ IUserDomain = &UserDomain{}
 
-func (ds *UserDomainService) Signup(ctx context.Context, user *entity.User) (*entity.User, error) {
+func (ds *UserDomain) Signup(ctx context.Context, user *entity.User) (*entity.User, error) {
 	// 用户已经存在
 	existed, err := ds.UserExisted(ctx, user.Name)
 	if err != nil {
@@ -46,7 +46,7 @@ func (ds *UserDomainService) Signup(ctx context.Context, user *entity.User) (*en
 	return ds.userRepo.CreateUser(ctx, user)
 }
 
-func (ds *UserDomainService) UserExisted(ctx context.Context, name string) (bool, error) {
+func (ds *UserDomain) UserExisted(ctx context.Context, name string) (bool, error) {
 	user, err := ds.userRepo.FindByName(ctx, name)
 	if err != nil {
 		return false, err
@@ -57,23 +57,23 @@ func (ds *UserDomainService) UserExisted(ctx context.Context, name string) (bool
 	return true, nil
 }
 
-func (ds *UserDomainService) FindByName(ctx context.Context, name string) (*entity.User, error) {
+func (ds *UserDomain) FindByName(ctx context.Context, name string) (*entity.User, error) {
 	return ds.userRepo.FindByName(ctx, name)
 }
 
-func (ds *UserDomainService) FindById(ctx context.Context, userId uint64) (*entity.User, error) {
+func (ds *UserDomain) FindById(ctx context.Context, userId uint64) (*entity.User, error) {
 	return ds.userRepo.FindById(ctx, userId)
 }
 
-func (ds *UserDomainService) GetUserList(ctx context.Context) ([]entity.User, error) {
+func (ds *UserDomain) GetUserList(ctx context.Context) ([]entity.User, error) {
 	return ds.userRepo.GetUserList(ctx)
 }
 
-func (ds *UserDomainService) FindByToken(ctx context.Context, userToken string) (*entity.User, error) {
+func (ds *UserDomain) FindByToken(ctx context.Context, userToken string) (*entity.User, error) {
 	return nil, nil
 }
 
-func (ds *UserDomainService) SignIn(ctx context.Context, name, password string) (user *entity.User, token string, err error) {
+func (ds *UserDomain) SignIn(ctx context.Context, name, password string) (user *entity.User, token string, err error) {
 	// 查找用户
 	user, err = ds.userRepo.FindByName(ctx, name)
 	if err != nil {

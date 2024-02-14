@@ -14,12 +14,12 @@ type IUserApp interface {
 }
 
 type UserApp struct {
-	userDomainService service.IUserDomainService
+	userDomain service.IUserDomain
 }
 
-func NewUserApp(userDomainService service.IUserDomainService) *UserApp {
+func NewUserApp(userDomain service.IUserDomain) *UserApp {
 	return &UserApp{
-		userDomainService: userDomainService,
+		userDomain: userDomain,
 	}
 }
 
@@ -32,14 +32,14 @@ func (app *UserApp) Signup(ctx context.Context, username, passwd string) (*entit
 	}
 	user.PasswordHash = user.GenPasswordHash(passwd)
 
-	return app.userDomainService.Signup(ctx, &user)
+	return app.userDomain.Signup(ctx, &user)
 }
 
 // SignIn 用户登陆
 func (app *UserApp) SignIn(ctx context.Context, username, passwd string) (user *entity.User, token string, err error) {
-	return app.userDomainService.SignIn(ctx, username, passwd)
+	return app.userDomain.SignIn(ctx, username, passwd)
 }
 
 func (app *UserApp) GetUserList(ctx context.Context) ([]entity.User, error) {
-	return app.userDomainService.GetUserList(ctx)
+	return app.userDomain.GetUserList(ctx)
 }

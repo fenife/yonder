@@ -6,12 +6,12 @@ import (
 )
 
 type DomainServices struct {
-	UserDomainService IUserDomainService
+	UserDomain IUserDomain
 }
 
 func NewDomainServices(
 	userRepo repo.IUserRepo, userCache cache.IUserCache) *DomainServices {
 	return &DomainServices{
-		UserDomainService: NewUserDomainService(userRepo, userCache),
+		UserDomain: NewUserDomain(userRepo, userCache),
 	}
 }

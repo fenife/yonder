@@ -26,7 +26,7 @@ func AddRouter(engine *gin.Engine) {
 		panic(err)
 	}
 	domainServices := service.NewDomainServices(repos.UserRepo, caches.UserCache)
-	apps := application.NewApps(domainServices.UserDomainService)
+	apps := application.NewApps(domainServices.UserDomain)
 	handlers := handler.NewHandlers(apps.UserApp)
 
 	// 添加路由

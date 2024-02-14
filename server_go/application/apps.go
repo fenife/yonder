@@ -6,8 +6,8 @@ type Apps struct {
 	UserApp IUserApp
 }
 
-func NewApps(userDomainService service.IUserDomainService) *Apps {
+func NewApps(userDomain service.IUserDomain) *Apps {
 	return &Apps{
-		UserApp: NewUserApp(userDomainService),
+		UserApp: NewUserApp(userDomain),
 	}
 }
