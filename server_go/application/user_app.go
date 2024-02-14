@@ -5,11 +5,11 @@ import (
 	"html"
 	"server-go/domain/entity"
 	"server-go/domain/service"
-	"server-go/pkg/utils"
 )
 
 type IUserApp interface {
-	CreateUser(ctx context.Context, username, passwd string) (*entity.User, error)
+	Signup(ctx context.Context, username, passwd string) (*entity.User, error)
+	SignIn(ctx context.Context, username, passwd string) (*entity.User, string, error)
 	GetUserList(ctx context.Context) ([]entity.User, error)
 }
 
@@ -25,12 +25,19 @@ func NewUserApp(userDomainService service.IUserDomainService) *UserApp {
 
 var _ IUserApp = &UserApp{}
 
-func (app *UserApp) CreateUser(ctx context.Context, username, passwd string) (*entity.User, error) {
+// Signup 用户注册
+func (app *UserApp) Signup(ctx context.Context, username, passwd string) (*entity.User, error) {
 	user := entity.User{
-		Name:         html.EscapeString(username),
-		PasswordHash: utils.Md5(passwd),
+		Name: html.EscapeString(username),
 	}
-	return app.userDomainService.CreateUser(ctx, &user)
+	user.PasswordHash = user.GenPasswordHash(passwd)
+
+	return app.userDomainService.Signup(ctx, &user)
+}
+
+// SignIn 用户登陆
+func (app *UserApp) SignIn(ctx context.Context, username, passwd string) (user *entity.User, token string, err error) {
+	return app.userDomainService.SignIn(ctx, username, passwd)
 }
 
 func (app *UserApp) GetUserList(ctx context.Context) ([]entity.User, error) {

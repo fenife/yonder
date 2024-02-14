@@ -44,6 +44,7 @@ func AddRouter(engine *gin.Engine) {
 		user := apiV1.Group("user")
 		{
 			user.POST("/signup", hdr.userHandler.UserSignup)
+			user.POST("/signin", hdr.userHandler.UserSignIn)
 		}
 	}
 }

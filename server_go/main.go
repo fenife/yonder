@@ -13,7 +13,7 @@ import (
 // @title yonder blog api service
 // @version 1.0
 // @description yonder博客的后端API服务
-// @termsOfService http://swagger.io/terms/
+// @termsOfService https://github.com/swaggo/swag
 // @host localhost:8030
 // @BasePath /
 func main() {

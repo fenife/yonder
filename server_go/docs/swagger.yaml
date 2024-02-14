@@ -13,7 +13,7 @@ definitions:
       msg:
         type: string
     type: object
-  req.CreateUserReq:
+  req.SignInReq:
     properties:
       name:
         maxLength: 20
@@ -27,14 +27,68 @@ definitions:
     - name
     - password
     type: object
+  req.SignupReq:
+    properties:
+      name:
+        maxLength: 20
+        minLength: 3
+        type: string
+      password:
+        maxLength: 32
+        minLength: 3
+        type: string
+    required:
+    - name
+    - password
+    type: object
+  resp.SignInResp:
+    properties:
+      user_token:
+        type: string
+      username:
+        type: string
+    type: object
 host: localhost:8030
 info:
   contact: {}
   description: yonder博客的后端API服务
-  termsOfService: http://swagger.io/terms/
+  termsOfService: https://github.com/swaggo/swag
   title: yonder blog api service
   version: "1.0"
 paths:
+  /api/v1/user/signin:
+    post:
+      consumes:
+      - application/json
+      description: 检查用户是否存在，密码是否正确，如果正常，返回用户token
+      parameters:
+      - description: 查询参数
+        in: body
+        name: object
+        schema:
+          $ref: '#/definitions/req.SignInReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/resp.SignInResp'
+        "2003":
+          description: 用户不存在
+          schema:
+            type: integer
+        "2004":
+          description: 用户名或密码不正确
+          schema:
+            type: integer
+        "2005":
+          description: 其他原因导致的登陆失败
+          schema:
+            type: integer
+      summary: 用户登陆
+      tags:
+      - users
   /api/v1/user/signup:
     post:
       consumes:
@@ -45,7 +99,7 @@ paths:
         in: body
         name: object
         schema:
-          $ref: '#/definitions/req.CreateUserReq'
+          $ref: '#/definitions/req.SignupReq'
       produces:
       - application/json
       responses:

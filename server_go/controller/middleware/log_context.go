@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"io"
 	"server-go/pkg/logx"
+	"strings"
 	"time"
 )
 
@@ -33,14 +34,18 @@ func LogContext() gin.HandlerFunc {
 		c.Next()
 
 		// log记录请求和响应
+		path := c.Request.URL.Path
 		withArgs := []interface{}{
 			"method", c.Request.Method,
 			"url", c.Request.RequestURI,
-			"path", c.Request.URL.Path,
+			"path", path,
 			"body", string(bodyData),
 			"internal", time.Since(t).Milliseconds(), // 毫秒
 			"status", c.Writer.Status(),
-			"response", writer.body.String(),
+		}
+		// swag文档api接口，不需要log响应body
+		if !strings.Contains(path, "swagger") {
+			withArgs = append(withArgs, "response", writer.body.String())
 		}
 		logx.Ctx(c).With(withArgs...).Infof("")
 	}

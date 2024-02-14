@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"server-go/application"
 	"server-go/controller/req"
+	"server-go/controller/resp"
 	"server-go/internal/errorx"
 	"server-go/pkg/logx"
 	"server-go/pkg/renderx"
@@ -25,18 +26,18 @@ func NewUserHandler(userApp application.IUserApp) *UserHandler {
 // @Tags         users
 // @Accept       json
 // @Produce      json
-// @Param        object body  req.CreateUserReq	false "查询参数"
+// @Param        object body  req.SignupReq	false "查询参数"
 // @Success      200  {object}  renderx.Response
 // @Router       /api/v1/user/signup [post]
 func (ctrl *UserHandler) UserSignup(c *gin.Context) {
-	var userReq req.CreateUserReq
+	var userReq req.SignupReq
 	if err := c.ShouldBindJSON(&userReq); err != nil {
 		logx.Ctx(c).With("error", err).Errorf("param error")
 		renderx.ErrOutput(c, errorx.ParamInvalid)
 		return
 	}
 
-	_, err := ctrl.userApp.CreateUser(c, userReq.Name, userReq.Password)
+	_, err := ctrl.userApp.Signup(c, userReq.Name, userReq.Password)
 	if err != nil {
 		if _, ok := err.(*renderx.Render); !ok {
 			logx.Ctx(c).With("error", err).Errorf("create user failed")
@@ -46,4 +47,41 @@ func (ctrl *UserHandler) UserSignup(c *gin.Context) {
 		return
 	}
 	renderx.SuccOutput(c)
+}
+
+// UserSignIn godoc
+// @Summary      用户登陆
+// @Description	 检查用户是否存在，密码是否正确，如果正常，返回用户token
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        object body  req.SignInReq	false "查询参数"
+// @Success      200  {object}  resp.SignInResp
+// @Failure      2003  integer 	"用户不存在"
+// @Failure      2004  integer 	"用户名或密码不正确"
+// @Failure      2005  integer 	"其他原因导致的登陆失败"
+// @Router       /api/v1/user/signin [post]
+func (ctrl *UserHandler) UserSignIn(c *gin.Context) {
+	var userReq req.SignInReq
+	if err := c.ShouldBindJSON(&userReq); err != nil {
+		logx.Ctx(c).With("error", err).Errorf("param error")
+		renderx.ErrOutput(c, errorx.ParamInvalid)
+		return
+	}
+
+	user, token, err := ctrl.userApp.SignIn(c, userReq.Name, userReq.Password)
+	if err != nil {
+		if _, ok := err.(*renderx.Render); !ok {
+			logx.Ctx(c).With("error", err).Errorf("user sign in failed")
+			err = errorx.UserSignupFailed
+		}
+		renderx.ErrOutput(c, err)
+		return
+	}
+
+	data := resp.SignInResp{
+		UserName:  user.Name,
+		UserToken: token,
+	}
+	renderx.SuccOutput(c, data)
 }

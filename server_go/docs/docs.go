@@ -9,13 +9,64 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "termsOfService": "http://swagger.io/terms/",
+        "termsOfService": "https://github.com/swaggo/swag",
         "contact": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/user/signin": {
+            "post": {
+                "description": "检查用户是否存在，密码是否正确，如果正常，返回用户token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "用户登陆",
+                "parameters": [
+                    {
+                        "description": "查询参数",
+                        "name": "object",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/req.SignInReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/resp.SignInResp"
+                        }
+                    },
+                    "2003": {
+                        "description": "用户不存在",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    "2004": {
+                        "description": "用户名或密码不正确",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    "2005": {
+                        "description": "其他原因导致的登陆失败",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/user/signup": {
             "post": {
                 "description": "创建新用户",
@@ -35,7 +86,7 @@ const docTemplate = `{
                         "name": "object",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/req.CreateUserReq"
+                            "$ref": "#/definitions/req.SignupReq"
                         }
                     }
                 ],
@@ -90,7 +141,7 @@ const docTemplate = `{
                 }
             }
         },
-        "req.CreateUserReq": {
+        "req.SignInReq": {
             "type": "object",
             "required": [
                 "name",
@@ -106,6 +157,36 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 32,
                     "minLength": 3
+                }
+            }
+        },
+        "req.SignupReq": {
+            "type": "object",
+            "required": [
+                "name",
+                "password"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 3
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "minLength": 3
+                }
+            }
+        },
+        "resp.SignInResp": {
+            "type": "object",
+            "properties": {
+                "user_token": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         }
