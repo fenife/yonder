@@ -10,16 +10,17 @@ const (
 	ErrCodeFailed = renderx.ErrCodeFailed
 
 	// 通用
-	ErrCodeParamInvalid = 1001
+	errCodeParamInvalid = 1001
 
 	// 用户注册
-	ErrCodeUserSignupFailed = 2001
-	ErrCodeUserExisted      = 2002
+	errCodeUserSignupFailed = 2001
+	errCodeUserExisted      = 2002
 	// 用户登陆
-	ErrCodeUserSignInFailed         = 2101
-	ErrCodeUserNotExisted           = 2102
-	ErrCodeUserNameOrPasswdNotValid = 2103
-	ErrCodeUserAlreadySignIn        = 2104
+	errCodeUserSignInFailed         = 2101
+	errCodeUserNotExisted           = 2102
+	errCodeUserNameOrPasswdNotValid = 2103
+	errCodeUserAlreadySignIn        = 2104
+	errCodeUserAuthFailed           = 2105
 
 	//ErrCodePermitDeny = 1101
 )
@@ -29,16 +30,17 @@ var (
 	RespFailed = renderx.RespFailed
 
 	// 通用
-	ParamInvalid = renderx.NewRender(http.StatusOK, ErrCodeParamInvalid, "param is invalid")
+	ParamInvalid = renderx.NewRender(http.StatusOK, errCodeParamInvalid, "param is invalid")
 
 	// 用户注册
-	UserSignupFailed = renderx.NewRender(http.StatusOK, ErrCodeUserSignupFailed, "user sign up failed")
-	UserExisted      = renderx.NewRender(http.StatusOK, ErrCodeUserExisted, "user existed")
+	UserSignupFailed = renderx.NewRender(http.StatusOK, errCodeUserSignupFailed, "user sign up failed")
+	UserExisted      = renderx.NewRender(http.StatusOK, errCodeUserExisted, "user existed")
 	// 用户登陆
-	UserSignInFailed         = renderx.NewRender(http.StatusOK, ErrCodeUserSignInFailed, "user sign in failed")
-	UserNotExisted           = renderx.NewRender(http.StatusOK, ErrCodeUserNotExisted, "user not existed")
-	UserNameOrPasswdNotValid = renderx.NewRender(http.StatusOK, ErrCodeUserNameOrPasswdNotValid, "user name or password not valid")
-	UserAlreadySignIn        = renderx.NewRender(http.StatusOK, ErrCodeUserAlreadySignIn, "user already sign in")
+	UserSignInFailed         = renderx.NewRender(http.StatusOK, errCodeUserSignInFailed, "user sign in failed")
+	UserNotExisted           = renderx.NewRender(http.StatusOK, errCodeUserNotExisted, "user not existed")
+	UserNameOrPasswdNotValid = renderx.NewRender(http.StatusOK, errCodeUserNameOrPasswdNotValid, "user name or password not valid")
+	UserAlreadySignIn        = renderx.NewRender(http.StatusOK, errCodeUserAlreadySignIn, "user already sign in")
+	UserAuthFailed           = renderx.NewRender(http.StatusOK, errCodeUserAuthFailed, "user auth failed")
 
 	//PermitDeny = renderx.NewRender(http.StatusOK, ErrCodePermitDeny, "user permission deny")
 )
