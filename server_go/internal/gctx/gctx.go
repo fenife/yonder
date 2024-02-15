@@ -7,8 +7,9 @@ import (
 )
 
 const (
-	ctxKeyReqId = "request_id"
-	ctxKeyUser  = "user"
+	ctxKeyReqId     = "request_id"
+	ctxKeyUser      = "user"
+	ctxKeyUserToken = "user_token"
 )
 
 func SetReqId(ctx *gin.Context, reqId string) {
@@ -29,6 +30,17 @@ func SetUser(ctx *gin.Context, user *entity.User) {
 func GetUser(ctx context.Context) (user *entity.User) {
 	if val := ctx.Value(ctxKeyUser); val != nil {
 		user, _ = val.(*entity.User)
+	}
+	return
+}
+
+func SetUserToken(ctx *gin.Context, token string) {
+	ctx.Set(ctxKeyUserToken, token)
+}
+
+func GetUserToken(ctx context.Context) (token string) {
+	if val := ctx.Value(ctxKeyUserToken); val != nil {
+		token, _ = val.(string)
 	}
 	return
 }

@@ -6,6 +6,7 @@ import (
 	"server-go/controller/req"
 	"server-go/controller/resp"
 	"server-go/internal/errorx"
+	"server-go/internal/gctx"
 	"server-go/pkg/logx"
 	"server-go/pkg/renderx"
 )
@@ -57,10 +58,7 @@ func (ctrl *UserHandler) UserSignup(c *gin.Context) {
 // @Produce      json
 // @Param        object body  req.SignInReq	false "查询参数"
 // @Success      200  {object}  resp.SignInResp
-// @Failure      2101  integer 	"其他原因导致的登陆失败"
-// @Failure      2102  integer 	"用户不存在"
-// @Failure      2103  integer 	"用户名或密码不正确"
-// @Failure      2104  integer 	"用户已登陆"
+// @Failure      111001  integer 	"参数错误"
 // @Router       /api/v1/user/signin [post]
 func (ctrl *UserHandler) UserSignIn(c *gin.Context) {
 	var userReq req.SignInReq
@@ -70,7 +68,7 @@ func (ctrl *UserHandler) UserSignIn(c *gin.Context) {
 		return
 	}
 
-	user, token, err := ctrl.userApp.SignIn(c, userReq.Name, userReq.Password)
+	user, signin, err := ctrl.userApp.SignIn(c, userReq.Name, userReq.Password)
 	if err != nil {
 		if _, ok := err.(*renderx.Render); !ok {
 			logx.Ctx(c).With("error", err).Errorf("user sign in failed")
@@ -82,7 +80,29 @@ func (ctrl *UserHandler) UserSignIn(c *gin.Context) {
 
 	data := resp.SignInResp{
 		UserName:  user.Name,
-		UserToken: token,
+		UserToken: signin.Token,
 	}
 	renderx.SuccOutput(c, data)
+}
+
+// UserSignOut godoc
+// @Summary      用户退出
+// @Description	 用户退出登陆，需要在header中附带x-user-token参数
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  renderx.Response
+// @Router       /api/v1/user/signout [post]
+func (ctrl *UserHandler) UserSignOut(c *gin.Context) {
+	token := gctx.GetUserToken(c)
+	err := ctrl.userApp.SignOut(c, token)
+	if err != nil {
+		if _, ok := err.(*renderx.Render); !ok {
+			logx.Ctx(c).With("error", err).Errorf("user sign out failed")
+			err = errorx.UserSignOutFailed
+		}
+		renderx.ErrOutput(c, err)
+		return
+	}
+	renderx.SuccOutput(c)
 }

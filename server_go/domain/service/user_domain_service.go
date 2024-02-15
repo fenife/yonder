@@ -7,15 +7,17 @@ import (
 	"server-go/domain/repo"
 	"server-go/internal/errorx"
 	"server-go/pkg/logx"
+	"time"
 )
 
 type IUserDomain interface {
 	Signup(ctx context.Context, user *entity.User) (*entity.User, error)
+	SignIn(ctx context.Context, name, password string) (user *entity.User, signin *entity.UserSignInInfo, err error)
+	SignOut(ctx context.Context, token string) (err error)
 	FindByName(ctx context.Context, name string) (*entity.User, error)
 	FindById(ctx context.Context, userId uint64) (*entity.User, error)
 	UserExisted(ctx context.Context, name string) (bool, error)
 	GetUserList(ctx context.Context) ([]entity.User, error)
-	SignIn(ctx context.Context, name, password string) (user *entity.User, token string, err error)
 	FindByToken(ctx context.Context, userToken string) (*entity.User, error)
 }
 
@@ -33,6 +35,7 @@ func NewUserDomain(userRepo repo.IUserRepo, userCache cache.IUserCache) *UserDom
 
 var _ IUserDomain = &UserDomain{}
 
+// 用户注册
 func (ds *UserDomain) Signup(ctx context.Context, user *entity.User) (*entity.User, error) {
 	// 用户已经存在
 	existed, err := ds.UserExisted(ctx, user.Name)
@@ -73,35 +76,49 @@ func (ds *UserDomain) FindByToken(ctx context.Context, userToken string) (*entit
 	return nil, nil
 }
 
-func (ds *UserDomain) SignIn(ctx context.Context, name, password string) (user *entity.User, token string, err error) {
+// 用户登陆
+func (ds *UserDomain) SignIn(ctx context.Context, name, password string) (user *entity.User, signin *entity.UserSignInInfo, err error) {
 	// 查找用户
 	user, err = ds.userRepo.FindByName(ctx, name)
 	if err != nil {
-		return nil, "", err
+		return
 	}
 	// 检查用户是否存在
 	if !user.IsValid() {
-		return nil, "", errorx.UserNotExisted
+		return nil, nil, errorx.UserNotExisted
 	}
 	// 检查密码是否错误
 	pwHash := user.GenPasswordHash(password)
 	if user.PasswordHash != pwHash {
 		logx.Ctx(ctx).Errorf("password is not valid: %s != %s", user.PasswordHash, pwHash)
-		return nil, "", errorx.UserNameOrPasswdNotValid
+		return nil, nil, errorx.UserNameOrPasswdNotValid
 	}
-	// 检查是否已经登陆
-	u, err := ds.userCache.GetUserById(ctx, user.ID)
+
+	// 检查是否已经登陆，限制一段时间内的登陆次数，防止接口频繁被调用而生成很多缓存数据
+	signin, err = ds.userCache.GetUserSignInInfo(ctx, user.ID)
 	if err != nil {
-		return nil, "", err
+		return nil, nil, err
 	}
-	if u.IsValid() {
-		return nil, "", errorx.UserAlreadySignIn
+	if signin != nil && signin.IsSignInLimit() {
+		return nil, nil, errorx.UserAlreadySignIn
 	}
-	// 生成用户token
-	token = user.GenUserToken()
-	// 缓存用户信息
-	if err = ds.userCache.CacheUserByToken(ctx, token, user); err != nil {
-		return nil, "", err
+
+	// 生成用户登陆信息
+	signin = &entity.UserSignInInfo{
+		UserId: user.ID,
+		Token:  user.GenUserToken(),
+		SignTs: time.Now().Unix(),
+	}
+
+	// 缓存用户登陆信息
+	if err = ds.userCache.CacheUserSignInInfo(ctx, user, signin); err != nil {
+		return nil, nil, err
 	}
 	return
+}
+
+// 用户退出
+func (ds *UserDomain) SignOut(ctx context.Context, token string) (err error) {
+	// 删除缓存信息
+	return ds.userCache.DelUserSignInByToken(ctx, token)
 }

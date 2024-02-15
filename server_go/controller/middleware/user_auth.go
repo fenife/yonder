@@ -23,7 +23,10 @@ func UserAuthMiddleware(userCache cache.IUserCache) gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+
+		gctx.SetUserToken(c, userToken)
 		gctx.SetUser(c, user)
+
 		c.Next()
 	}
 }

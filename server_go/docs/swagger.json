@@ -34,34 +34,39 @@
                     }
                 ],
                 "responses": {
+                    "111001": {
+                        "description": "参数错误",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/resp.SignInResp"
                         }
-                    },
-                    "2101": {
-                        "description": "其他原因导致的登陆失败",
+                    }
+                }
+            }
+        },
+        "/api/v1/user/signout": {
+            "post": {
+                "description": "用户退出登陆，需要在header中附带x-user-token参数",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "用户退出",
+                "responses": {
+                    "200": {
+                        "description": "OK",
                         "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    "2102": {
-                        "description": "用户不存在",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    "2103": {
-                        "description": "用户名或密码不正确",
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    "2104": {
-                        "description": "用户已登陆",
-                        "schema": {
-                            "type": "integer"
+                            "$ref": "#/definitions/renderx.Response"
                         }
                     }
                 }

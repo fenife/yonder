@@ -7,6 +7,7 @@ import (
 	"server-go/application"
 	"server-go/config"
 	"server-go/controller/handler"
+	mw "server-go/controller/middleware"
 	"server-go/domain/service"
 	"server-go/infra/cache/redisc"
 	"server-go/infra/persistence"
@@ -27,16 +28,17 @@ func AddRouter(engine *gin.Engine) {
 	}
 	domainServices := service.NewDomainServices(repos.UserRepo, caches.UserCache)
 	apps := application.NewApps(domainServices.UserDomain)
-	handlers := handler.NewHandlers(apps.UserApp)
+	hdr := handler.NewHandlers(apps.UserApp)
 
 	// 添加路由
-	engine.GET("/ping", handlers.PingHandler.Ping)
+	engine.GET("/ping", hdr.PingHandler.Ping)
 	apiV1 := engine.Group("/api/v1")
 	{
 		user := apiV1.Group("user")
 		{
-			user.POST("/signup", handlers.UserHandler.UserSignup)
-			user.POST("/signin", handlers.UserHandler.UserSignIn)
+			user.POST("/signup", hdr.UserHandler.UserSignup)
+			user.POST("/signin", hdr.UserHandler.UserSignIn)
+			user.POST("/signout", mw.UserAuthMiddleware(caches.UserCache), hdr.UserHandler.UserSignOut)
 		}
 	}
 }

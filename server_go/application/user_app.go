@@ -9,7 +9,8 @@ import (
 
 type IUserApp interface {
 	Signup(ctx context.Context, username, passwd string) (*entity.User, error)
-	SignIn(ctx context.Context, username, passwd string) (*entity.User, string, error)
+	SignIn(ctx context.Context, username, passwd string) (user *entity.User, signin *entity.UserSignInInfo, err error)
+	SignOut(ctx context.Context, token string) (err error)
 	GetUserList(ctx context.Context) ([]entity.User, error)
 }
 
@@ -36,8 +37,14 @@ func (app *UserApp) Signup(ctx context.Context, username, passwd string) (*entit
 }
 
 // SignIn 用户登陆
-func (app *UserApp) SignIn(ctx context.Context, username, passwd string) (user *entity.User, token string, err error) {
+func (app *UserApp) SignIn(ctx context.Context, username, passwd string) (
+	user *entity.User, signin *entity.UserSignInInfo, err error) {
 	return app.userDomain.SignIn(ctx, username, passwd)
+}
+
+// SignOut 用户退出
+func (app *UserApp) SignOut(ctx context.Context, token string) (err error) {
+	return app.userDomain.SignOut(ctx, token)
 }
 
 func (app *UserApp) GetUserList(ctx context.Context) ([]entity.User, error) {
