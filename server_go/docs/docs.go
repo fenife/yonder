@@ -210,7 +210,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:8030",
 	BasePath:         "/",
 	Schemes:          []string{},
-	Title:            "yonder blog api service",
+	Title:            "yonder blog api aservice",
 	Description:      "yonder博客的后端API服务",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

@@ -53,7 +53,7 @@ info:
   contact: {}
   description: yonder博客的后端API服务
   termsOfService: https://github.com/swaggo/swag
-  title: yonder blog api service
+  title: yonder blog api aservice
   version: "1.0"
 paths:
   /api/v1/user/signin:

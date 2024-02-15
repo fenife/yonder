@@ -2,7 +2,7 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"server-go/application/service"
+	"server-go/application/aservice"
 	"server-go/controller/req"
 	"server-go/controller/resp"
 	"server-go/internal/errorx"
@@ -12,10 +12,10 @@ import (
 )
 
 type UserHandler struct {
-	userApp service.IUserApp
+	userApp aservice.IUserApp
 }
 
-func NewUserHandler(userApp service.IUserApp) *UserHandler {
+func NewUserHandler(userApp aservice.IUserApp) *UserHandler {
 	return &UserHandler{
 		userApp: userApp,
 	}

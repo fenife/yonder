@@ -1,7 +1,7 @@
-package service
+package aservice
 
 import (
-	"server-go/domain/service"
+	"server-go/domain/dservice"
 )
 
 type Apps struct {
@@ -9,7 +9,7 @@ type Apps struct {
 	CategoryApp ICategoryApp
 }
 
-func NewApps(userDomain service.IUserDomain, categoryDomain service.ICategoryDomain) *Apps {
+func NewApps(userDomain dservice.IUserDomain, categoryDomain dservice.ICategoryDomain) *Apps {
 	return &Apps{
 		UserApp:     NewUserApp(userDomain),
 		CategoryApp: NewCategoryApp(categoryDomain),

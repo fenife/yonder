@@ -1,9 +1,9 @@
-package service
+package aservice
 
 import (
 	"context"
+	"server-go/domain/dservice"
 	"server-go/domain/entity"
-	"server-go/domain/service"
 )
 
 type ICategoryApp interface {
@@ -11,10 +11,10 @@ type ICategoryApp interface {
 }
 
 type CategoryApp struct {
-	categoryDomain service.ICategoryDomain
+	categoryDomain dservice.ICategoryDomain
 }
 
-func NewCategoryApp(categoryDomain service.ICategoryDomain) *CategoryApp {
+func NewCategoryApp(categoryDomain dservice.ICategoryDomain) *CategoryApp {
 	return &CategoryApp{
 		categoryDomain: categoryDomain,
 	}

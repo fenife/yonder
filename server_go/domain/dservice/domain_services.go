@@ -1,4 +1,4 @@
-package service
+package dservice
 
 import (
 	"server-go/domain/cache"

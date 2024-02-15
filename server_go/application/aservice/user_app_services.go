@@ -1,11 +1,11 @@
-package service
+package aservice
 
 import (
 	"context"
 	"html"
 	"server-go/domain/do"
+	"server-go/domain/dservice"
 	"server-go/domain/entity"
-	"server-go/domain/service"
 )
 
 type IUserApp interface {
@@ -16,10 +16,10 @@ type IUserApp interface {
 }
 
 type UserApp struct {
-	userDomain service.IUserDomain
+	userDomain dservice.IUserDomain
 }
 
-func NewUserApp(userDomain service.IUserDomain) *UserApp {
+func NewUserApp(userDomain dservice.IUserDomain) *UserApp {
 	return &UserApp{
 		userDomain: userDomain,
 	}

@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"server-go/application/service"
+	"server-go/application/aservice"
 )
 
 type Handlers struct {
@@ -9,7 +9,7 @@ type Handlers struct {
 	UserHandler *UserHandler
 }
 
-func NewHandlers(userApp service.IUserApp) *Handlers {
+func NewHandlers(userApp aservice.IUserApp) *Handlers {
 	return &Handlers{
 		PingHandler: NewPingHandler(),
 		UserHandler: NewUserHandler(userApp),
