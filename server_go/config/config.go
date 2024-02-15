@@ -40,11 +40,17 @@ func (r *RedisConfig) Addr() string {
 	return fmt.Sprintf("%s:%d", r.Host, r.Port)
 }
 
+type AdminUser struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
 type Config struct {
 	Env    string       `json:"env"`
 	Server ServerConfig `json:"server"`
 	Mysql  MysqlConfig  `json:"mysql"`
 	Redis  RedisConfig  `json:"redis"`
+	Admin  AdminUser    `json:"admin"`
 }
 
 var Conf Config

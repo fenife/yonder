@@ -14,7 +14,7 @@ func UserAuthMiddleware(userCache cache.IUserCache) gin.HandlerFunc {
 		userToken := c.GetHeader(gctx.HeaderKeyUserToken)
 		user, err := userCache.GetUserByToken(c, userToken)
 		if err != nil || !user.IsValid() {
-			logx.Ctx(c).With("error", err).Errorf("user auth failed")
+			logx.Ctx(c).With("token", userToken, "error", err).Errorf("user auth failed")
 			renderx.ErrOutput(c, errorx.UserAuthFailed)
 			c.Abort()
 			return
