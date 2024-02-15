@@ -10,7 +10,7 @@ import (
 type User struct {
 	BaseModel
 
-	Name         string `gorm:"type:varchar(256);not null;unique;comment:'用户名'" json:"name"`
+	Name         string `gorm:"type:varchar(255);not null;unique;comment:'用户名'" json:"name"`
 	PasswordHash string `gorm:"type:varchar(100);not null;comment:'密码'" json:"password_hash"`
 	//Status       int8   `gorm:"type:tinyint;not null;comment:'用户状态'" json:"status"`
 }
