@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"server-go/domain/cache"
+	"server-go/domain/do"
 	"server-go/domain/entity"
 	"server-go/domain/repo"
 	"server-go/internal/errorx"
@@ -12,7 +13,7 @@ import (
 
 type IUserDomain interface {
 	Signup(ctx context.Context, user *entity.User) (*entity.User, error)
-	SignIn(ctx context.Context, name, password string) (user *entity.User, signin *entity.UserSignInInfo, err error)
+	SignIn(ctx context.Context, name, password string) (user *entity.User, signin *do.UserSignInInfo, err error)
 	SignOut(ctx context.Context, token string) (err error)
 	FindByName(ctx context.Context, name string) (*entity.User, error)
 	FindById(ctx context.Context, userId uint64) (*entity.User, error)
@@ -77,7 +78,7 @@ func (ds *UserDomain) FindByToken(ctx context.Context, userToken string) (*entit
 }
 
 // 用户登陆
-func (ds *UserDomain) SignIn(ctx context.Context, name, password string) (user *entity.User, signin *entity.UserSignInInfo, err error) {
+func (ds *UserDomain) SignIn(ctx context.Context, name, password string) (user *entity.User, signin *do.UserSignInInfo, err error) {
 	// 查找用户
 	user, err = ds.userRepo.FindByName(ctx, name)
 	if err != nil {
@@ -104,7 +105,7 @@ func (ds *UserDomain) SignIn(ctx context.Context, name, password string) (user *
 	}
 
 	// 生成用户登陆信息
-	signin = &entity.UserSignInInfo{
+	signin = &do.UserSignInInfo{
 		UserId: user.ID,
 		Token:  user.GenUserToken(),
 		SignTs: time.Now().Unix(),

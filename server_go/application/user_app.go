@@ -3,13 +3,14 @@ package application
 import (
 	"context"
 	"html"
+	"server-go/domain/do"
 	"server-go/domain/entity"
 	"server-go/domain/service"
 )
 
 type IUserApp interface {
 	Signup(ctx context.Context, username, passwd string) (*entity.User, error)
-	SignIn(ctx context.Context, username, passwd string) (user *entity.User, signin *entity.UserSignInInfo, err error)
+	SignIn(ctx context.Context, username, passwd string) (user *entity.User, signin *do.UserSignInInfo, err error)
 	SignOut(ctx context.Context, token string) (err error)
 	GetUserList(ctx context.Context) ([]entity.User, error)
 }
@@ -38,7 +39,7 @@ func (app *UserApp) Signup(ctx context.Context, username, passwd string) (*entit
 
 // SignIn 用户登陆
 func (app *UserApp) SignIn(ctx context.Context, username, passwd string) (
-	user *entity.User, signin *entity.UserSignInInfo, err error) {
+	user *entity.User, signin *do.UserSignInInfo, err error) {
 	return app.userDomain.SignIn(ctx, username, passwd)
 }
 

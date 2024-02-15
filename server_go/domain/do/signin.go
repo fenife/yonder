@@ -1,4 +1,6 @@
-package entity
+// domain object
+
+package do
 
 import "time"
 

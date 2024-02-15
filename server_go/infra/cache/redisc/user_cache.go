@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/redis/go-redis/v9"
 	"server-go/domain/cache"
+	"server-go/domain/do"
 	"server-go/domain/entity"
 	"strconv"
 	"time"
@@ -32,7 +33,7 @@ func NewUserCache(rds *redis.Client) *UserCache {
 // UserRepo implements the repo.UserRepo interface
 var _ cache.IUserCache = &UserCache{}
 
-func (u *UserCache) CacheUserSignInInfo(ctx context.Context, user *entity.User, signin *entity.UserSignInInfo) error {
+func (u *UserCache) CacheUserSignInInfo(ctx context.Context, user *entity.User, signin *do.UserSignInInfo) error {
 	userData, err := json.Marshal(user)
 	if err != nil {
 		return err
@@ -111,7 +112,7 @@ func (u *UserCache) DelUserSignInByToken(ctx context.Context, token string) erro
 }
 
 // 根据用户id获取最近一次的登陆信息
-func (u *UserCache) GetUserSignInInfo(ctx context.Context, userId uint64) (*entity.UserSignInInfo, error) {
+func (u *UserCache) GetUserSignInInfo(ctx context.Context, userId uint64) (*do.UserSignInInfo, error) {
 	signinData, err := u.rds.Get(ctx, getKeyUid2SignIn(userId)).Result()
 	if err == redis.Nil || signinData == "" {
 		return nil, nil
@@ -119,7 +120,7 @@ func (u *UserCache) GetUserSignInInfo(ctx context.Context, userId uint64) (*enti
 	if err != nil {
 		return nil, err
 	}
-	var signin entity.UserSignInInfo
+	var signin do.UserSignInInfo
 	err = json.Unmarshal([]byte(signinData), &signin)
 	return &signin, err
 }
