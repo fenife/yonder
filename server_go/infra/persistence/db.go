@@ -8,8 +8,9 @@ import (
 )
 
 type Repos struct {
-	db       *gorm.DB
-	UserRepo repo.IUserRepo
+	db           *gorm.DB
+	UserRepo     repo.IUserRepo
+	CategoryRepo repo.ICategoryRepo
 }
 
 func NewRepos(mysqlConf *config.MysqlConfig) (*Repos, error) {
@@ -20,7 +21,8 @@ func NewRepos(mysqlConf *config.MysqlConfig) (*Repos, error) {
 	//db.LogMode(true)
 
 	return &Repos{
-		db:       db,
-		UserRepo: NewUserRepo(db),
+		db:           db,
+		UserRepo:     NewUserRepo(db),
+		CategoryRepo: NewCategoryRepo(db),
 	}, nil
 }

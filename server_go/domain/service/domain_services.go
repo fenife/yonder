@@ -6,12 +6,15 @@ import (
 )
 
 type DomainServices struct {
-	UserDomain IUserDomain
+	UserDomain     IUserDomain
+	CategoryDomain ICategoryDomain
 }
 
 func NewDomainServices(
-	userRepo repo.IUserRepo, userCache cache.IUserCache) *DomainServices {
+	userRepo repo.IUserRepo, userCache cache.IUserCache, cateRepo repo.ICategoryRepo,
+) *DomainServices {
 	return &DomainServices{
-		UserDomain: NewUserDomain(userRepo, userCache),
+		UserDomain:     NewUserDomain(userRepo, userCache),
+		CategoryDomain: NewCategoryDomain(cateRepo),
 	}
 }
