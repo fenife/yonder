@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"server-go/config"
-	"server-go/controller/middleware"
+	mw "server-go/controller/middleware"
 	"server-go/router"
 
 	_ "server-go/docs" // 导入swag生成的接口文档
@@ -21,8 +21,8 @@ func main() {
 	//gin.SetMode(gin.ReleaseMode)
 
 	engine.Use(
-		middleware.RequestIdMiddleware(),
-		middleware.LogContext(),
+		mw.RequestIdMiddleware(),
+		mw.LogContext(),
 		gin.Recovery(),
 	)
 

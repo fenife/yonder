@@ -6,13 +6,9 @@ import (
 	"server-go/internal/gctx"
 )
 
-const (
-	headerKeyReqId = "x-request-id"
-)
-
 func RequestIdMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		reqId := c.GetHeader(headerKeyReqId)
+		reqId := c.GetHeader(gctx.HeaderKeyReqId)
 		if reqId == "" {
 			reqId = uuid.New().String()
 		}

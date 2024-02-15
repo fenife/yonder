@@ -7,6 +7,11 @@ import (
 )
 
 const (
+	HeaderKeyReqId     = "X-Request-Id"
+	HeaderKeyUserToken = "X-User-Token"
+)
+
+const (
 	ctxKeyReqId     = "request_id"
 	ctxKeyUser      = "user"
 	ctxKeyUserToken = "user_token"

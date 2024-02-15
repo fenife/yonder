@@ -9,13 +9,9 @@ import (
 	"server-go/pkg/renderx"
 )
 
-const (
-	headerKeyUserToken = "x-user-token"
-)
-
 func UserAuthMiddleware(userCache cache.IUserCache) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		userToken := c.GetHeader(headerKeyUserToken)
+		userToken := c.GetHeader(gctx.HeaderKeyUserToken)
 		user, err := userCache.GetUserByToken(c, userToken)
 		if err != nil || !user.IsValid() {
 			logx.Ctx(c).With("error", err).Errorf("user auth failed")
