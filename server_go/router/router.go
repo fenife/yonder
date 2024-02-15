@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"server-go/application"
+	service2 "server-go/application/service"
 	"server-go/config"
 	"server-go/controller/handler"
 	mw "server-go/controller/middleware"
@@ -27,7 +27,7 @@ func AddRouter(engine *gin.Engine) {
 		panic(err)
 	}
 	domainServices := service.NewDomainServices(repos.UserRepo, caches.UserCache)
-	apps := application.NewApps(domainServices.UserDomain)
+	apps := service2.NewApps(domainServices.UserDomain)
 	hdr := handler.NewHandlers(apps.UserApp)
 
 	// 添加路由

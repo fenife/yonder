@@ -1,6 +1,8 @@
-package application
+package service
 
-import "server-go/domain/service"
+import (
+	"server-go/domain/service"
+)
 
 type Apps struct {
 	UserApp     IUserApp
