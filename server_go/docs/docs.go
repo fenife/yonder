@@ -205,7 +205,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.Post": {
+        "dto.PostShortDetail": {
             "type": "object",
             "properties": {
                 "cate_id": {
@@ -329,7 +329,7 @@ const docTemplate = `{
                 "post_list": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.Post"
+                        "$ref": "#/definitions/dto.PostShortDetail"
                     }
                 },
                 "total": {

@@ -199,7 +199,7 @@
                 }
             }
         },
-        "dto.Post": {
+        "dto.PostShortDetail": {
             "type": "object",
             "properties": {
                 "cate_id": {
@@ -323,7 +323,7 @@
                 "post_list": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.Post"
+                        "$ref": "#/definitions/dto.PostShortDetail"
                     }
                 },
                 "total": {
