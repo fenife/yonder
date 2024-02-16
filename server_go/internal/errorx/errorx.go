@@ -26,6 +26,9 @@ const (
 	errCodeUserSignOutFailed = 121201
 
 	//ErrCodePermitDeny = 1101
+
+	// 文章分类 13-xx-xx
+	errCodeGetCateListFailed = 131101
 )
 
 var (
@@ -48,4 +51,7 @@ var (
 	UserSignOutFailed = renderx.NewRender(http.StatusOK, errCodeUserSignOutFailed, "user sign out failed")
 
 	//PermitDeny = renderx.NewRender(http.StatusOK, ErrCodePermitDeny, "user permission deny")
+
+	// 文章分类
+	CateListFailed = renderx.NewRender(http.StatusOK, errCodeGetCateListFailed, "get category list failed")
 )

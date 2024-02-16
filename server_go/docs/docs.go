@@ -16,6 +16,62 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/category/list": {
+            "get": {
+                "description": "获取文章分类列表，包含了该分类下文章的统计数目",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "category"
+                ],
+                "summary": "分类列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/resp.CategoryListResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/post/list": {
+            "get": {
+                "description": "获取文章列表，支持分页，可按分类id进行查询",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "post"
+                ],
+                "summary": "文章列表",
+                "parameters": [
+                    {
+                        "description": "查询参数",
+                        "name": "object",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/req.GetPostListReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/resp.PostListResp"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/user/signin": {
             "post": {
                 "description": "检查用户是否存在，密码是否正确，如果正常，返回用户token",
@@ -26,7 +82,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "users"
+                    "user"
                 ],
                 "summary": "用户登陆",
                 "parameters": [
@@ -65,7 +121,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "users"
+                    "user"
                 ],
                 "summary": "用户退出",
                 "responses": {
@@ -88,7 +144,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "users"
+                    "user"
                 ],
                 "summary": "用户注册",
                 "parameters": [
@@ -132,6 +188,52 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.CategoryList": {
+            "type": "object",
+            "properties": {
+                "cate_id": {
+                    "description": "分类id",
+                    "type": "integer"
+                },
+                "cate_name": {
+                    "description": "分类名称",
+                    "type": "string"
+                },
+                "post_count": {
+                    "description": "该分类下的文章数",
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.Post": {
+            "type": "object",
+            "properties": {
+                "cate_id": {
+                    "type": "integer"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "title_en": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "renderx.Response": {
             "type": "object",
             "properties": {
@@ -149,6 +251,23 @@ const docTemplate = `{
                 },
                 "msg": {
                     "type": "string"
+                }
+            }
+        },
+        "req.GetPostListReq": {
+            "type": "object",
+            "properties": {
+                "cate_id": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "limit": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "page": {
+                    "type": "integer",
+                    "minimum": 0
                 }
             }
         },
@@ -187,6 +306,35 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 32,
                     "minLength": 3
+                }
+            }
+        },
+        "resp.CategoryListResp": {
+            "type": "object",
+            "properties": {
+                "cate_list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.CategoryList"
+                    }
+                },
+                "total": {
+                    "description": "文章分类的总数目",
+                    "type": "integer"
+                }
+            }
+        },
+        "resp.PostListResp": {
+            "type": "object",
+            "properties": {
+                "post_list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.Post"
+                    }
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },

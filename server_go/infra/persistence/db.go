@@ -11,6 +11,7 @@ type Repos struct {
 	db           *gorm.DB
 	UserRepo     repo.IUserRepo
 	CategoryRepo repo.ICategoryRepo
+	PostRepo     repo.IPostRepo
 }
 
 func NewRepos(mysqlConf *config.MysqlConfig) (*Repos, error) {
@@ -24,5 +25,6 @@ func NewRepos(mysqlConf *config.MysqlConfig) (*Repos, error) {
 		db:           db,
 		UserRepo:     NewUserRepo(db),
 		CategoryRepo: NewCategoryRepo(db),
+		PostRepo:     NewPostRepo(db),
 	}, nil
 }

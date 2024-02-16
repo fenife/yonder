@@ -29,6 +29,6 @@ func main() {
 	router.AddRouter(engine)
 
 	if err := engine.Run(config.Conf.Server.ServerAddr()); err != nil {
-		panic(fmt.Sprintf("run app failed: %v", err))
+		panic(fmt.Sprintf("start app failed: %v", err))
 	}
 }

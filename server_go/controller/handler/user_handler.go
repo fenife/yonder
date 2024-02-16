@@ -24,7 +24,7 @@ func NewUserHandler(userApp aservice.IUserApp) *UserHandler {
 // UserSignup godoc
 // @Summary      用户注册
 // @Description  创建新用户
-// @Tags         users
+// @Tags         user
 // @Accept       json
 // @Produce      json
 // @Param        object body  req.SignupReq	false "查询参数"
@@ -53,7 +53,7 @@ func (ctrl *UserHandler) UserSignup(c *gin.Context) {
 // UserSignIn godoc
 // @Summary      用户登陆
 // @Description	 检查用户是否存在，密码是否正确，如果正常，返回用户token
-// @Tags         users
+// @Tags         user
 // @Accept       json
 // @Produce      json
 // @Param        object body  req.SignInReq	false "查询参数"
@@ -88,7 +88,7 @@ func (ctrl *UserHandler) UserSignIn(c *gin.Context) {
 // UserSignOut godoc
 // @Summary      用户退出
 // @Description	 用户退出登陆，需要在header中附带x-user-token参数
-// @Tags         users
+// @Tags         user
 // @Accept       json
 // @Produce      json
 // @Success      200  {object}  renderx.Response

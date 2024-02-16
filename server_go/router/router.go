@@ -26,9 +26,9 @@ func AddRouter(engine *gin.Engine) {
 	if err != nil {
 		panic(err)
 	}
-	domainServices := dservice.NewDomainServices(repos.UserRepo, caches.UserCache, repos.CategoryRepo)
-	apps := aservice.NewApps(domainServices.UserDomain, domainServices.CategoryDomain)
-	hdr := handler.NewHandlers(apps.UserApp)
+	domainServices := dservice.NewDomainServices(repos.UserRepo, caches.UserCache, repos.CategoryRepo, repos.PostRepo)
+	apps := aservice.NewApps(domainServices.UserDomain, domainServices.CategoryDomain, domainServices.PostDomain)
+	hdr := handler.NewHandlers(apps.UserApp, apps.CategoryApp, apps.PostApp)
 
 	// 添加路由
 	engine.GET("/ping", hdr.PingHandler.Ping)
@@ -39,6 +39,15 @@ func AddRouter(engine *gin.Engine) {
 			user.POST("/signup", hdr.UserHandler.UserSignup)
 			user.POST("/signin", hdr.UserHandler.UserSignIn)
 			user.POST("/signout", mw.UserAuthMiddleware(caches.UserCache), hdr.UserHandler.UserSignOut)
+		}
+		cate := apiV1.Group("category")
+		{
+			cate.GET("/list", hdr.CategoryHandler.GetCategoryList)
+		}
+
+		post := apiV1.Group("post")
+		{
+			post.GET("/list", hdr.PostHandler.GetPostList)
 		}
 	}
 }
