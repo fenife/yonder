@@ -8,7 +8,7 @@ import (
 )
 
 type IPostApp interface {
-	GetPostList(ctx context.Context, cateId uint64, page, limit int) ([]dto.PostShortDetail, error)
+	GetPostList(ctx context.Context, cateId uint64, page, limit int) ([]dto.PostBrief, error)
 }
 
 type PostApp struct {
@@ -23,21 +23,21 @@ func NewPostApp(postDomain dservice.IPostDomain) *PostApp {
 
 var _ IPostApp = &PostApp{}
 
-func (app *PostApp) GetPostList(ctx context.Context, cateId uint64, page, limit int) ([]dto.PostShortDetail, error) {
+func (app *PostApp) GetPostList(ctx context.Context, cateId uint64, page, limit int) ([]dto.PostBrief, error) {
 	posts, err := app.postDomain.GetPostList(ctx, cateId, page, limit)
 	if err != nil {
 		return nil, err
 	}
-	postList := make([]dto.PostShortDetail, 0)
+	postList := make([]dto.PostBrief, 0)
 	for _, p := range posts {
 		postList = append(postList, getPostDto(&p))
 	}
 	return postList, err
 }
 
-func getPostDto(post *entity.Post) dto.PostShortDetail {
+func getPostDto(post *entity.Post) dto.PostBrief {
 	layout := "2006-01-02 15:05:05"
-	p := dto.PostShortDetail{
+	p := dto.PostBrief{
 		ID:        post.ID,
 		CreatedAt: post.CreatedAt.Format(layout),
 		UpdatedAt: post.CreatedAt.Format(layout),

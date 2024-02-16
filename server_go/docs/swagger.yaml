@@ -12,7 +12,7 @@ definitions:
         description: 该分类下的文章数
         type: integer
     type: object
-  dto.PostShortDetail:
+  dto.PostBrief:
     properties:
       cate_id:
         type: integer
@@ -97,7 +97,7 @@ definitions:
     properties:
       post_list:
         items:
-          $ref: '#/definitions/dto.PostShortDetail'
+          $ref: '#/definitions/dto.PostBrief'
         type: array
       total:
         type: integer
