@@ -50,3 +50,30 @@ func (ctrl *PostHandler) GetPostList(c *gin.Context) {
 	}
 	renderx.SuccOutput(c, result)
 }
+
+// GetPostDetail godoc
+// @Summary      文章详情
+// @Description	 获取文章详情，包括用户和分类信息
+// @Tags         post
+// @Accept       json
+// @Produce      json
+// @Param        object query  req.GetPostDetailReq	false "查询参数"
+// @Success      200  {object}  resp.PostDetailResp
+// @Router       /api/v1/post/detail [get]
+func (ctrl *PostHandler) GetPostDetail(c *gin.Context) {
+	var postReq req.GetPostDetailReq
+	if err := c.ShouldBindQuery(&postReq); err != nil {
+		logx.Ctx(c).With("error", err).Errorf("param error")
+		renderx.ErrOutput(c, errorx.ParamInvalid)
+		return
+	}
+
+	detail, err := ctrl.postApp.GetPostDetail(c, postReq.PostId, postReq.ContentType)
+	if err != nil {
+		logx.Ctx(c).With("error", err).Errorf("get posts failed")
+		renderx.ErrOutput(c, err)
+		return
+	}
+
+	renderx.SuccOutput(c, detail)
+}

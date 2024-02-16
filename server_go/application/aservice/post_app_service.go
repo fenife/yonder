@@ -9,15 +9,21 @@ import (
 
 type IPostApp interface {
 	GetPostList(ctx context.Context, cateId uint64, page, limit int) ([]dto.PostBrief, error)
+	GetPostDetail(ctx context.Context, postId uint64, contentType string) (*dto.PostDetail, error)
 }
 
 type PostApp struct {
 	postDomain dservice.IPostDomain
+	cateDomain dservice.ICategoryDomain
+	userDomain dservice.IUserDomain
 }
 
-func NewPostApp(postDomain dservice.IPostDomain) *PostApp {
+func NewPostApp(postDomain dservice.IPostDomain, cateDomain dservice.ICategoryDomain,
+	userDomain dservice.IUserDomain) *PostApp {
 	return &PostApp{
 		postDomain: postDomain,
+		cateDomain: cateDomain,
+		userDomain: userDomain,
 	}
 }
 
@@ -30,22 +36,35 @@ func (app *PostApp) GetPostList(ctx context.Context, cateId uint64, page, limit 
 	}
 	postList := make([]dto.PostBrief, 0)
 	for _, p := range posts {
-		postList = append(postList, getPostDto(&p))
+		postList = append(postList, postToBrief(&p))
 	}
 	return postList, err
 }
 
-func getPostDto(post *entity.Post) dto.PostBrief {
-	layout := "2006-01-02 15:05:05"
+func postToBrief(post *entity.Post) dto.PostBrief {
 	p := dto.PostBrief{
 		ID:        post.ID,
-		CreatedAt: post.CreatedAt.Format(layout),
-		UpdatedAt: post.CreatedAt.Format(layout),
+		CreatedAt: post.CreatedAt.Format(timeFormatLayout),
+		UpdatedAt: post.CreatedAt.Format(timeFormatLayout),
 		UserId:    post.UserId,
 		CateId:    post.CateId,
 		Title:     post.Title,
 		TitleEn:   post.TitleEn,
-		Content:   post.Content,
 	}
 	return p
+}
+
+func (app *PostApp) GetPostDetail(ctx context.Context, postId uint64, contentType string) (*dto.PostDetail, error) {
+	post, err := app.postDomain.GetPostById(ctx, postId)
+	if err != nil {
+		return nil, err
+	}
+
+	detail := dto.PostDetail{
+		PostBrief: postToBrief(post),
+		User:      userToBrief(&post.User),
+		Category:  cateToBrief(&post.Category),
+	}
+	detail.Content = post.Content // todo: markdown to html
+	return &detail, nil
 }

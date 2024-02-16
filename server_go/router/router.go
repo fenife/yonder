@@ -48,6 +48,7 @@ func AddRouter(engine *gin.Engine) {
 		post := apiV1.Group("post")
 		{
 			post.GET("/list", hdr.PostHandler.GetPostList)
+			post.GET("/detail", hdr.PostHandler.GetPostDetail)
 		}
 	}
 }

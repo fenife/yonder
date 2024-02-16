@@ -15,8 +15,8 @@ type IUserDomain interface {
 	Signup(ctx context.Context, user *entity.User) (*entity.User, error)
 	SignIn(ctx context.Context, name, password string) (user *entity.User, signin *do.UserSignInInfo, err error)
 	SignOut(ctx context.Context, token string) (err error)
-	FindByName(ctx context.Context, name string) (*entity.User, error)
-	FindById(ctx context.Context, userId uint64) (*entity.User, error)
+	GetUserByName(ctx context.Context, name string) (*entity.User, error)
+	GetUserById(ctx context.Context, userId uint64) (*entity.User, error)
 	UserExisted(ctx context.Context, name string) (bool, error)
 	GetUserList(ctx context.Context) ([]entity.User, error)
 	FindByToken(ctx context.Context, userToken string) (*entity.User, error)
@@ -61,12 +61,19 @@ func (ds *UserDomain) UserExisted(ctx context.Context, name string) (bool, error
 	return true, nil
 }
 
-func (ds *UserDomain) FindByName(ctx context.Context, name string) (*entity.User, error) {
+func (ds *UserDomain) GetUserByName(ctx context.Context, name string) (*entity.User, error) {
 	return ds.userRepo.FindByName(ctx, name)
 }
 
-func (ds *UserDomain) FindById(ctx context.Context, userId uint64) (*entity.User, error) {
-	return ds.userRepo.FindById(ctx, userId)
+func (ds *UserDomain) GetUserById(ctx context.Context, userId uint64) (*entity.User, error) {
+	user, err := ds.userRepo.FindById(ctx, userId)
+	if err != nil {
+		return nil, err
+	}
+	if !user.IsValid() {
+		return nil, errorx.UserNotFound
+	}
+	return user, nil
 }
 
 func (ds *UserDomain) GetUserList(ctx context.Context) ([]entity.User, error) {

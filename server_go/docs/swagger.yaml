@@ -1,5 +1,18 @@
 basePath: /
 definitions:
+  dto.CategoryBrief:
+    properties:
+      created_at:
+        description: '"2006-01-02 15:05:05"'
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        description: 同上
+        type: string
+    type: object
   dto.CategoryList:
     properties:
       cate_id:
@@ -16,8 +29,6 @@ definitions:
     properties:
       cate_id:
         type: integer
-      content:
-        type: string
       created_at:
         description: '"2006-01-02 15:05:05"'
         type: string
@@ -32,6 +43,19 @@ definitions:
         type: string
       user_id:
         type: integer
+    type: object
+  dto.UserBrief:
+    properties:
+      created_at:
+        description: '"2006-01-02 15:05:05"'
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        description: 同上
+        type: string
     type: object
   renderx.Response:
     properties:
@@ -93,6 +117,32 @@ definitions:
         description: 文章分类的总数目
         type: integer
     type: object
+  resp.PostDetailResp:
+    properties:
+      cate_id:
+        type: integer
+      category:
+        $ref: '#/definitions/dto.CategoryBrief'
+      content:
+        description: 文章详情
+        type: string
+      created_at:
+        description: '"2006-01-02 15:05:05"'
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      title_en:
+        type: string
+      updated_at:
+        description: 同上
+        type: string
+      user:
+        $ref: '#/definitions/dto.UserBrief'
+      user_id:
+        type: integer
+    type: object
   resp.PostListResp:
     properties:
       post_list:
@@ -132,6 +182,31 @@ paths:
       summary: 分类列表
       tags:
       - category
+  /api/v1/post/detail:
+    get:
+      consumes:
+      - application/json
+      description: 获取文章详情，包括用户和分类信息
+      parameters:
+      - enum:
+        - html
+        in: query
+        name: content_type
+        type: string
+      - in: query
+        name: post_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/resp.PostDetailResp'
+      summary: 文章详情
+      tags:
+      - post
   /api/v1/post/list:
     get:
       consumes:

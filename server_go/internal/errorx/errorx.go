@@ -24,14 +24,18 @@ const (
 	errCodeUserAuthFailed           = 121105
 	// 用户退出 12-12-xx
 	errCodeUserSignOutFailed = 121201
+	// 其他 12-13-xx
+	errCodeUserNotFound = 121301
 
 	//ErrCodePermitDeny = 1101
 
 	// 文章分类 13-xx-xx
-	errCodeGetCateListFailed = 131101
+	errCodeCategoryNotFound  = 151101
+	errCodeGetCateListFailed = 131102
 
 	// 文章 15-xx-xx
-	errCodeGetPostListFailed = 151101
+	errCodePostNotFound      = 151101
+	errCodeGetPostListFailed = 151102
 )
 
 var (
@@ -52,12 +56,16 @@ var (
 	UserAuthFailed           = renderx.NewRender(http.StatusOK, errCodeUserAuthFailed, "user auth failed")
 	// 用户退出
 	UserSignOutFailed = renderx.NewRender(http.StatusOK, errCodeUserSignOutFailed, "user sign out failed")
+	// 其他
+	UserNotFound = renderx.NewRender(http.StatusOK, errCodeUserNotFound, "user not found")
 
 	//PermitDeny = renderx.NewRender(http.StatusOK, ErrCodePermitDeny, "user permission deny")
 
 	// 文章分类
-	CateListFailed = renderx.NewRender(http.StatusOK, errCodeGetCateListFailed, "get category list failed")
+	CategoryNotFound = renderx.NewRender(http.StatusOK, errCodeCategoryNotFound, "category not found")
+	CateListFailed   = renderx.NewRender(http.StatusOK, errCodeGetCateListFailed, "get category list failed")
 
 	// 文章
+	PostNotFound   = renderx.NewRender(http.StatusOK, errCodePostNotFound, "post not found")
 	PostListFailed = renderx.NewRender(http.StatusOK, errCodeGetPostListFailed, "get post list failed")
 )

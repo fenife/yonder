@@ -5,3 +5,8 @@ type GetPostListReq struct {
 	Page   int    `form:"page" binging:"omitempty,min=1,default=1"`
 	Limit  int    `form:"limit" binging:"omitempty,min=1,default=10"`
 }
+
+type GetPostDetailReq struct {
+	PostId      uint64 `form:"post_id" binding:"required"`
+	ContentType string `form:"content_type" binding:"omitempty,oneof=html"`
+}

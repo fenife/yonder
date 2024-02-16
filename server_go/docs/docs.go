@@ -39,6 +39,45 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/post/detail": {
+            "get": {
+                "description": "获取文章详情，包括用户和分类信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "post"
+                ],
+                "summary": "文章详情",
+                "parameters": [
+                    {
+                        "enum": [
+                            "html"
+                        ],
+                        "type": "string",
+                        "name": "content_type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "post_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/resp.PostDetailResp"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/post/list": {
             "get": {
                 "description": "获取文章列表，支持分页，可按分类id进行查询",
@@ -188,6 +227,25 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.CategoryBrief": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "\"2006-01-02 15:05:05\"",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "同上",
+                    "type": "string"
+                }
+            }
+        },
         "dto.CategoryList": {
             "type": "object",
             "properties": {
@@ -211,9 +269,6 @@ const docTemplate = `{
                 "cate_id": {
                     "type": "integer"
                 },
-                "content": {
-                    "type": "string"
-                },
                 "created_at": {
                     "description": "\"2006-01-02 15:05:05\"",
                     "type": "string"
@@ -233,6 +288,25 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "integer"
+                }
+            }
+        },
+        "dto.UserBrief": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "\"2006-01-02 15:05:05\"",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "同上",
+                    "type": "string"
                 }
             }
         },
@@ -319,6 +393,44 @@ const docTemplate = `{
                 },
                 "total": {
                     "description": "文章分类的总数目",
+                    "type": "integer"
+                }
+            }
+        },
+        "resp.PostDetailResp": {
+            "type": "object",
+            "properties": {
+                "cate_id": {
+                    "type": "integer"
+                },
+                "category": {
+                    "$ref": "#/definitions/dto.CategoryBrief"
+                },
+                "content": {
+                    "description": "文章详情",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "\"2006-01-02 15:05:05\"",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "title_en": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "同上",
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/dto.UserBrief"
+                },
+                "user_id": {
                     "type": "integer"
                 }
             }

@@ -8,5 +8,11 @@ type PostBrief struct {
 	CateId    uint64 `json:"cate_id"`
 	Title     string `json:"title"`
 	TitleEn   string `json:"title_en"`
-	Content   string `json:"content"`
+}
+
+type PostDetail struct {
+	PostBrief
+	Content  string        `json:"content"` // 文章详情
+	User     UserBrief     `json:"user"`
+	Category CategoryBrief `json:"category"`
 }

@@ -8,4 +8,12 @@ type Post struct {
 	Title   string `gorm:"type:varchar(255);not null;unique;comment:'中文标题'" json:"title"`
 	TitleEn string `gorm:"type:varchar(255);not null;unique;comment:'英文标题'" json:"title_en"`
 	Content string `gorm:"type:text;not null;comment:'文章内容'" json:"content"`
+
+	User     User     `gorm:"foreignKey:UserId"`
+	Category Category `gorm:"foreignKey:CateId"`
+}
+
+func (u *Post) IsValid() bool {
+	// 未删除，且id>0
+	return u.DeletedAt.Valid == false && u.ID > 0
 }

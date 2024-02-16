@@ -11,3 +11,10 @@ type CategoryList struct {
 	CateName  string `json:"cate_name"`  // 分类名称
 	PostCount int    `json:"post_count"` // 该分类下的文章数
 }
+
+type CategoryBrief struct {
+	ID        uint64 `json:"id"`
+	CreatedAt string `json:"created_at"` // "2006-01-02 15:05:05"
+	UpdatedAt string `json:"updated_at"` // 同上
+	Name      string `json:"name"`
+}

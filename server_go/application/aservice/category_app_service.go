@@ -5,6 +5,7 @@ import (
 	"server-go/application/dto"
 	"server-go/domain/do"
 	"server-go/domain/dservice"
+	"server-go/domain/entity"
 )
 
 type ICategoryApp interface {
@@ -54,4 +55,14 @@ func (app *CategoryApp) GetCategoryList(ctx context.Context) ([]dto.CategoryList
 		res = append(res, d)
 	}
 	return res, nil
+}
+
+func cateToBrief(cate *entity.Category) dto.CategoryBrief {
+	c := dto.CategoryBrief{
+		ID:        cate.ID,
+		CreatedAt: cate.CreatedAt.Format(timeFormatLayout),
+		UpdatedAt: cate.CreatedAt.Format(timeFormatLayout),
+		Name:      cate.Name,
+	}
+	return c
 }

@@ -2,6 +2,7 @@ package persistence
 
 import (
 	"context"
+	"errors"
 	"gorm.io/gorm"
 	"server-go/domain/do"
 	"server-go/domain/entity"
@@ -42,4 +43,14 @@ func (r *PostRepo) GetPostList(ctx context.Context, cateId uint64, page, limit i
 	offset := (page - 1) * limit
 	err := tx.Offset(offset).Limit(limit).Find(&posts).Error
 	return posts, err
+}
+
+func (r *PostRepo) FindById(ctx context.Context, postId uint64) (*entity.Post, error) {
+	var post entity.Post
+	err := r.db.WithContext(ctx).Where("id = ?", postId).Preload("User").Preload("Category").First(&post).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		// 通过ID判断是否存在
+		return &post, nil
+	}
+	return &post, err
 }
