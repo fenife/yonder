@@ -3,6 +3,11 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	"server-go/application/aservice"
+	"server-go/controller/req"
+	"server-go/controller/resp"
+	"server-go/internal/errorx"
+	"server-go/pkg/logx"
+	"server-go/pkg/renderx"
 )
 
 type PostHandler struct {
@@ -25,5 +30,23 @@ func NewPostHandler(postApp aservice.IPostApp) *PostHandler {
 // @Success      200  {object}  resp.PostListResp
 // @Router       /api/v1/post/list [get]
 func (ctrl *PostHandler) GetPostList(c *gin.Context) {
+	var postReq req.GetPostListReq
+	if err := c.ShouldBindQuery(&postReq); err != nil {
+		logx.Ctx(c).With("error", err).Errorf("param error")
+		renderx.ErrOutput(c, errorx.ParamInvalid)
+		return
+	}
 
+	posts, err := ctrl.postApp.GetPostList(c, postReq.CateId, postReq.Page, postReq.Limit)
+	if err != nil {
+		logx.Ctx(c).With("error", err).Errorf("get posts failed")
+		renderx.ErrOutput(c, err)
+		return
+	}
+
+	result := resp.PostListResp{
+		Total:    len(posts),
+		PostList: posts,
+	}
+	renderx.SuccOutput(c, result)
 }

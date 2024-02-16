@@ -1,7 +1,7 @@
 package req
 
 type GetPostListReq struct {
-	CateId uint64 `json:"cate_id" binding:"omitempty,gte=0"`
-	Page   int    `json:"page" binding:"omitempty,gte=0,default=1"`
-	Limit  int    `json:"limit" binding:"omitempty,gte=0,default=10"`
+	CateId uint64 `form:"cate_id" binging:"omitempty,min=1"`
+	Page   int    `form:"page" binging:"omitempty,min=1,default=1"`
+	Limit  int    `form:"limit" binging:"omitempty,min=1,default=10"`
 }

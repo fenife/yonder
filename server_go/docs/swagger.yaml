@@ -19,6 +19,7 @@ definitions:
       content:
         type: string
       created_at:
+        description: '"2006-01-02 15:05:05"'
         type: string
       id:
         type: integer
@@ -27,6 +28,7 @@ definitions:
       title_en:
         type: string
       updated_at:
+        description: 同上
         type: string
       user_id:
         type: integer
@@ -47,13 +49,10 @@ definitions:
   req.GetPostListReq:
     properties:
       cate_id:
-        minimum: 0
         type: integer
       limit:
-        minimum: 0
         type: integer
       page:
-        minimum: 0
         type: integer
     type: object
   req.SignInReq:

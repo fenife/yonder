@@ -215,6 +215,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "created_at": {
+                    "description": "\"2006-01-02 15:05:05\"",
                     "type": "string"
                 },
                 "id": {
@@ -227,6 +228,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updated_at": {
+                    "description": "同上",
                     "type": "string"
                 },
                 "user_id": {
@@ -258,16 +260,13 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "cate_id": {
-                    "type": "integer",
-                    "minimum": 0
+                    "type": "integer"
                 },
                 "limit": {
-                    "type": "integer",
-                    "minimum": 0
+                    "type": "integer"
                 },
                 "page": {
-                    "type": "integer",
-                    "minimum": 0
+                    "type": "integer"
                 }
             }
         },

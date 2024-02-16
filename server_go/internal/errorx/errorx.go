@@ -29,6 +29,9 @@ const (
 
 	// 文章分类 13-xx-xx
 	errCodeGetCateListFailed = 131101
+
+	// 文章 15-xx-xx
+	errCodeGetPostListFailed = 151101
 )
 
 var (
@@ -54,4 +57,7 @@ var (
 
 	// 文章分类
 	CateListFailed = renderx.NewRender(http.StatusOK, errCodeGetCateListFailed, "get category list failed")
+
+	// 文章
+	PostListFailed = renderx.NewRender(http.StatusOK, errCodeGetPostListFailed, "get post list failed")
 )
