@@ -39,6 +39,62 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/post/about": {
+            "get": {
+                "description": "获取about文章详情，用于about页面展示",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "post"
+                ],
+                "summary": "about文章内容",
+                "parameters": [
+                    {
+                        "enum": [
+                            "html"
+                        ],
+                        "type": "string",
+                        "name": "content_type",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/resp.PostDetailResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/post/archive": {
+            "get": {
+                "description": "获取文章归档列表，包括用户和分类信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "post"
+                ],
+                "summary": "文章归档列表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/resp.PostArchiveResp"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/post/detail": {
             "get": {
                 "description": "获取文章详情，包括用户和分类信息",
@@ -263,6 +319,23 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.PostArchiveItem": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "post_list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.PostDetail"
+                    }
+                },
+                "year": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.PostBrief": {
             "type": "object",
             "properties": {
@@ -285,6 +358,44 @@ const docTemplate = `{
                 "updated_at": {
                     "description": "同上",
                     "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.PostDetail": {
+            "type": "object",
+            "properties": {
+                "cate_id": {
+                    "type": "integer"
+                },
+                "category": {
+                    "$ref": "#/definitions/dto.CategoryBrief"
+                },
+                "content": {
+                    "description": "文章详情",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "\"2006-01-02 15:05:05\"",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "title_en": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "同上",
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/dto.UserBrief"
                 },
                 "user_id": {
                     "type": "integer"
@@ -394,6 +505,17 @@ const docTemplate = `{
                 "total": {
                     "description": "文章分类的总数目",
                     "type": "integer"
+                }
+            }
+        },
+        "resp.PostArchiveResp": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.PostArchiveItem"
+                    }
                 }
             }
         },

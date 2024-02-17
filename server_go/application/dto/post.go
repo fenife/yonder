@@ -16,3 +16,9 @@ type PostDetail struct {
 	User     UserBrief     `json:"user"`
 	Category CategoryBrief `json:"category"`
 }
+
+type PostArchiveItem struct {
+	Year     int           `json:"year"`
+	Count    int           `json:"count"`
+	PostList []*PostDetail `json:"post_list"`
+}

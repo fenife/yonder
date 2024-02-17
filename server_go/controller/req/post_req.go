@@ -10,3 +10,10 @@ type GetPostDetailReq struct {
 	PostId      uint64 `form:"post_id" binding:"required"`
 	ContentType string `form:"content_type" binding:"omitempty,oneof=html"`
 }
+
+type GetPostArchiveReq struct {
+}
+
+type GetPostAboutReq struct {
+	ContentType string `form:"content_type" binding:"omitempty,oneof=html"`
+}

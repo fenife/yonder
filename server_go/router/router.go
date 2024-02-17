@@ -49,6 +49,8 @@ func AddRouter(engine *gin.Engine) {
 		{
 			post.GET("/list", hdr.PostHandler.GetPostList)
 			post.GET("/detail", hdr.PostHandler.GetPostDetail)
+			post.GET("/archive", hdr.PostHandler.GetPostArchive)
+			post.GET("/about", hdr.PostHandler.GetPostAbout)
 		}
 	}
 }

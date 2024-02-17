@@ -10,3 +10,7 @@ type PostListResp struct {
 type PostDetailResp struct {
 	dto.PostDetail
 }
+
+type PostArchiveResp struct {
+	List []*dto.PostArchiveItem `json:"list"`
+}

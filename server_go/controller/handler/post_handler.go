@@ -77,3 +77,59 @@ func (ctrl *PostHandler) GetPostDetail(c *gin.Context) {
 
 	renderx.SuccOutput(c, detail)
 }
+
+// GetPostArchive godoc
+// @Summary      文章归档列表
+// @Description	 获取文章归档列表，包括用户和分类信息
+// @Tags         post
+// @Accept       json
+// @Produce      json
+// @Param        object query  req.GetPostArchiveReq	false "查询参数"
+// @Success      200  {object}  resp.PostArchiveResp
+// @Router       /api/v1/post/archive [get]
+func (ctrl *PostHandler) GetPostArchive(c *gin.Context) {
+	//var postReq req.GetPostArchiveReq
+	//if err := c.ShouldBindQuery(&postReq); err != nil {
+	//	logx.Ctx(c).With("error", err).Errorf("param error")
+	//	renderx.ErrOutput(c, errorx.ParamInvalid)
+	//	return
+	//}
+
+	postList, err := ctrl.postApp.GetPostArchiveList(c)
+	if err != nil {
+		logx.Ctx(c).With("error", err).Errorf("get posts failed")
+		renderx.ErrOutput(c, err)
+		return
+	}
+	result := resp.PostArchiveResp{
+		List: postList,
+	}
+	renderx.SuccOutput(c, result)
+}
+
+// GetPostAbout godoc
+// @Summary      about文章内容
+// @Description	 获取about文章详情，用于about页面展示
+// @Tags         post
+// @Accept       json
+// @Produce      json
+// @Param        object query  req.GetPostAboutReq	false "查询参数"
+// @Success      200  {object}  resp.PostDetailResp
+// @Router       /api/v1/post/about [get]
+func (ctrl *PostHandler) GetPostAbout(c *gin.Context) {
+	var postReq req.GetPostAboutReq
+	if err := c.ShouldBindQuery(&postReq); err != nil {
+		logx.Ctx(c).With("error", err).Errorf("param error")
+		renderx.ErrOutput(c, errorx.ParamInvalid)
+		return
+	}
+
+	detail, err := ctrl.postApp.GetPostAbout(c, postReq.ContentType)
+	if err != nil {
+		logx.Ctx(c).With("error", err).Errorf("get posts failed")
+		renderx.ErrOutput(c, err)
+		return
+	}
+
+	renderx.SuccOutput(c, detail)
+}

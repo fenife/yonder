@@ -12,6 +12,8 @@ type IPostDomain interface {
 	GetPostStat(ctx context.Context) ([]do.PostStat, error)
 	GetPostList(ctx context.Context, cateId uint64, page, limit int) ([]entity.Post, error)
 	GetPostById(ctx context.Context, postId uint64) (*entity.Post, error)
+	GetPostArchiveList(ctx context.Context) ([]*entity.Post, error)
+	GetPostAbout(ctx context.Context) (*entity.Post, error)
 }
 
 type PostDomain struct {
@@ -39,6 +41,23 @@ func (ds *PostDomain) GetPostList(ctx context.Context, cateId uint64, page, limi
 // 获取文章详情
 func (ds *PostDomain) GetPostById(ctx context.Context, postId uint64) (*entity.Post, error) {
 	post, err := ds.postRepo.FindById(ctx, postId)
+	if err != nil {
+		return nil, err
+	}
+	if !post.IsValid() {
+		return nil, errorx.PostNotFound
+	}
+	return post, nil
+}
+
+// 获取归档文章列表
+func (ds *PostDomain) GetPostArchiveList(ctx context.Context) ([]*entity.Post, error) {
+	return ds.postRepo.GetPostArchiveList(ctx)
+}
+
+// 获取标题为about的文章，用于about页面内容展示
+func (ds *PostDomain) GetPostAbout(ctx context.Context) (*entity.Post, error) {
+	post, err := ds.postRepo.FindByTitle(ctx, "about")
 	if err != nil {
 		return nil, err
 	}

@@ -41,13 +41,29 @@ func (r *PostRepo) GetPostList(ctx context.Context, cateId uint64, page, limit i
 		tx.Where("cate_id = ?", cateId)
 	}
 	offset := (page - 1) * limit
-	err := tx.Offset(offset).Limit(limit).Find(&posts).Error
+	err := tx.Offset(offset).Limit(limit).Omit("content").Find(&posts).Error
+	return posts, err
+}
+
+func (r *PostRepo) GetPostArchiveList(ctx context.Context) ([]*entity.Post, error) {
+	var posts []*entity.Post
+	err := r.db.WithContext(ctx).Preload("User").Preload("Category").Omit("content").First(&posts).Error
 	return posts, err
 }
 
 func (r *PostRepo) FindById(ctx context.Context, postId uint64) (*entity.Post, error) {
 	var post entity.Post
 	err := r.db.WithContext(ctx).Where("id = ?", postId).Preload("User").Preload("Category").First(&post).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		// 通过ID判断是否存在
+		return &post, nil
+	}
+	return &post, err
+}
+
+func (r *PostRepo) FindByTitle(ctx context.Context, name string) (*entity.Post, error) {
+	var post entity.Post
+	err := r.db.WithContext(ctx).Where("title = ?", name).Preload("User").Preload("Category").First(&post).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		// 通过ID判断是否存在
 		return &post, nil

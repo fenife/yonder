@@ -25,6 +25,17 @@ definitions:
         description: 该分类下的文章数
         type: integer
     type: object
+  dto.PostArchiveItem:
+    properties:
+      count:
+        type: integer
+      post_list:
+        items:
+          $ref: '#/definitions/dto.PostDetail'
+        type: array
+      year:
+        type: integer
+    type: object
   dto.PostBrief:
     properties:
       cate_id:
@@ -41,6 +52,32 @@ definitions:
       updated_at:
         description: 同上
         type: string
+      user_id:
+        type: integer
+    type: object
+  dto.PostDetail:
+    properties:
+      cate_id:
+        type: integer
+      category:
+        $ref: '#/definitions/dto.CategoryBrief'
+      content:
+        description: 文章详情
+        type: string
+      created_at:
+        description: '"2006-01-02 15:05:05"'
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      title_en:
+        type: string
+      updated_at:
+        description: 同上
+        type: string
+      user:
+        $ref: '#/definitions/dto.UserBrief'
       user_id:
         type: integer
     type: object
@@ -117,6 +154,13 @@ definitions:
         description: 文章分类的总数目
         type: integer
     type: object
+  resp.PostArchiveResp:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/dto.PostArchiveItem'
+        type: array
+    type: object
   resp.PostDetailResp:
     properties:
       cate_id:
@@ -182,6 +226,42 @@ paths:
       summary: 分类列表
       tags:
       - category
+  /api/v1/post/about:
+    get:
+      consumes:
+      - application/json
+      description: 获取about文章详情，用于about页面展示
+      parameters:
+      - enum:
+        - html
+        in: query
+        name: content_type
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/resp.PostDetailResp'
+      summary: about文章内容
+      tags:
+      - post
+  /api/v1/post/archive:
+    get:
+      consumes:
+      - application/json
+      description: 获取文章归档列表，包括用户和分类信息
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/resp.PostArchiveResp'
+      summary: 文章归档列表
+      tags:
+      - post
   /api/v1/post/detail:
     get:
       consumes:
