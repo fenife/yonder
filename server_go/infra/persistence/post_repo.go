@@ -47,7 +47,8 @@ func (r *PostRepo) GetPostList(ctx context.Context, cateId uint64, page, limit i
 
 func (r *PostRepo) GetPostArchiveList(ctx context.Context) ([]*entity.Post, error) {
 	var posts []*entity.Post
-	err := r.db.WithContext(ctx).Preload("User").Preload("Category").Omit("content").First(&posts).Error
+	err := r.db.WithContext(ctx).Preload("User").Preload("Category").
+		Omit("content").Order("id desc").Find(&posts).Error
 	return posts, err
 }
 

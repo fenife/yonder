@@ -6,6 +6,7 @@ import (
 	"server-go/domain/do"
 	"server-go/domain/dservice"
 	"server-go/pkg/md2html"
+	"sort"
 )
 
 const (
@@ -94,6 +95,10 @@ func (app *PostApp) GetPostArchiveList(ctx context.Context) ([]*dto.PostArchiveI
 		p := v
 		result = append(result, p)
 	}
+	// 按年份倒序
+	sort.SliceStable(result, func(i, j int) bool {
+		return result[i].Year > result[j].Year
+	})
 	return result, err
 }
 
