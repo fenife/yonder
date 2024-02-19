@@ -16,6 +16,7 @@ type User struct {
 }
 
 func (u *User) GenPasswordHash(password string) string {
+	//return utils.Md5(fmt.Sprintf("%s-%s", config.Conf.Server.SecretKey, password))
 	return utils.Md5(password)
 }
 

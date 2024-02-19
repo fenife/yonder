@@ -15,7 +15,7 @@ func readMds() []byte {
 	return data
 }
 
-func writeHmtls(html []byte) {
+func writeHTMLs(html []byte) {
 	err := os.WriteFile("test.html", html, 0666)
 	if err != nil {
 		fmt.Println(err)
@@ -25,5 +25,5 @@ func writeHmtls(html []byte) {
 func main() {
 	md := readMds()
 	html := md2html.Parse(md)
-	writeHmtls(html)
+	writeHTMLs(html)
 }
