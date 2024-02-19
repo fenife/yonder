@@ -9,6 +9,7 @@ import (
 type Caches struct {
 	rds       *redis.Client
 	UserCache cache.IUserCache
+	ApiCache  cache.IApiCache
 }
 
 func NewCaches(redisConf *config.RedisConfig) (*Caches, error) {
@@ -21,5 +22,6 @@ func NewCaches(redisConf *config.RedisConfig) (*Caches, error) {
 	return &Caches{
 		rds:       rds,
 		UserCache: NewUserCache(rds),
+		ApiCache:  NewApiCache(rds),
 	}, nil
 }
