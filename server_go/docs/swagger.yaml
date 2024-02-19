@@ -7,6 +7,51 @@ definitions:
       name:
         type: string
     type: object
+  do.PostDetail:
+    properties:
+      cate_id:
+        type: integer
+      category:
+        $ref: '#/definitions/do.CategoryTiny'
+      content:
+        description: 文章详情
+        type: string
+      created_at:
+        description: '"2006-01-02 15:05:05"'
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      title_en:
+        type: string
+      updated_at:
+        description: 同上
+        type: string
+      user:
+        $ref: '#/definitions/do.UserTiny'
+      user_id:
+        type: integer
+    type: object
+  do.PostSmall:
+    properties:
+      cate_id:
+        type: integer
+      created_at:
+        description: '"2006-01-02 15:05:05"'
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      title_en:
+        type: string
+      updated_at:
+        description: 同上
+        type: string
+      user_id:
+        type: integer
+    type: object
   do.UserTiny:
     properties:
       id:
@@ -32,54 +77,9 @@ definitions:
         type: integer
       post_list:
         items:
-          $ref: '#/definitions/dto.PostDetail'
+          $ref: '#/definitions/do.PostDetail'
         type: array
       year:
-        type: integer
-    type: object
-  dto.PostBrief:
-    properties:
-      cate_id:
-        type: integer
-      created_at:
-        description: '"2006-01-02 15:05:05"'
-        type: string
-      id:
-        type: integer
-      title:
-        type: string
-      title_en:
-        type: string
-      updated_at:
-        description: 同上
-        type: string
-      user_id:
-        type: integer
-    type: object
-  dto.PostDetail:
-    properties:
-      cate_id:
-        type: integer
-      category:
-        $ref: '#/definitions/do.CategoryTiny'
-      content:
-        description: 文章详情
-        type: string
-      created_at:
-        description: '"2006-01-02 15:05:05"'
-        type: string
-      id:
-        type: integer
-      title:
-        type: string
-      title_en:
-        type: string
-      updated_at:
-        description: 同上
-        type: string
-      user:
-        $ref: '#/definitions/do.UserTiny'
-      user_id:
         type: integer
     type: object
   renderx.Response:
@@ -179,7 +179,7 @@ definitions:
     properties:
       post_list:
         items:
-          $ref: '#/definitions/dto.PostBrief'
+          $ref: '#/definitions/do.PostSmall'
         type: array
       total:
         type: integer

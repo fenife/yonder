@@ -1,5 +1,7 @@
 package entity
 
+import "server-go/domain/do"
+
 type Post struct {
 	BaseModel
 
@@ -13,7 +15,30 @@ type Post struct {
 	Category Category `gorm:"foreignKey:CateId"`
 }
 
-func (u *Post) IsValid() bool {
+func (p *Post) IsValid() bool {
 	// 未删除，且id>0
-	return u.DeletedAt.Valid == false && u.ID > 0
+	return p.DeletedAt.Valid == false && p.ID > 0
+}
+
+func (p *Post) ToSmall() *do.PostSmall {
+	newPost := do.PostSmall{
+		ID:        p.ID,
+		CreatedAt: p.CreatedAt.Format(timeFormatLayout),
+		UpdatedAt: p.CreatedAt.Format(timeFormatLayout),
+		UserId:    p.UserId,
+		CateId:    p.CateId,
+		Title:     p.Title,
+		TitleEn:   p.TitleEn,
+	}
+	return &newPost
+}
+
+func (p *Post) ToDetail() *do.PostDetail {
+	detail := do.PostDetail{
+		PostSmall: *p.ToSmall(),
+		User:      p.User.ToTiny(),
+		Category:  p.Category.ToTiny(),
+	}
+	//detail.Content = p.Content
+	return &detail
 }

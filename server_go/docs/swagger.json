@@ -288,6 +288,72 @@
                 }
             }
         },
+        "do.PostDetail": {
+            "type": "object",
+            "properties": {
+                "cate_id": {
+                    "type": "integer"
+                },
+                "category": {
+                    "$ref": "#/definitions/do.CategoryTiny"
+                },
+                "content": {
+                    "description": "文章详情",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "\"2006-01-02 15:05:05\"",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "title_en": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "同上",
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/do.UserTiny"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "do.PostSmall": {
+            "type": "object",
+            "properties": {
+                "cate_id": {
+                    "type": "integer"
+                },
+                "created_at": {
+                    "description": "\"2006-01-02 15:05:05\"",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "title_en": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "同上",
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "do.UserTiny": {
             "type": "object",
             "properties": {
@@ -325,76 +391,10 @@
                 "post_list": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.PostDetail"
+                        "$ref": "#/definitions/do.PostDetail"
                     }
                 },
                 "year": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.PostBrief": {
-            "type": "object",
-            "properties": {
-                "cate_id": {
-                    "type": "integer"
-                },
-                "created_at": {
-                    "description": "\"2006-01-02 15:05:05\"",
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "title_en": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "description": "同上",
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.PostDetail": {
-            "type": "object",
-            "properties": {
-                "cate_id": {
-                    "type": "integer"
-                },
-                "category": {
-                    "$ref": "#/definitions/do.CategoryTiny"
-                },
-                "content": {
-                    "description": "文章详情",
-                    "type": "string"
-                },
-                "created_at": {
-                    "description": "\"2006-01-02 15:05:05\"",
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "title_en": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "description": "同上",
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/do.UserTiny"
-                },
-                "user_id": {
                     "type": "integer"
                 }
             }
@@ -541,7 +541,7 @@
                 "post_list": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.PostBrief"
+                        "$ref": "#/definitions/do.PostSmall"
                     }
                 },
                 "total": {

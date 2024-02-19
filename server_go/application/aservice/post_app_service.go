@@ -3,15 +3,15 @@ package aservice
 import (
 	"context"
 	"server-go/application/dto"
+	"server-go/domain/do"
 	"server-go/domain/dservice"
-	"server-go/domain/entity"
 )
 
 type IPostApp interface {
-	GetPostList(ctx context.Context, cateId uint64, page, limit int) ([]dto.PostBrief, error)
-	GetPostDetail(ctx context.Context, postId uint64, contentType string) (*dto.PostDetail, error)
+	GetPostList(ctx context.Context, cateId uint64, page, limit int) ([]*do.PostSmall, error)
+	GetPostDetail(ctx context.Context, postId uint64, contentType string) (*do.PostDetail, error)
 	GetPostArchiveList(ctx context.Context) ([]*dto.PostArchiveItem, error)
-	GetPostAbout(ctx context.Context, contentType string) (*dto.PostDetail, error)
+	GetPostAbout(ctx context.Context, contentType string) (*do.PostDetail, error)
 }
 
 type PostApp struct {
@@ -31,38 +31,27 @@ func NewPostApp(postDomain dservice.IPostDomain, cateDomain dservice.ICategoryDo
 
 var _ IPostApp = &PostApp{}
 
-func (app *PostApp) GetPostList(ctx context.Context, cateId uint64, page, limit int) ([]dto.PostBrief, error) {
+func (app *PostApp) GetPostList(ctx context.Context, cateId uint64, page, limit int) ([]*do.PostSmall, error) {
 	posts, err := app.postDomain.GetPostList(ctx, cateId, page, limit)
 	if err != nil {
 		return nil, err
 	}
-	postList := make([]dto.PostBrief, 0)
+	postList := make([]*do.PostSmall, 0)
 	for _, p := range posts {
-		postList = append(postList, postToBrief(&p))
+		postList = append(postList, p.ToSmall())
 	}
 	return postList, err
 }
 
-func postToBrief(post *entity.Post) dto.PostBrief {
-	p := dto.PostBrief{
-		ID:        post.ID,
-		CreatedAt: post.CreatedAt.Format(timeFormatLayout),
-		UpdatedAt: post.CreatedAt.Format(timeFormatLayout),
-		UserId:    post.UserId,
-		CateId:    post.CateId,
-		Title:     post.Title,
-		TitleEn:   post.TitleEn,
-	}
-	return p
-}
-
-func (app *PostApp) GetPostDetail(ctx context.Context, postId uint64, contentType string) (*dto.PostDetail, error) {
+func (app *PostApp) GetPostDetail(ctx context.Context, postId uint64, contentType string) (*do.PostDetail, error) {
 	post, err := app.postDomain.GetPostById(ctx, postId)
 	if err != nil {
 		return nil, err
 	}
 
-	detail := postToDetail(post)
+	detail := post.ToDetail()
+	detail.Content = post.Content
+
 	return detail, nil
 }
 
@@ -80,10 +69,11 @@ func (app *PostApp) GetPostArchiveList(ctx context.Context) ([]*dto.PostArchiveI
 			yearMap[year] = &dto.PostArchiveItem{
 				Year:     year,
 				Count:    0,
-				PostList: make([]*dto.PostDetail, 0),
+				PostList: make([]*do.PostDetail, 0),
 			}
 		}
-		detail := postToDetail(p)
+		detail := p.ToDetail()
+
 		yearMap[year].PostList = append(yearMap[year].PostList, detail)
 		yearMap[year].Count += 1
 	}
@@ -96,21 +86,14 @@ func (app *PostApp) GetPostArchiveList(ctx context.Context) ([]*dto.PostArchiveI
 	return result, err
 }
 
-func (app *PostApp) GetPostAbout(ctx context.Context, contentType string) (*dto.PostDetail, error) {
+func (app *PostApp) GetPostAbout(ctx context.Context, contentType string) (*do.PostDetail, error) {
 	post, err := app.postDomain.GetPostAbout(ctx)
 	if err != nil {
 		return nil, err
 	}
-	detail := postToDetail(post)
-	return detail, nil
-}
 
-func postToDetail(post *entity.Post) *dto.PostDetail {
-	detail := dto.PostDetail{
-		PostBrief: postToBrief(post),
-		User:      post.User.ToTiny(),
-		Category:  post.Category.ToTiny(),
-	}
-	detail.Content = post.Content // todo: markdown to html
-	return &detail
+	detail := post.ToDetail()
+	detail.Content = post.Content
+
+	return detail, nil
 }

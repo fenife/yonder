@@ -1,14 +1,17 @@
 package resp
 
-import "server-go/application/dto"
+import (
+	"server-go/application/dto"
+	"server-go/domain/do"
+)
 
 type PostListResp struct {
 	Total    int             `json:"total"`
-	PostList []dto.PostBrief `json:"post_list"`
+	PostList []*do.PostSmall `json:"post_list"`
 }
 
 type PostDetailResp struct {
-	dto.PostDetail
+	do.PostDetail
 }
 
 type PostArchiveResp struct {
