@@ -15,5 +15,5 @@ type GetPostArchiveReq struct {
 }
 
 type GetPostAboutReq struct {
-	ContentType string `form:"content_type" binding:"omitempty,oneof=html"`
+	ContentType string `form:"content_type" binding:"omitempty,oneof=html md"`
 }

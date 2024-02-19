@@ -5,6 +5,7 @@ import (
 	"server-go/application/dto"
 	"server-go/domain/do"
 	"server-go/domain/dservice"
+	"server-go/domain/entity"
 	"server-go/pkg/md2html"
 	"sort"
 )
@@ -55,16 +56,7 @@ func (app *PostApp) GetPostDetail(ctx context.Context, postId uint64, contentTyp
 	if err != nil {
 		return nil, err
 	}
-
-	detail := post.ToDetail()
-	switch contentType {
-	case contentTypeMd:
-		detail.Content = post.Content
-	case contentTypeHtml:
-		detail.Content = md2html.Parse(post.Content)
-	}
-
-	return detail, nil
+	return app.postToDetail(post, contentType)
 }
 
 func (app *PostApp) GetPostArchiveList(ctx context.Context) ([]*dto.PostArchiveItem, error) {
@@ -107,9 +99,19 @@ func (app *PostApp) GetPostAbout(ctx context.Context, contentType string) (*do.P
 	if err != nil {
 		return nil, err
 	}
+	return app.postToDetail(post, contentType)
+}
 
+func (app *PostApp) postToDetail(post *entity.Post, contentType string) (*do.PostDetail, error) {
+	if contentType == "" {
+		contentType = contentTypeHtml
+	}
 	detail := post.ToDetail()
-	detail.Content = post.Content
-
+	switch contentType {
+	case contentTypeMd:
+		detail.Content = post.Content
+	case contentTypeHtml:
+		detail.Content = md2html.Parse(post.Content)
+	}
 	return detail, nil
 }

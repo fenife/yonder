@@ -222,6 +222,7 @@ paths:
       parameters:
       - enum:
         - html
+        - md
         in: query
         name: content_type
         type: string
