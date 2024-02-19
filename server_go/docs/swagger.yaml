@@ -258,8 +258,9 @@ paths:
       parameters:
       - enum:
         - html
+        - md
         in: query
-        name: content_type
+        name: ct
         type: string
       - in: query
         name: post_id

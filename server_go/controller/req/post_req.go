@@ -8,7 +8,7 @@ type GetPostListReq struct {
 
 type GetPostDetailReq struct {
 	PostId      uint64 `form:"post_id" binding:"required"`
-	ContentType string `form:"content_type" binding:"omitempty,oneof=html"`
+	ContentType string `form:"ct" binding:"omitempty,oneof=html md"`
 }
 
 type GetPostArchiveReq struct {

@@ -5,6 +5,12 @@ import (
 	"server-go/application/dto"
 	"server-go/domain/do"
 	"server-go/domain/dservice"
+	"server-go/pkg/md2html"
+)
+
+const (
+	contentTypeMd   = "md"
+	contentTypeHtml = "html"
 )
 
 type IPostApp interface {
@@ -50,7 +56,12 @@ func (app *PostApp) GetPostDetail(ctx context.Context, postId uint64, contentTyp
 	}
 
 	detail := post.ToDetail()
-	detail.Content = post.Content
+	switch contentType {
+	case contentTypeMd:
+		detail.Content = post.Content
+	case contentTypeHtml:
+		detail.Content = md2html.Parse(post.Content)
+	}
 
 	return detail, nil
 }

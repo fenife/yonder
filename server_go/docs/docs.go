@@ -111,10 +111,11 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "enum": [
-                            "html"
+                            "html",
+                            "md"
                         ],
                         "type": "string",
-                        "name": "content_type",
+                        "name": "ct",
                         "in": "query"
                     },
                     {
