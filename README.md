@@ -120,6 +120,7 @@ make down
     - 自实现的ORM框架norm (Python)
     - 通过 docker 构建、docker compose 部署
     - 通过docker和compose搭建本地开发环境，可自动监控本地变化的文件并重启服务
+    - 创建默认管理员，单独用一个脚本，跟main.py分开
 
 ## TODO
 - 业务侧：
@@ -132,7 +133,7 @@ make down
     - 评论
     - 支持合辑
     - 首页文章列表，作者、时间、标签的UI优化
-    - 最近更新
+    - 最近更新文章列表
     - 归档：
         - 按月份+统计
     - 分类：
@@ -140,10 +141,9 @@ make down
         - 超过后显示更多按钮
 
 - 技术侧：
-    - 创建默认管理员，单独用一个脚本，跟main.py分开
-    - 不显示id，用md5
+    - 不显示id，用md5或title
     - 文章列表按created_at排序，方便后续数据导入和恢复
     - 线程池
     - docker compose 中通过 python watchdog 监控文件变化，自动重启服务，方便开发
-
+    - golang gin DDD 方式编写服务api
 
