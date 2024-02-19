@@ -6,6 +6,8 @@ import (
 	"server-go/domain/do"
 	"server-go/domain/dservice"
 	"server-go/domain/entity"
+	"sort"
+	"strings"
 )
 
 type ICategoryApp interface {
@@ -55,7 +57,13 @@ func (app *CategoryApp) GetCategoryList(ctx context.Context) ([]dto.CategoryList
 		res = append(res, d)
 	}
 
-	// todo: 排序
+	// 排序，按文章数目倒序，按名称正序
+	sort.SliceStable(res, func(i, j int) bool {
+		if res[i].PostCount != res[j].PostCount {
+			return res[i].PostCount > res[j].PostCount
+		}
+		return strings.Compare(res[i].CateName, res[j].CateName) == -1
+	})
 
 	return res, nil
 }
