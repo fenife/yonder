@@ -54,6 +54,9 @@ func (app *CategoryApp) GetCategoryList(ctx context.Context) ([]dto.CategoryList
 		}
 		res = append(res, d)
 	}
+
+	// todo: 排序
+
 	return res, nil
 }
 

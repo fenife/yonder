@@ -11,7 +11,7 @@ run:
 stop:
 	docker compose -f docker-compose.yml down
 
-as:
+py:
 	docker exec -it yonder-server-py-dev /bin/bash
 
 dev-es:

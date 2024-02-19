@@ -57,21 +57,21 @@ services:
       mysql:
         condition: service_healthy
 
-  server_go:
-    image: yonder-server-go:dev
-    container_name: yonder-server-go-dev
-    restart: always
-    ports:
-      - "8020:8020"
-    volumes:
-      - /var/yonder/logs:/var/yonder/logs
-      - ..:/yonder
-    command: /bin/bash -c "while true;do sleep 600;done"
-    networks:
-      - yonder-net
-    depends_on:
-      mysql:
-        condition: service_healthy
+  # server_go:
+  #   image: yonder-server-go:dev
+  #   container_name: yonder-server-go-dev
+  #   restart: always
+  #   ports:
+  #     - "8020:8020"
+  #   volumes:
+  #     - /var/yonder/logs:/var/yonder/logs
+  #     - ..:/yonder
+  #   command: /bin/bash -c "while true;do sleep 600;done"
+  #   networks:
+  #     - yonder-net
+  #   depends_on:
+  #     mysql:
+  #       condition: service_healthy
 
   frontend:
     image: yonder-frontend:dev

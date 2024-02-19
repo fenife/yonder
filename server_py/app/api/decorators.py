@@ -10,7 +10,7 @@ from app.consts import RespCode
 from app import app, cache_pool
 
 
-API_CACHE_EXPIRED = 1 * 60
+API_CACHE_EXPIRED = 10
 
 
 def permission_required(permission):
