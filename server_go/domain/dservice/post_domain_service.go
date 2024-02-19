@@ -35,6 +35,12 @@ func (ds *PostDomain) GetPostStat(ctx context.Context) ([]do.PostStat, error) {
 
 // 获取文章列表
 func (ds *PostDomain) GetPostList(ctx context.Context, cateId uint64, page, limit int) ([]entity.Post, error) {
+	if page <= 0 {
+		page = 1 // 默认第1页
+	}
+	if limit <= 0 {
+		limit = 10 // 默认一页10条数据
+	}
 	return ds.postRepo.GetPostList(ctx, cateId, page, limit)
 }
 

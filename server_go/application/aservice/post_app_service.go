@@ -51,6 +51,7 @@ func (app *PostApp) GetPostList(ctx context.Context, cateId uint64, page, limit 
 	return postList, err
 }
 
+// 获取文章详情
 func (app *PostApp) GetPostDetail(ctx context.Context, postId uint64, contentType string) (*do.PostDetail, error) {
 	post, err := app.postDomain.GetPostById(ctx, postId)
 	if err != nil {
@@ -59,6 +60,7 @@ func (app *PostApp) GetPostDetail(ctx context.Context, postId uint64, contentTyp
 	return app.postToDetailWithContent(post, contentType)
 }
 
+// 获取归档文章列表
 func (app *PostApp) GetPostArchiveList(ctx context.Context) ([]*dto.PostArchiveItem, error) {
 	posts, err := app.postDomain.GetPostArchiveList(ctx)
 	if err != nil {
@@ -88,7 +90,7 @@ func (app *PostApp) GetPostArchiveList(ctx context.Context) ([]*dto.PostArchiveI
 		p := v
 		result = append(result, p)
 	}
-	// 按年份倒序
+	// 按年份倒序排序
 	sort.SliceStable(result, func(i, j int) bool {
 		return result[i].Year > result[j].Year
 	})
@@ -103,6 +105,7 @@ func (app *PostApp) GetPostAbout(ctx context.Context, contentType string) (*do.P
 	return app.postToDetailWithContent(post, contentType)
 }
 
+// domain对象转换
 func (app *PostApp) postToDetailWithContent(post *entity.Post, contentType string) (*do.PostDetail, error) {
 	if contentType == "" {
 		contentType = contentTypeHtml

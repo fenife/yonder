@@ -59,7 +59,7 @@ const docTemplate = `{
                             "md"
                         ],
                         "type": "string",
-                        "name": "content_type",
+                        "name": "ct",
                         "in": "query"
                     }
                 ],
@@ -116,11 +116,13 @@ const docTemplate = `{
                             "md"
                         ],
                         "type": "string",
+                        "description": "文章内容类型，html或者markdown",
                         "name": "ct",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "description": "文章id",
                         "name": "post_id",
                         "in": "query",
                         "required": true
@@ -151,12 +153,23 @@ const docTemplate = `{
                 "summary": "文章列表",
                 "parameters": [
                     {
-                        "description": "查询参数",
-                        "name": "object",
-                        "in": "body",
-                        "schema": {
-                            "$ref": "#/definitions/req.GetPostListReq"
-                        }
+                        "minimum": 1,
+                        "type": "integer",
+                        "description": "分类id",
+                        "name": "cate_id",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -394,15 +407,18 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "count": {
+                    "description": "文章数目",
                     "type": "integer"
                 },
                 "post_list": {
+                    "description": "文章列表，文章内容为\"\"，不需要展示",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/do.PostDetail"
                     }
                 },
                 "year": {
+                    "description": "创建年份",
                     "type": "integer"
                 }
             }
@@ -424,20 +440,6 @@ const docTemplate = `{
                 },
                 "msg": {
                     "type": "string"
-                }
-            }
-        },
-        "req.GetPostListReq": {
-            "type": "object",
-            "properties": {
-                "cate_id": {
-                    "type": "integer"
-                },
-                "limit": {
-                    "type": "integer"
-                },
-                "page": {
-                    "type": "integer"
                 }
             }
         },

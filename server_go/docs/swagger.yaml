@@ -74,12 +74,15 @@ definitions:
   dto.PostArchiveItem:
     properties:
       count:
+        description: 文章数目
         type: integer
       post_list:
+        description: 文章列表，文章内容为""，不需要展示
         items:
           $ref: '#/definitions/do.PostDetail'
         type: array
       year:
+        description: 创建年份
         type: integer
     type: object
   renderx.Response:
@@ -94,15 +97,6 @@ definitions:
         type: integer
       msg:
         type: string
-    type: object
-  req.GetPostListReq:
-    properties:
-      cate_id:
-        type: integer
-      limit:
-        type: integer
-      page:
-        type: integer
     type: object
   req.SignInReq:
     properties:
@@ -224,7 +218,7 @@ paths:
         - html
         - md
         in: query
-        name: content_type
+        name: ct
         type: string
       produces:
       - application/json
@@ -257,13 +251,15 @@ paths:
       - application/json
       description: 获取文章详情，包括用户和分类信息
       parameters:
-      - enum:
+      - description: 文章内容类型，html或者markdown
+        enum:
         - html
         - md
         in: query
         name: ct
         type: string
-      - in: query
+      - description: 文章id
+        in: query
         name: post_id
         required: true
         type: integer
@@ -283,11 +279,19 @@ paths:
       - application/json
       description: 获取文章列表，支持分页，可按分类id进行查询
       parameters:
-      - description: 查询参数
-        in: body
-        name: object
-        schema:
-          $ref: '#/definitions/req.GetPostListReq'
+      - description: 分类id
+        in: query
+        minimum: 1
+        name: cate_id
+        type: integer
+      - in: query
+        minimum: 1
+        name: limit
+        type: integer
+      - in: query
+        minimum: 1
+        name: page
+        type: integer
       produces:
       - application/json
       responses:

@@ -26,7 +26,7 @@ func NewPostHandler(postApp aservice.IPostApp) *PostHandler {
 // @Tags         post
 // @Accept       json
 // @Produce      json
-// @Param        object body  req.GetPostListReq	false "查询参数"
+// @Param        object query  req.GetPostListReq	false "查询参数"
 // @Success      200  {object}  resp.PostListResp
 // @Router       /api/v1/post/list [get]
 func (ctrl *PostHandler) GetPostList(c *gin.Context) {

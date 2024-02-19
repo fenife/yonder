@@ -29,16 +29,10 @@ func (r *PostRepo) GetPostStat(ctx context.Context) ([]do.PostStat, error) {
 }
 
 func (r *PostRepo) GetPostList(ctx context.Context, cateId uint64, page, limit int) ([]entity.Post, error) {
-	if page <= 0 {
-		page = 1 // 默认第1页
-	}
-	if limit <= 0 {
-		limit = 10 // 默认一页10条数据
-	}
 	var posts []entity.Post
 	tx := r.db.WithContext(ctx)
 	if cateId > 0 {
-		tx.Where("cate_id = ?", cateId)
+		tx = tx.Where("cate_id = ?", cateId)
 	}
 	offset := (page - 1) * limit
 	err := tx.Offset(offset).Limit(limit).Omit("content").Find(&posts).Error
@@ -57,7 +51,7 @@ func (r *PostRepo) FindById(ctx context.Context, postId uint64) (*entity.Post, e
 	var post entity.Post
 	err := r.db.WithContext(ctx).Where("id = ?", postId).Preload("User").Preload("Category").First(&post).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		// 通过ID判断是否存在
+		// 可通过ID判断是否存在
 		return &post, nil
 	}
 	return &post, err
