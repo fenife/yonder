@@ -5,7 +5,6 @@ import (
 	"server-go/application/dto"
 	"server-go/domain/do"
 	"server-go/domain/dservice"
-	"server-go/domain/entity"
 	"sort"
 	"strings"
 )
@@ -66,14 +65,4 @@ func (app *CategoryApp) GetCategoryList(ctx context.Context) ([]dto.CategoryList
 	})
 
 	return res, nil
-}
-
-func cateToBrief(cate *entity.Category) dto.CategoryBrief {
-	c := dto.CategoryBrief{
-		ID:        cate.ID,
-		CreatedAt: cate.CreatedAt.Format(timeFormatLayout),
-		UpdatedAt: cate.CreatedAt.Format(timeFormatLayout),
-		Name:      cate.Name,
-	}
-	return c
 }

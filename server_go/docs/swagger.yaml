@@ -1,16 +1,17 @@
 basePath: /
 definitions:
-  dto.CategoryBrief:
+  do.CategoryTiny:
     properties:
-      created_at:
-        description: '"2006-01-02 15:05:05"'
-        type: string
       id:
         type: integer
       name:
         type: string
-      updated_at:
-        description: 同上
+    type: object
+  do.UserTiny:
+    properties:
+      id:
+        type: integer
+      name:
         type: string
     type: object
   dto.CategoryList:
@@ -60,7 +61,7 @@ definitions:
       cate_id:
         type: integer
       category:
-        $ref: '#/definitions/dto.CategoryBrief'
+        $ref: '#/definitions/do.CategoryTiny'
       content:
         description: 文章详情
         type: string
@@ -77,22 +78,9 @@ definitions:
         description: 同上
         type: string
       user:
-        $ref: '#/definitions/dto.UserBrief'
+        $ref: '#/definitions/do.UserTiny'
       user_id:
         type: integer
-    type: object
-  dto.UserBrief:
-    properties:
-      created_at:
-        description: '"2006-01-02 15:05:05"'
-        type: string
-      id:
-        type: integer
-      name:
-        type: string
-      updated_at:
-        description: 同上
-        type: string
     type: object
   renderx.Response:
     properties:
@@ -166,7 +154,7 @@ definitions:
       cate_id:
         type: integer
       category:
-        $ref: '#/definitions/dto.CategoryBrief'
+        $ref: '#/definitions/do.CategoryTiny'
       content:
         description: 文章详情
         type: string
@@ -183,7 +171,7 @@ definitions:
         description: 同上
         type: string
       user:
-        $ref: '#/definitions/dto.UserBrief'
+        $ref: '#/definitions/do.UserTiny'
       user_id:
         type: integer
     type: object

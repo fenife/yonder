@@ -83,12 +83,7 @@ func (app *PostApp) GetPostArchiveList(ctx context.Context) ([]*dto.PostArchiveI
 				PostList: make([]*dto.PostDetail, 0),
 			}
 		}
-		detail := &dto.PostDetail{
-			PostBrief: postToBrief(p),
-			User:      userToBrief(&p.User),
-			Category:  cateToBrief(&p.Category),
-		}
-
+		detail := postToDetail(p)
 		yearMap[year].PostList = append(yearMap[year].PostList, detail)
 		yearMap[year].Count += 1
 	}
@@ -113,8 +108,8 @@ func (app *PostApp) GetPostAbout(ctx context.Context, contentType string) (*dto.
 func postToDetail(post *entity.Post) *dto.PostDetail {
 	detail := dto.PostDetail{
 		PostBrief: postToBrief(post),
-		User:      userToBrief(&post.User),
-		Category:  cateToBrief(&post.Category),
+		User:      post.User.ToTiny(),
+		Category:  post.Category.ToTiny(),
 	}
 	detail.Content = post.Content // todo: markdown to html
 	return &detail

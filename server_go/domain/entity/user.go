@@ -2,6 +2,7 @@ package entity
 
 import (
 	"github.com/google/uuid"
+	"server-go/domain/do"
 	"server-go/pkg/utils"
 	"strconv"
 	"time"
@@ -34,4 +35,22 @@ func (u *User) GenUserToken() string {
 func (u *User) IsValid() bool {
 	// 未删除，且uid>0
 	return u.DeletedAt.Valid == false && u.ID > 0
+}
+
+func (u *User) ToTiny() *do.UserTiny {
+	newUser := do.UserTiny{
+		ID:   u.ID,
+		Name: u.Name,
+	}
+	return &newUser
+}
+
+func (u *User) ToSmall() *do.UserSmall {
+	newUser := do.UserSmall{
+		ID:        u.ID,
+		CreatedAt: u.CreatedAt.Format(timeFormatLayout),
+		UpdatedAt: u.CreatedAt.Format(timeFormatLayout),
+		Name:      u.Name,
+	}
+	return &newUser
 }

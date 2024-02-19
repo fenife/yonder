@@ -1,12 +1,32 @@
 package entity
 
+import "server-go/domain/do"
+
 type Category struct {
 	BaseModel
 
 	Name string `gorm:"type:varchar(255);not null;unique;comment:'分类名称'" json:"name"`
 }
 
-func (u *Category) IsValid() bool {
+func (c *Category) IsValid() bool {
 	// 未删除，且id>0
-	return u.DeletedAt.Valid == false && u.ID > 0
+	return c.DeletedAt.Valid == false && c.ID > 0
+}
+
+func (c *Category) ToTiny() *do.CategoryTiny {
+	newCate := do.CategoryTiny{
+		ID:   c.ID,
+		Name: c.Name,
+	}
+	return &newCate
+}
+
+func (c *Category) ToSmall() *do.CategorySmall {
+	newCate := do.CategorySmall{
+		ID:        c.ID,
+		CreatedAt: c.CreatedAt.Format(timeFormatLayout),
+		UpdatedAt: c.CreatedAt.Format(timeFormatLayout),
+		Name:      c.Name,
+	}
+	return &newCate
 }

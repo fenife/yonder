@@ -1,5 +1,7 @@
 package dto
 
+import "server-go/domain/do"
+
 type PostBrief struct {
 	ID        uint64 `json:"id"`
 	CreatedAt string `json:"created_at"` // "2006-01-02 15:05:05"
@@ -12,9 +14,9 @@ type PostBrief struct {
 
 type PostDetail struct {
 	PostBrief
-	Content  string        `json:"content"` // 文章详情
-	User     UserBrief     `json:"user"`
-	Category CategoryBrief `json:"category"`
+	Content  string           `json:"content"` // 文章详情
+	User     *do.UserTiny     `json:"user"`
+	Category *do.CategoryTiny `json:"category"`
 }
 
 type PostArchiveItem struct {

@@ -3,7 +3,6 @@ package aservice
 import (
 	"context"
 	"html"
-	"server-go/application/dto"
 	"server-go/domain/do"
 	"server-go/domain/dservice"
 	"server-go/domain/entity"
@@ -51,14 +50,4 @@ func (app *UserApp) SignOut(ctx context.Context, token string) (err error) {
 
 func (app *UserApp) GetUserList(ctx context.Context) ([]entity.User, error) {
 	return app.userDomain.GetUserList(ctx)
-}
-
-func userToBrief(user *entity.User) dto.UserBrief {
-	u := dto.UserBrief{
-		ID:        user.ID,
-		CreatedAt: user.CreatedAt.Format(timeFormatLayout),
-		UpdatedAt: user.CreatedAt.Format(timeFormatLayout),
-		Name:      user.Name,
-	}
-	return u
 }

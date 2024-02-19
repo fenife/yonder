@@ -283,21 +283,24 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "dto.CategoryBrief": {
+        "do.CategoryTiny": {
             "type": "object",
             "properties": {
-                "created_at": {
-                    "description": "\"2006-01-02 15:05:05\"",
-                    "type": "string"
-                },
                 "id": {
                     "type": "integer"
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "do.UserTiny": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
                 },
-                "updated_at": {
-                    "description": "同上",
+                "name": {
                     "type": "string"
                 }
             }
@@ -371,7 +374,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "category": {
-                    "$ref": "#/definitions/dto.CategoryBrief"
+                    "$ref": "#/definitions/do.CategoryTiny"
                 },
                 "content": {
                     "description": "文章详情",
@@ -395,29 +398,10 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user": {
-                    "$ref": "#/definitions/dto.UserBrief"
+                    "$ref": "#/definitions/do.UserTiny"
                 },
                 "user_id": {
                     "type": "integer"
-                }
-            }
-        },
-        "dto.UserBrief": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "description": "\"2006-01-02 15:05:05\"",
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "description": "同上",
-                    "type": "string"
                 }
             }
         },
@@ -526,7 +510,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "category": {
-                    "$ref": "#/definitions/dto.CategoryBrief"
+                    "$ref": "#/definitions/do.CategoryTiny"
                 },
                 "content": {
                     "description": "文章详情",
@@ -550,7 +534,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user": {
-                    "$ref": "#/definitions/dto.UserBrief"
+                    "$ref": "#/definitions/do.UserTiny"
                 },
                 "user_id": {
                     "type": "integer"
