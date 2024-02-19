@@ -46,6 +46,7 @@ func (r *PostRepo) GetPostList(ctx context.Context, cateId uint64, page, limit i
 }
 
 func (r *PostRepo) GetPostArchiveList(ctx context.Context) ([]*entity.Post, error) {
+	// 默认按id倒序排序，亦即创建时间(create_at)
 	var posts []*entity.Post
 	err := r.db.WithContext(ctx).Preload("User").Preload("Category").
 		Omit("content").Order("id desc").Find(&posts).Error

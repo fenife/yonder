@@ -56,7 +56,7 @@ func (app *PostApp) GetPostDetail(ctx context.Context, postId uint64, contentTyp
 	if err != nil {
 		return nil, err
 	}
-	return app.postToDetail(post, contentType)
+	return app.postToDetailWithContent(post, contentType)
 }
 
 func (app *PostApp) GetPostArchiveList(ctx context.Context) ([]*dto.PostArchiveItem, error) {
@@ -64,6 +64,7 @@ func (app *PostApp) GetPostArchiveList(ctx context.Context) ([]*dto.PostArchiveI
 	if err != nil {
 		return nil, err
 	}
+	// 按年份将文章分类
 	// 默认按id倒序排序，亦即创建时间(create_at)
 	yearMap := make(map[int]*dto.PostArchiveItem, 0)
 	for _, v := range posts {
@@ -99,10 +100,10 @@ func (app *PostApp) GetPostAbout(ctx context.Context, contentType string) (*do.P
 	if err != nil {
 		return nil, err
 	}
-	return app.postToDetail(post, contentType)
+	return app.postToDetailWithContent(post, contentType)
 }
 
-func (app *PostApp) postToDetail(post *entity.Post, contentType string) (*do.PostDetail, error) {
+func (app *PostApp) postToDetailWithContent(post *entity.Post, contentType string) (*do.PostDetail, error) {
 	if contentType == "" {
 		contentType = contentTypeHtml
 	}
