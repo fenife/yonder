@@ -6,13 +6,13 @@ import (
 	"server-go/pkg/md2html"
 )
 
-func readMds() []byte {
+func readMds() string {
 	configFile := "./test.md"
 	data, err := os.ReadFile(configFile)
 	if err != nil {
 		panic(fmt.Sprintf("read file failed: %v", err))
 	}
-	return data
+	return string(data)
 }
 
 func writeHTMLs(html []byte) {
@@ -25,5 +25,5 @@ func writeHTMLs(html []byte) {
 func main() {
 	md := readMds()
 	html := md2html.Parse(md)
-	writeHTMLs(html)
+	writeHTMLs([]byte(html))
 }

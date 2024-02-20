@@ -26,5 +26,12 @@ def bubble_sort(lst: list):
 - 空间复杂度：O(1)
 - 稳定性：稳定
 
-## 参考：
+## table
+
+| Name  | Age |
+|-------|------|
+|  Bob  | 27 |
+| Alice | 23 |
+
+## 参考
 1. [python排序算法](https://cloud.tencent.com/developer/article/2117904)

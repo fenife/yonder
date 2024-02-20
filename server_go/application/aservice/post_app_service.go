@@ -17,9 +17,9 @@ const (
 
 type IPostApp interface {
 	GetPostList(ctx context.Context, cateId uint64, page, limit int) ([]*do.PostSmall, error)
-	GetPostDetail(ctx context.Context, postId uint64, contentType string) (*do.PostDetail, error)
+	GetPostDetail(ctx context.Context, postId uint64, contentType string) (*dto.PostDetail, error)
 	GetPostArchiveList(ctx context.Context) ([]*dto.PostArchiveItem, error)
-	GetPostAbout(ctx context.Context, contentType string) (*do.PostDetail, error)
+	GetPostAbout(ctx context.Context, contentType string) (*dto.PostDetail, error)
 }
 
 type PostApp struct {
@@ -39,6 +39,7 @@ func NewPostApp(postDomain dservice.IPostDomain, cateDomain dservice.ICategoryDo
 
 var _ IPostApp = &PostApp{}
 
+// 获取文章列表
 func (app *PostApp) GetPostList(ctx context.Context, cateId uint64, page, limit int) ([]*do.PostSmall, error) {
 	posts, err := app.postDomain.GetPostList(ctx, cateId, page, limit)
 	if err != nil {
@@ -52,7 +53,7 @@ func (app *PostApp) GetPostList(ctx context.Context, cateId uint64, page, limit 
 }
 
 // 获取文章详情
-func (app *PostApp) GetPostDetail(ctx context.Context, postId uint64, contentType string) (*do.PostDetail, error) {
+func (app *PostApp) GetPostDetail(ctx context.Context, postId uint64, contentType string) (*dto.PostDetail, error) {
 	post, err := app.postDomain.GetPostById(ctx, postId)
 	if err != nil {
 		return nil, err
@@ -97,7 +98,7 @@ func (app *PostApp) GetPostArchiveList(ctx context.Context) ([]*dto.PostArchiveI
 	return result, err
 }
 
-func (app *PostApp) GetPostAbout(ctx context.Context, contentType string) (*do.PostDetail, error) {
+func (app *PostApp) GetPostAbout(ctx context.Context, contentType string) (*dto.PostDetail, error) {
 	post, err := app.postDomain.GetPostAbout(ctx)
 	if err != nil {
 		return nil, err
@@ -106,11 +107,13 @@ func (app *PostApp) GetPostAbout(ctx context.Context, contentType string) (*do.P
 }
 
 // domain对象转换
-func (app *PostApp) postToDetailWithContent(post *entity.Post, contentType string) (*do.PostDetail, error) {
+func (app *PostApp) postToDetailWithContent(post *entity.Post, contentType string) (*dto.PostDetail, error) {
 	if contentType == "" {
 		contentType = contentTypeHtml
 	}
-	detail := post.ToDetail()
+	detail := &dto.PostDetail{
+		PostDetail: post.ToDetail(),
+	}
 	switch contentType {
 	case contentTypeMd:
 		detail.Content = post.Content
