@@ -6,8 +6,8 @@ import (
 )
 
 type PostListResp struct {
-	Total    int             `json:"total"`
-	PostList []*do.PostSmall `json:"post_list"`
+	Total    int              `json:"total"`
+	PostList []*do.PostDetail `json:"post_list"`
 }
 
 type PostDetailResp struct {

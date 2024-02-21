@@ -10,10 +10,11 @@ import (
 
 type IPostDomain interface {
 	GetPostStat(ctx context.Context) ([]do.PostStat, error)
-	GetPostList(ctx context.Context, cateId uint64, page, limit int) ([]entity.Post, error)
+	GetPostList(ctx context.Context, cateId uint64, page, limit int) ([]*entity.Post, error)
 	GetPostById(ctx context.Context, postId uint64) (*entity.Post, error)
 	GetPostArchiveList(ctx context.Context) ([]*entity.Post, error)
 	GetPostAbout(ctx context.Context) (*entity.Post, error)
+	SearchByTitle(ctx context.Context, kw string, page, limit int) ([]*entity.Post, error)
 }
 
 type PostDomain struct {
@@ -34,12 +35,12 @@ func (ds *PostDomain) GetPostStat(ctx context.Context) ([]do.PostStat, error) {
 }
 
 // 获取文章列表
-func (ds *PostDomain) GetPostList(ctx context.Context, cateId uint64, page, limit int) ([]entity.Post, error) {
+func (ds *PostDomain) GetPostList(ctx context.Context, cateId uint64, page, limit int) ([]*entity.Post, error) {
 	if page <= 0 {
-		page = 1 // 默认第1页
+		page = defaultPage // 默认第1页
 	}
 	if limit <= 0 {
-		limit = 10 // 默认一页10条数据
+		limit = defaultLimit // 默认一页10条数据
 	}
 	return ds.postRepo.GetPostList(ctx, cateId, page, limit)
 }
@@ -71,4 +72,15 @@ func (ds *PostDomain) GetPostAbout(ctx context.Context) (*entity.Post, error) {
 		return nil, errorx.PostNotFound
 	}
 	return post, nil
+}
+
+// 根据标题搜索文章
+func (ds *PostDomain) SearchByTitle(ctx context.Context, kw string, page, limit int) ([]*entity.Post, error) {
+	if page <= 0 {
+		page = defaultPage // 默认第1页
+	}
+	if limit <= 0 {
+		limit = defaultLimit // 默认一页10条数据
+	}
+	return ds.postRepo.SearchByTitle(ctx, kw, page, limit)
 }

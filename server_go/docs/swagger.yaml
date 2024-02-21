@@ -33,25 +33,6 @@ definitions:
       user_id:
         type: integer
     type: object
-  do.PostSmall:
-    properties:
-      cate_id:
-        type: integer
-      created_at:
-        description: '"2006-01-02 15:05:05"'
-        type: string
-      id:
-        type: integer
-      title:
-        type: string
-      title_en:
-        type: string
-      updated_at:
-        description: 同上
-        type: string
-      user_id:
-        type: integer
-    type: object
   do.UserTiny:
     properties:
       id:
@@ -173,7 +154,7 @@ definitions:
     properties:
       post_list:
         items:
-          $ref: '#/definitions/do.PostSmall'
+          $ref: '#/definitions/do.PostDetail'
         type: array
       total:
         type: integer
@@ -300,6 +281,35 @@ paths:
           schema:
             $ref: '#/definitions/resp.PostListResp'
       summary: 文章列表
+      tags:
+      - post
+  /api/v1/post/search:
+    get:
+      consumes:
+      - application/json
+      description: 根据标题搜索文章列表
+      parameters:
+      - description: 搜索关键字
+        in: query
+        name: kw
+        required: true
+        type: string
+      - in: query
+        minimum: 1
+        name: limit
+        type: integer
+      - in: query
+        minimum: 1
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/resp.PostListResp'
+      summary: 文章搜索
       tags:
       - post
   /api/v1/user/signin:

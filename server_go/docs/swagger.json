@@ -176,6 +176,50 @@
                 }
             }
         },
+        "/api/v1/post/search": {
+            "get": {
+                "description": "根据标题搜索文章列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "post"
+                ],
+                "summary": "文章搜索",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "搜索关键字",
+                        "name": "kw",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/resp.PostListResp"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/user/signin": {
             "post": {
                 "description": "检查用户是否存在，密码是否正确，如果正常，返回用户token",
@@ -335,34 +379,6 @@
                 },
                 "user": {
                     "$ref": "#/definitions/do.UserTiny"
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "do.PostSmall": {
-            "type": "object",
-            "properties": {
-                "cate_id": {
-                    "type": "integer"
-                },
-                "created_at": {
-                    "description": "\"2006-01-02 15:05:05\"",
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "title_en": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "description": "同上",
-                    "type": "string"
                 },
                 "user_id": {
                     "type": "integer"
@@ -545,7 +561,7 @@
                 "post_list": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/do.PostSmall"
+                        "$ref": "#/definitions/do.PostDetail"
                     }
                 },
                 "total": {

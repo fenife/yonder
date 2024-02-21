@@ -133,3 +133,33 @@ func (ctrl *PostHandler) GetPostAbout(c *gin.Context) {
 
 	renderx.SuccOutput(c, detail)
 }
+
+// SearchPostByTitle godoc
+// @Summary      文章搜索
+// @Description	 根据标题搜索文章列表
+// @Tags         post
+// @Accept       json
+// @Produce      json
+// @Param        object query  req.SearchPostReq	false "查询参数"
+// @Success      200  {object}  resp.PostListResp
+// @Router       /api/v1/post/search [get]
+func (ctrl *PostHandler) SearchPostByTitle(c *gin.Context) {
+	var postReq req.SearchPostReq
+	if err := c.ShouldBindQuery(&postReq); err != nil {
+		logx.Ctx(c).With("error", err).Errorf("param error")
+		renderx.ErrOutput(c, errorx.ParamInvalid)
+		return
+	}
+
+	postDetails, err := ctrl.postApp.SearchPostByTitle(c, postReq.KeyWord, postReq.Page, postReq.Limit)
+	if err != nil {
+		logx.Ctx(c).With("error", err).Errorf("get posts failed")
+		renderx.ErrOutput(c, err)
+		return
+	}
+	result := resp.PostListResp{
+		Total:    len(postDetails),
+		PostList: postDetails,
+	}
+	renderx.SuccOutput(c, result)
+}

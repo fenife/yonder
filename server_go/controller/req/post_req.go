@@ -17,3 +17,9 @@ type GetPostArchiveReq struct {
 type GetPostAboutReq struct {
 	ContentType string `form:"ct" binding:"omitempty,oneof=html md"`
 }
+
+type SearchPostReq struct {
+	KeyWord string `form:"kw" binding:"required"` // 搜索关键字
+	Page    int    `form:"page" binding:"omitempty,gte=1"`
+	Limit   int    `form:"limit" binding:"omitempty,gte=1"`
+}

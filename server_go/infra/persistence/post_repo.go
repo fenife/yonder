@@ -28,8 +28,8 @@ func (r *PostRepo) GetPostStat(ctx context.Context) ([]do.PostStat, error) {
 	return postStats, err
 }
 
-func (r *PostRepo) GetPostList(ctx context.Context, cateId uint64, page, limit int) ([]entity.Post, error) {
-	var posts []entity.Post
+func (r *PostRepo) GetPostList(ctx context.Context, cateId uint64, page, limit int) ([]*entity.Post, error) {
+	var posts []*entity.Post
 	tx := r.db.WithContext(ctx)
 	if cateId > 0 {
 		tx = tx.Where("cate_id = ?", cateId)
@@ -65,4 +65,13 @@ func (r *PostRepo) FindByTitle(ctx context.Context, name string) (*entity.Post, 
 		return &post, nil
 	}
 	return &post, err
+}
+
+func (r *PostRepo) SearchByTitle(ctx context.Context, kw string, page, limit int) ([]*entity.Post, error) {
+	var posts []*entity.Post
+	offset := (page - 1) * limit
+	err := r.db.WithContext(ctx).Preload("User").Preload("Category").
+		Omit("content").Where("title like ?", "%"+kw+"%").Order("id desc").
+		Offset(offset).Limit(limit).Find(&posts).Error
+	return posts, err
 }

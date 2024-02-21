@@ -5,6 +5,11 @@ import (
 	"server-go/domain/repo"
 )
 
+const (
+	defaultPage  = 1
+	defaultLimit = 10
+)
+
 type DomainServices struct {
 	UserDomain     IUserDomain
 	CategoryDomain ICategoryDomain
