@@ -1,4 +1,6 @@
 
+.PHONY: run rund stop
+
 ubuntu-base = ubuntu-base
 yonder-frontend = yonder-frontend
 yonder-server-py = yonder-server-py
@@ -41,12 +43,13 @@ format:
 	find . -name "*.sh" | xargs dos2unix
 
 # all
-up: format bu bf bs
+run: format bu bf bs
 	docker compose -f dockerbuild/docker-compose.yml up
 
-upd: format bu bf bs
+rund: format bu bf bs
 	find . -name "*.sh" | xargs dos2unix
 	docker compose -f dockerbuild/docker-compose.yml up -d
 
-down:
+stop:
 	docker compose -f dockerbuild/docker-compose.yml down
+
