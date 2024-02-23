@@ -4,6 +4,7 @@
 ubuntu-base = ubuntu-base
 yonder-frontend = yonder-frontend
 yonder-server-py = yonder-server-py
+yonder-server-go = yonder-server-go
 
 # ubuntu base
 
@@ -24,29 +25,42 @@ rf: bf
 ef: bf
 	docker run --rm -it $(yonder-frontend) bash
 
-# server
+# server_py
 
-bs: bs
+build-py: 
 	docker build -f dockerbuild/dockerfile.server.py -t $(yonder-server-py) .
 
-rs: bs
-	docker run --name $(yonder-server-py) --rm -it -p 6070:6070 $(yonder-server-py) 
+run-py: build-py
+	docker run --name $(yonder-server-py) --rm -it -p 8010:8010 $(yonder-server-py) 
 
-es: bs
+enter-py: build-py
 	docker run --rm -it $(yonder-server-py) bash
 
-as: 
+py: 
 	docker exec -it $(yonder-server-py) bash
+
+# server_go
+build-go: 
+	docker build -f dockerbuild/dockerfile.server.go -t $(yonder-server-go) .
+
+run-go: build-go
+	docker run --name $(yonder-server-go) --rm -it -p 8020:8020 $(yonder-server-go) 
+
+enter-go: build-go
+	docker run --rm -it $(yonder-server-go) bash
+
+go: 
+	docker exec -it $(yonder-server-go) bash
 
 # bash 脚本文件换行符格式化
 format:
 	find . -name "*.sh" | xargs dos2unix
 
 # all
-run: format bu bf bs
+run: format bu bf build-py 
 	docker compose -f dockerbuild/docker-compose.yml up
 
-rund: format bu bf bs
+rund: format bu bf build-py
 	find . -name "*.sh" | xargs dos2unix
 	docker compose -f dockerbuild/docker-compose.yml up -d
 

@@ -5,7 +5,7 @@ COPY server_py/requirements.txt /tmp/
 RUN pip3 install -r /tmp/requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 ARG YONDER_HOME=/yonder
-ARG SERVER_DIR=/yonder/server_py
+ARG SERVER_DIR=/yonder/server_go
 
 RUN mkdir -p ${SERVER_DIR}
 WORKDIR ${SERVER_DIR}

@@ -14,13 +14,11 @@ stop:
 py:
 	docker exec -it yonder-server-py-dev /bin/bash
 
-dev-es:
+dev-py:
 	docker run --rm -it -v .:/yonder yonder-server-py:dev /yonder/server_py/start-dev.sh
 
-bg:
+build-go:
 	docker build -f dockerfile.server.go -t yonder-server-go:dev ..
 
-ag:
+go:
 	docker exec -it yonder-server-go-dev /bin/bash
-
-
