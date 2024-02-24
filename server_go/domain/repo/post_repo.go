@@ -13,4 +13,6 @@ type IPostRepo interface {
 	GetPostArchiveList(ctx context.Context) ([]*entity.Post, error)
 	FindByTitle(ctx context.Context, name string) (*entity.Post, error)
 	SearchByTitle(ctx context.Context, kw string, page, limit int) ([]*entity.Post, error)
+	GetPrePost(ctx context.Context, postId uint64) (*entity.Post, error)
+	GetNextPost(ctx context.Context, postId uint64) (*entity.Post, error)
 }

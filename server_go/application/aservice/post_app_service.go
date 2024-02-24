@@ -6,6 +6,7 @@ import (
 	"server-go/domain/do"
 	"server-go/domain/dservice"
 	"server-go/domain/entity"
+	"server-go/pkg/logx"
 	"server-go/pkg/md2html"
 	"sort"
 )
@@ -17,7 +18,7 @@ const (
 
 type IPostApp interface {
 	GetPostList(ctx context.Context, cateId uint64, page, limit int) ([]*do.PostDetail, error)
-	GetPostDetail(ctx context.Context, postId uint64, contentType string) (*dto.PostDetail, error)
+	GetPostDetail(ctx context.Context, postId uint64, contentType string) (*dto.PostDetailWithPreNext, error)
 	GetPostArchiveList(ctx context.Context) ([]*dto.PostArchiveItem, error)
 	GetPostAbout(ctx context.Context, contentType string) (*dto.PostDetail, error)
 	SearchPostByTitle(ctx context.Context, kw string, page, limit int) ([]*do.PostDetail, error)
@@ -54,12 +55,29 @@ func (app *PostApp) GetPostList(ctx context.Context, cateId uint64, page, limit 
 }
 
 // 获取文章详情
-func (app *PostApp) GetPostDetail(ctx context.Context, postId uint64, contentType string) (*dto.PostDetail, error) {
+func (app *PostApp) GetPostDetail(ctx context.Context, postId uint64, contentType string) (*dto.PostDetailWithPreNext, error) {
 	post, err := app.postDomain.GetPostById(ctx, postId)
 	if err != nil {
 		return nil, err
 	}
-	return app.postToDetailWithContent(post, contentType)
+	detail, err := app.postToDetailWithContent(post, contentType)
+	if err != nil {
+		return nil, err
+	}
+	prePost, err := app.postDomain.GetPrePost(ctx, post.ID)
+	if err != nil {
+		logx.Ctx(ctx).With("error", err).Errorf("get pre post failed: %v", err)
+	}
+	nextPost, err := app.postDomain.GetNextPost(ctx, post.ID)
+	if err != nil {
+		logx.Ctx(ctx).With("error", err).Errorf("get next post failed: %v", err)
+	}
+	result := dto.PostDetailWithPreNext{
+		Post: detail,
+		Pre:  prePost.ToDetail(),
+		Next: nextPost.ToDetail(),
+	}
+	return &result, nil
 }
 
 // 获取归档文章列表

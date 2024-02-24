@@ -433,6 +433,48 @@
                 }
             }
         },
+        "dto.PostDetail": {
+            "type": "object",
+            "properties": {
+                "cate_id": {
+                    "type": "integer"
+                },
+                "category": {
+                    "$ref": "#/definitions/do.CategoryTiny"
+                },
+                "content": {
+                    "description": "文章详情",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "\"2006-01-02 15:05:05\"",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "title_en": {
+                    "type": "string"
+                },
+                "toc": {
+                    "description": "markdown的目录",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "同上",
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/do.UserTiny"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "renderx.Response": {
             "type": "object",
             "properties": {
@@ -520,38 +562,14 @@
         "resp.PostDetailResp": {
             "type": "object",
             "properties": {
-                "cate_id": {
-                    "type": "integer"
+                "next": {
+                    "$ref": "#/definitions/do.PostDetail"
                 },
-                "category": {
-                    "$ref": "#/definitions/do.CategoryTiny"
+                "post": {
+                    "$ref": "#/definitions/dto.PostDetail"
                 },
-                "content": {
-                    "description": "文章详情",
-                    "type": "string"
-                },
-                "created_at": {
-                    "description": "\"2006-01-02 15:05:05\"",
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "title_en": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "description": "同上",
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/do.UserTiny"
-                },
-                "user_id": {
-                    "type": "integer"
+                "pre": {
+                    "$ref": "#/definitions/do.PostDetail"
                 }
             }
         },

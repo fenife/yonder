@@ -38,6 +38,9 @@ func (u *User) IsValid() bool {
 }
 
 func (u *User) ToTiny() *do.UserTiny {
+	if u == nil {
+		return nil
+	}
 	newUser := do.UserTiny{
 		ID:   u.ID,
 		Name: u.Name,
@@ -46,6 +49,9 @@ func (u *User) ToTiny() *do.UserTiny {
 }
 
 func (u *User) ToSmall() *do.UserSmall {
+	if u == nil {
+		return nil
+	}
 	newUser := do.UserSmall{
 		ID:        u.ID,
 		CreatedAt: u.CreatedAt.Format(timeFormatLayout),

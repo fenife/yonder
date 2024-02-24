@@ -21,6 +21,9 @@ func (p *Post) IsValid() bool {
 }
 
 func (p *Post) ToSmall() *do.PostSmall {
+	if p == nil {
+		return nil
+	}
 	newPost := do.PostSmall{
 		ID:        p.ID,
 		CreatedAt: p.CreatedAt.Format(timeFormatLayout),
@@ -34,6 +37,9 @@ func (p *Post) ToSmall() *do.PostSmall {
 }
 
 func (p *Post) ToDetail() *do.PostDetail {
+	if p == nil {
+		return nil
+	}
 	detail := do.PostDetail{
 		PostSmall: *p.ToSmall(),
 		User:      p.User.ToTiny(),

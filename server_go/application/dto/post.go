@@ -12,3 +12,9 @@ type PostDetail struct {
 	*do.PostDetail
 	Toc string `json:"toc"` // markdown的目录
 }
+
+type PostDetailWithPreNext struct {
+	Post *PostDetail    `json:"post"`
+	Pre  *do.PostDetail `json:"pre"`
+	Next *do.PostDetail `json:"next"`
+}

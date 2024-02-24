@@ -15,6 +15,8 @@ type IPostDomain interface {
 	GetPostArchiveList(ctx context.Context) ([]*entity.Post, error)
 	GetPostAbout(ctx context.Context) (*entity.Post, error)
 	SearchByTitle(ctx context.Context, kw string, page, limit int) ([]*entity.Post, error)
+	GetPrePost(ctx context.Context, postId uint64) (*entity.Post, error)
+	GetNextPost(ctx context.Context, postId uint64) (*entity.Post, error)
 }
 
 type PostDomain struct {
@@ -83,4 +85,28 @@ func (ds *PostDomain) SearchByTitle(ctx context.Context, kw string, page, limit 
 		limit = defaultLimit // 默认一页10条数据
 	}
 	return ds.postRepo.SearchByTitle(ctx, kw, page, limit)
+}
+
+// 获取上一篇文章
+func (ds *PostDomain) GetPrePost(ctx context.Context, postId uint64) (*entity.Post, error) {
+	post, err := ds.postRepo.GetPrePost(ctx, postId)
+	if err != nil {
+		return nil, err
+	}
+	if !post.IsValid() {
+		return nil, errorx.PostNotFound
+	}
+	return post, nil
+}
+
+// 获取下一篇文章
+func (ds *PostDomain) GetNextPost(ctx context.Context, postId uint64) (*entity.Post, error) {
+	post, err := ds.postRepo.GetNextPost(ctx, postId)
+	if err != nil {
+		return nil, err
+	}
+	if !post.IsValid() {
+		return nil, errorx.PostNotFound
+	}
+	return post, nil
 }

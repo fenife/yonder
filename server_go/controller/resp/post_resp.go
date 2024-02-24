@@ -11,7 +11,7 @@ type PostListResp struct {
 }
 
 type PostDetailResp struct {
-	do.PostDetail
+	*dto.PostDetailWithPreNext
 }
 
 type PostArchiveResp struct {

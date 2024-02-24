@@ -14,6 +14,9 @@ func (c *Category) IsValid() bool {
 }
 
 func (c *Category) ToTiny() *do.CategoryTiny {
+	if c == nil {
+		return nil
+	}
 	newCate := do.CategoryTiny{
 		ID:   c.ID,
 		Name: c.Name,
@@ -22,6 +25,9 @@ func (c *Category) ToTiny() *do.CategoryTiny {
 }
 
 func (c *Category) ToSmall() *do.CategorySmall {
+	if c == nil {
+		return nil
+	}
 	newCate := do.CategorySmall{
 		ID:        c.ID,
 		CreatedAt: c.CreatedAt.Format(timeFormatLayout),

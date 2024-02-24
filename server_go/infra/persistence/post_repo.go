@@ -75,3 +75,25 @@ func (r *PostRepo) SearchByTitle(ctx context.Context, kw string, page, limit int
 		Offset(offset).Limit(limit).Find(&posts).Error
 	return posts, err
 }
+
+func (r *PostRepo) GetPrePost(ctx context.Context, postId uint64) (*entity.Post, error) {
+	var post entity.Post
+	err := r.db.WithContext(ctx).Preload("User").Preload("Category").
+		Where("id < ?", postId).Order("id desc").First(&post).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		// 可通过ID判断是否存在
+		return &post, nil
+	}
+	return &post, err
+}
+
+func (r *PostRepo) GetNextPost(ctx context.Context, postId uint64) (*entity.Post, error) {
+	var post entity.Post
+	err := r.db.WithContext(ctx).Preload("User").Preload("Category").
+		Where("id > ?", postId).Order("id asc").First(&post).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		// 可通过ID判断是否存在
+		return &post, nil
+	}
+	return &post, err
+}
