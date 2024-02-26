@@ -6,24 +6,26 @@
       </div>
       <!--<div class="app-header-left">-->
       <div>
-        <MenuItem name="home">Home</MenuItem>
-        <MenuItem name="archive" >Archive</MenuItem>
-        <MenuItem name="about">About</MenuItem>
+        <MenuItem name="home">首页</MenuItem>
+        <MenuItem name="archive" >归档</MenuItem>
+        <MenuItem name="about">关于</MenuItem>
       </div>
 
       <div class="app-header-search">
         <!--<Input suffix="ios-search" placeholder="search"/>-->
-        <Input search placeholder="search ... " v-model="searchValue" @on-search="handleSearch"/>
+        <Input search placeholder="搜索 ... " v-model="searchValue" @on-search="handleSearch"/>
       </div>
-      <div class="app-header-right">
-        <div v-if="user">
-          <MenuItem name="signout">Sign out</MenuItem>
-        </div>
-        <div v-else>
-          <MenuItem name="signup">Sign up</MenuItem>
-          <MenuItem name="signin">Sign in</MenuItem>
-        </div>
-      </div>
+
+<!--      <div class="app-header-right">-->
+<!--        <div v-if="user">-->
+<!--          <MenuItem name="signout">退出</MenuItem>-->
+<!--        </div>-->
+<!--        <div v-else>-->
+<!--          <MenuItem name="signin">登陆</MenuItem>-->
+<!--          <MenuItem name="signup">注册</MenuItem>-->
+<!--        </div>-->
+<!--      </div>-->
+
     </Menu>
   </div>
 </template>
@@ -71,7 +73,7 @@
           this.$router.push("/search/" + this.searchValue)
           this.searchValue = ''
         } else {
-          this.$Message.warning("input something to search")
+          this.$Message.warning("搜索内容不能为空")
         }
       },
       onSignout () {
@@ -82,7 +84,7 @@
               this.$Message.info({
                 duration: 3,
                 closable: true,
-                content: "signout success"
+                content: "登陆成功"
               })
               // fresh user state and reload page
               window.location.href = '/'
