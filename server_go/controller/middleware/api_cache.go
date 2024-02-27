@@ -11,16 +11,16 @@ import (
 func ApiCacheMiddleware(apiCache cache.IApiCache) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		key := c.Request.RequestURI
-		resp, err := apiCache.GetApiCache(c, key)
+		respData, err := apiCache.GetApiCache(c, key)
 		if err != nil {
 			logx.Ctx(c).With("error", err).Errorf("get api cache failed")
 			renderx.ErrOutput(c, err)
 			c.Abort()
 			return
 		}
-		if resp != nil {
+		if respData != nil {
 			logx.Ctx(c).With("key", key).Infof("get resp from cache")
-			renderx.SuccOutput(c, resp)
+			renderx.SuccOutput(c, respData)
 			c.Abort()
 			return
 		}
