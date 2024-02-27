@@ -17,7 +17,7 @@ const (
 )
 
 type IPostApp interface {
-	GetPostList(ctx context.Context, cateId uint64, page, limit int) ([]*do.PostDetail, error)
+	GetPostList(ctx context.Context, cateId uint64, page, limit int) (posts []*do.PostDetail, total int, err error)
 	GetPostDetail(ctx context.Context, postId uint64, contentType string) (*dto.PostDetailWithPreNext, error)
 	GetPostArchiveList(ctx context.Context) ([]*dto.PostArchiveItem, error)
 	GetPostAbout(ctx context.Context, contentType string) (*dto.PostDetail, error)
@@ -42,16 +42,16 @@ func NewPostApp(postDomain dservice.IPostDomain, cateDomain dservice.ICategoryDo
 var _ IPostApp = &PostApp{}
 
 // 获取文章列表
-func (app *PostApp) GetPostList(ctx context.Context, cateId uint64, page, limit int) ([]*do.PostDetail, error) {
-	posts, err := app.postDomain.GetPostList(ctx, cateId, page, limit)
+func (app *PostApp) GetPostList(ctx context.Context, cateId uint64, page, limit int) (postList []*do.PostDetail, total int, err error) {
+	posts, total, err := app.postDomain.GetPostList(ctx, cateId, page, limit)
 	if err != nil {
-		return nil, err
+		return
 	}
-	postList := make([]*do.PostDetail, 0)
+	postList = make([]*do.PostDetail, 0)
 	for _, p := range posts {
 		postList = append(postList, p.ToDetail())
 	}
-	return postList, err
+	return postList, total, err
 }
 
 // 获取文章详情

@@ -37,7 +37,7 @@ func (ctrl *PostHandler) GetPostList(c *gin.Context) {
 		return
 	}
 
-	posts, err := ctrl.postApp.GetPostList(c, postReq.CateId, postReq.Page, postReq.Limit)
+	posts, total, err := ctrl.postApp.GetPostList(c, postReq.CateId, postReq.Page, postReq.Limit)
 	if err != nil {
 		logx.Ctx(c).With("error", err).Errorf("get posts failed")
 		renderx.ErrOutput(c, err)
@@ -45,7 +45,7 @@ func (ctrl *PostHandler) GetPostList(c *gin.Context) {
 	}
 
 	result := resp.PostListResp{
-		Total:    len(posts),
+		Total:    total,
 		PostList: posts,
 	}
 	renderx.SuccOutput(c, result)

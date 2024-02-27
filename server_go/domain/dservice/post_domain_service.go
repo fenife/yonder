@@ -10,7 +10,7 @@ import (
 
 type IPostDomain interface {
 	GetPostStat(ctx context.Context) ([]do.PostStat, error)
-	GetPostList(ctx context.Context, cateId uint64, page, limit int) ([]*entity.Post, error)
+	GetPostList(ctx context.Context, cateId uint64, page, limit int) (posts []*entity.Post, total int, err error)
 	GetPostById(ctx context.Context, postId uint64) (*entity.Post, error)
 	GetPostArchiveList(ctx context.Context) ([]*entity.Post, error)
 	GetPostAbout(ctx context.Context) (*entity.Post, error)
@@ -37,14 +37,20 @@ func (ds *PostDomain) GetPostStat(ctx context.Context) ([]do.PostStat, error) {
 }
 
 // 获取文章列表
-func (ds *PostDomain) GetPostList(ctx context.Context, cateId uint64, page, limit int) ([]*entity.Post, error) {
+func (ds *PostDomain) GetPostList(ctx context.Context, cateId uint64, page, limit int) (posts []*entity.Post, total int, err error) {
 	if page <= 0 {
 		page = defaultPage // 默认第1页
 	}
 	if limit <= 0 {
 		limit = defaultLimit // 默认一页10条数据
 	}
-	return ds.postRepo.GetPostList(ctx, cateId, page, limit)
+	// 获取文章列表
+	posts, err = ds.postRepo.GetPostList(ctx, cateId, page, limit)
+	if err != nil {
+		return
+	}
+	total, err = ds.postRepo.GetPostTotal(ctx, cateId)
+	return
 }
 
 // 获取文章详情

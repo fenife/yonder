@@ -35,7 +35,8 @@ func (r *PostRepo) GetPostList(ctx context.Context, cateId uint64, page, limit i
 		tx = tx.Where("cate_id = ?", cateId)
 	}
 	offset := (page - 1) * limit
-	err := tx.Omit("content").Preload("User").Preload("Category").Offset(offset).Limit(limit).Find(&posts).Error
+	err := tx.Omit("content").Preload("User").Preload("Category").
+		Offset(offset).Limit(limit).Order("id desc").Find(&posts).Error
 	return posts, err
 }
 
@@ -96,4 +97,14 @@ func (r *PostRepo) GetNextPost(ctx context.Context, postId uint64) (*entity.Post
 		return &post, nil
 	}
 	return &post, err
+}
+
+// 获取可展示的文章总数
+func (r *PostRepo) GetPostTotal(ctx context.Context, cateId uint64) (total int, err error) {
+	tx := r.db.WithContext(ctx)
+	if cateId > 0 {
+		tx = tx.Where("cate_id = ?", cateId)
+	}
+	err = tx.Model(&entity.Post{}).Select("count(1) as total").Scan(&total).Error
+	return
 }
