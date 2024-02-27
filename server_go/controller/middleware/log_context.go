@@ -45,7 +45,7 @@ func LogContext() gin.HandlerFunc {
 		}
 		// swag文档api接口，不需要log响应body
 		if !strings.Contains(path, "swagger") {
-			withArgs = append(withArgs, "response", writer.body.String())
+			withArgs = append(withArgs, "response", writer.body.String(), "resp_len", writer.body.Len())
 		}
 		logx.Ctx(c).With(withArgs...).Infof("")
 	}
