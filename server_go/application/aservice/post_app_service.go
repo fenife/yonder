@@ -20,7 +20,7 @@ type IPostApp interface {
 	GetPostList(ctx context.Context, cateId uint64, page, limit int) (posts []*do.PostDetail, total int, err error)
 	GetPostDetail(ctx context.Context, postId uint64, contentType string) (*dto.PostDetailWithPreNext, error)
 	GetPostArchiveList(ctx context.Context) ([]*dto.PostArchiveItem, error)
-	GetPostAbout(ctx context.Context, contentType string) (*dto.PostDetail, error)
+	GetPostAbout(ctx context.Context, contentType string) (*dto.PostDetailWithPreNext, error)
 	SearchPostByTitle(ctx context.Context, kw string, page, limit int) ([]*do.PostDetail, error)
 }
 
@@ -80,6 +80,23 @@ func (app *PostApp) GetPostDetail(ctx context.Context, postId uint64, contentTyp
 	return &result, nil
 }
 
+func (app *PostApp) GetPostAbout(ctx context.Context, contentType string) (*dto.PostDetailWithPreNext, error) {
+	post, err := app.postDomain.GetPostAbout(ctx)
+	if err != nil {
+		return nil, err
+	}
+	detail, err := app.postToDetailWithContent(post, contentType)
+	if err != nil {
+		return nil, err
+	}
+	result := dto.PostDetailWithPreNext{
+		Post: detail,
+		Pre:  nil,
+		Next: nil,
+	}
+	return &result, nil
+}
+
 // 获取归档文章列表
 func (app *PostApp) GetPostArchiveList(ctx context.Context) ([]*dto.PostArchiveItem, error) {
 	posts, err := app.postDomain.GetPostArchiveList(ctx)
@@ -115,14 +132,6 @@ func (app *PostApp) GetPostArchiveList(ctx context.Context) ([]*dto.PostArchiveI
 		return result[i].Year > result[j].Year
 	})
 	return result, err
-}
-
-func (app *PostApp) GetPostAbout(ctx context.Context, contentType string) (*dto.PostDetail, error) {
-	post, err := app.postDomain.GetPostAbout(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return app.postToDetailWithContent(post, contentType)
 }
 
 // domain对象转换

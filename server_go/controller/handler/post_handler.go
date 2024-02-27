@@ -70,7 +70,34 @@ func (ctrl *PostHandler) GetPostDetail(c *gin.Context) {
 
 	detail, err := ctrl.postApp.GetPostDetail(c, postReq.PostId, postReq.ContentType)
 	if err != nil {
-		logx.Ctx(c).With("error", err).Errorf("get posts failed")
+		logx.Ctx(c).With("error", err).Errorf("get post failed")
+		renderx.ErrOutput(c, err)
+		return
+	}
+
+	renderx.SuccOutput(c, detail)
+}
+
+// GetPostAbout godoc
+// @Summary      about文章内容
+// @Description	 获取about文章详情，用于about页面展示
+// @Tags         post
+// @Accept       json
+// @Produce      json
+// @Param        object query  req.GetPostAboutReq	false "查询参数"
+// @Success      200  {object}  resp.PostDetailResp
+// @Router       /api/v1/post/about [get]
+func (ctrl *PostHandler) GetPostAbout(c *gin.Context) {
+	var postReq req.GetPostAboutReq
+	if err := c.ShouldBindQuery(&postReq); err != nil {
+		logx.Ctx(c).With("error", err).Errorf("param error")
+		renderx.ErrOutput(c, errorx.ParamInvalid)
+		return
+	}
+
+	detail, err := ctrl.postApp.GetPostAbout(c, postReq.ContentType)
+	if err != nil {
+		logx.Ctx(c).With("error", err).Errorf("get post failed")
 		renderx.ErrOutput(c, err)
 		return
 	}
@@ -97,7 +124,7 @@ func (ctrl *PostHandler) GetPostArchive(c *gin.Context) {
 
 	postList, err := ctrl.postApp.GetPostArchiveList(c)
 	if err != nil {
-		logx.Ctx(c).With("error", err).Errorf("get posts failed")
+		logx.Ctx(c).With("error", err).Errorf("get post failed")
 		renderx.ErrOutput(c, err)
 		return
 	}
@@ -105,33 +132,6 @@ func (ctrl *PostHandler) GetPostArchive(c *gin.Context) {
 		List: postList,
 	}
 	renderx.SuccOutput(c, result)
-}
-
-// GetPostAbout godoc
-// @Summary      about文章内容
-// @Description	 获取about文章详情，用于about页面展示
-// @Tags         post
-// @Accept       json
-// @Produce      json
-// @Param        object query  req.GetPostAboutReq	false "查询参数"
-// @Success      200  {object}  resp.PostDetailResp
-// @Router       /api/v1/post/about [get]
-func (ctrl *PostHandler) GetPostAbout(c *gin.Context) {
-	var postReq req.GetPostAboutReq
-	if err := c.ShouldBindQuery(&postReq); err != nil {
-		logx.Ctx(c).With("error", err).Errorf("param error")
-		renderx.ErrOutput(c, errorx.ParamInvalid)
-		return
-	}
-
-	detail, err := ctrl.postApp.GetPostAbout(c, postReq.ContentType)
-	if err != nil {
-		logx.Ctx(c).With("error", err).Errorf("get posts failed")
-		renderx.ErrOutput(c, err)
-		return
-	}
-
-	renderx.SuccOutput(c, detail)
 }
 
 // SearchPostByTitle godoc
@@ -153,7 +153,7 @@ func (ctrl *PostHandler) SearchPostByTitle(c *gin.Context) {
 
 	postDetails, err := ctrl.postApp.SearchPostByTitle(c, postReq.KeyWord, postReq.Page, postReq.Limit)
 	if err != nil {
-		logx.Ctx(c).With("error", err).Errorf("get posts failed")
+		logx.Ctx(c).With("error", err).Errorf("search posts failed")
 		renderx.ErrOutput(c, err)
 		return
 	}
