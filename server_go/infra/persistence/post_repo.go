@@ -35,7 +35,7 @@ func (r *PostRepo) GetPostList(ctx context.Context, cateId uint64, page, limit i
 		tx = tx.Where("cate_id = ?", cateId)
 	}
 	offset := (page - 1) * limit
-	err := tx.Offset(offset).Limit(limit).Omit("content").Find(&posts).Error
+	err := tx.Omit("content").Preload("User").Preload("Category").Offset(offset).Limit(limit).Find(&posts).Error
 	return posts, err
 }
 

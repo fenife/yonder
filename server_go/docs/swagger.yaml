@@ -40,13 +40,11 @@ definitions:
       name:
         type: string
     type: object
-  dto.CategoryList:
+  dto.CategoryListItem:
     properties:
-      cate_id:
-        description: 分类id
+      id:
         type: integer
-      cate_name:
-        description: 分类名称
+      name:
         type: string
       post_count:
         description: 该分类下的文章数
@@ -140,7 +138,7 @@ definitions:
     properties:
       cate_list:
         items:
-          $ref: '#/definitions/dto.CategoryList'
+          $ref: '#/definitions/dto.CategoryListItem'
         type: array
       total:
         description: 文章分类的总数目

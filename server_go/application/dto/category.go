@@ -6,8 +6,9 @@ Data Transfer Object (dto)
 
 package dto
 
-type CategoryList struct {
-	CateId    uint64 `json:"cate_id"`    // 分类id
-	CateName  string `json:"cate_name"`  // 分类名称
-	PostCount int    `json:"post_count"` // 该分类下的文章数
+import "server-go/domain/do"
+
+type CategoryListItem struct {
+	*do.CategoryTiny
+	PostCount int `json:"post_count"` // 该分类下的文章数
 }

@@ -402,15 +402,13 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.CategoryList": {
+        "dto.CategoryListItem": {
             "type": "object",
             "properties": {
-                "cate_id": {
-                    "description": "分类id",
+                "id": {
                     "type": "integer"
                 },
-                "cate_name": {
-                    "description": "分类名称",
+                "name": {
                     "type": "string"
                 },
                 "post_count": {
@@ -545,7 +543,7 @@ const docTemplate = `{
                 "cate_list": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dto.CategoryList"
+                        "$ref": "#/definitions/dto.CategoryListItem"
                     }
                 },
                 "total": {

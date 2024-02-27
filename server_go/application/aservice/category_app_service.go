@@ -10,7 +10,7 @@ import (
 )
 
 type ICategoryApp interface {
-	GetCategoryList(ctx context.Context) ([]dto.CategoryList, error)
+	GetCategoryList(ctx context.Context) ([]dto.CategoryListItem, error)
 }
 
 type CategoryApp struct {
@@ -27,7 +27,7 @@ func NewCategoryApp(categoryDomain dservice.ICategoryDomain, postDomain dservice
 
 var _ ICategoryApp = &CategoryApp{}
 
-func (app *CategoryApp) GetCategoryList(ctx context.Context) ([]dto.CategoryList, error) {
+func (app *CategoryApp) GetCategoryList(ctx context.Context) ([]dto.CategoryListItem, error) {
 	cates, err := app.categoryDomain.GetCategoryList(ctx)
 	if err != nil {
 		return nil, err
@@ -43,11 +43,10 @@ func (app *CategoryApp) GetCategoryList(ctx context.Context) ([]dto.CategoryList
 		statMaps[p.CateId] = p
 	}
 
-	res := make([]dto.CategoryList, 0)
+	res := make([]dto.CategoryListItem, 0)
 	for _, c := range cates {
-		d := dto.CategoryList{
-			CateId:   c.ID,
-			CateName: c.Name,
+		d := dto.CategoryListItem{
+			CategoryTiny: c.ToTiny(),
 		}
 		// 该分类下可展示文章的数目
 		if p, ok := statMaps[c.ID]; ok {
@@ -61,7 +60,7 @@ func (app *CategoryApp) GetCategoryList(ctx context.Context) ([]dto.CategoryList
 		if res[i].PostCount != res[j].PostCount {
 			return res[i].PostCount > res[j].PostCount
 		}
-		return strings.Compare(res[i].CateName, res[j].CateName) == -1
+		return strings.Compare(res[i].Name, res[j].Name) == -1
 	})
 
 	return res, nil

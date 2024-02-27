@@ -95,8 +95,8 @@ func SuccOutput(c *gin.Context, data ...interface{}) {
 		return
 	}
 
+	// 用data生成新的resp
 	r = NewRender(http.StatusOK, ErrCodeOK, "ok", d)
-
 	c.JSON(r.StatusCode, r.Response)
 	return
 }
