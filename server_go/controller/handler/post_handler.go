@@ -151,14 +151,14 @@ func (ctrl *PostHandler) SearchPostByTitle(c *gin.Context) {
 		return
 	}
 
-	postDetails, err := ctrl.postApp.SearchPostByTitle(c, postReq.KeyWord, postReq.Page, postReq.Limit)
+	postDetails, total, err := ctrl.postApp.SearchPostByTitle(c, postReq.KeyWord, postReq.Page, postReq.Limit)
 	if err != nil {
 		logx.Ctx(c).With("error", err).Errorf("search posts failed")
 		renderx.ErrOutput(c, err)
 		return
 	}
 	result := resp.PostListResp{
-		Total:    len(postDetails),
+		Total:    total,
 		PostList: postDetails,
 	}
 	renderx.SuccOutput(c, result)

@@ -68,13 +68,18 @@ func (r *PostRepo) FindByTitle(ctx context.Context, name string) (*entity.Post, 
 	return &post, err
 }
 
-func (r *PostRepo) SearchByTitle(ctx context.Context, kw string, page, limit int) ([]*entity.Post, error) {
-	var posts []*entity.Post
+func (r *PostRepo) SearchByTitle(ctx context.Context, kw string, page, limit int) (posts []*entity.Post, total int, err error) {
 	offset := (page - 1) * limit
-	err := r.db.WithContext(ctx).Preload("User").Preload("Category").
-		Omit("content").Where("title like ?", "%"+kw+"%").Order("id desc").
-		Offset(offset).Limit(limit).Find(&posts).Error
-	return posts, err
+	err = r.db.WithContext(ctx).Model(&entity.Post{}).Where("title like ?", "%"+kw+"%").Omit("content").
+		Preload("User").Preload("Category").Order("id desc").Offset(offset).Limit(limit).Find(&posts).Error
+	if err != nil {
+		return
+	}
+
+	// 总数目
+	err = r.db.WithContext(ctx).Model(&entity.Post{}).Where("title like ?", "%"+kw+"%").
+		Select("count(1) as total").Scan(&total).Error
+	return posts, total, err
 }
 
 func (r *PostRepo) GetPrePost(ctx context.Context, postId uint64) (*entity.Post, error) {

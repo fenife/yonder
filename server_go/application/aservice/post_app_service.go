@@ -21,7 +21,7 @@ type IPostApp interface {
 	GetPostDetail(ctx context.Context, postId uint64, contentType string) (*dto.PostDetailWithPreNext, error)
 	GetPostArchiveList(ctx context.Context) ([]*dto.PostArchiveItem, error)
 	GetPostAbout(ctx context.Context, contentType string) (*dto.PostDetailWithPreNext, error)
-	SearchPostByTitle(ctx context.Context, kw string, page, limit int) ([]*do.PostDetail, error)
+	SearchPostByTitle(ctx context.Context, kw string, page, limit int) (posts []*do.PostDetail, total int, err error)
 }
 
 type PostApp struct {
@@ -151,15 +151,15 @@ func (app *PostApp) postToDetailWithContent(post *entity.Post, contentType strin
 	return detail, nil
 }
 
-func (app *PostApp) SearchPostByTitle(ctx context.Context, kw string, page, limit int) ([]*do.PostDetail, error) {
-	posts, err := app.postDomain.SearchByTitle(ctx, kw, page, limit)
+func (app *PostApp) SearchPostByTitle(ctx context.Context, kw string, page, limit int) (posts []*do.PostDetail, total int, err error) {
+	postList, total, err := app.postDomain.SearchByTitle(ctx, kw, page, limit)
 	if err != nil {
-		return nil, err
+		return
 	}
-	results := make([]*do.PostDetail, 0)
-	for _, v := range posts {
+	posts = make([]*do.PostDetail, 0)
+	for _, v := range postList {
 		p := v
-		results = append(results, p.ToDetail())
+		posts = append(posts, p.ToDetail())
 	}
-	return results, nil
+	return
 }

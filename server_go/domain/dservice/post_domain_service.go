@@ -14,7 +14,7 @@ type IPostDomain interface {
 	GetPostById(ctx context.Context, postId uint64) (*entity.Post, error)
 	GetPostArchiveList(ctx context.Context) ([]*entity.Post, error)
 	GetPostAbout(ctx context.Context) (*entity.Post, error)
-	SearchByTitle(ctx context.Context, kw string, page, limit int) ([]*entity.Post, error)
+	SearchByTitle(ctx context.Context, kw string, page, limit int) (posts []*entity.Post, total int, err error)
 	GetPrePost(ctx context.Context, postId uint64) (*entity.Post, error)
 	GetNextPost(ctx context.Context, postId uint64) (*entity.Post, error)
 }
@@ -83,7 +83,7 @@ func (ds *PostDomain) GetPostAbout(ctx context.Context) (*entity.Post, error) {
 }
 
 // 根据标题搜索文章
-func (ds *PostDomain) SearchByTitle(ctx context.Context, kw string, page, limit int) ([]*entity.Post, error) {
+func (ds *PostDomain) SearchByTitle(ctx context.Context, kw string, page, limit int) (posts []*entity.Post, total int, err error) {
 	if page <= 0 {
 		page = defaultPage // 默认第1页
 	}
