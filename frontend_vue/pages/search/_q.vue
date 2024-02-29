@@ -1,7 +1,7 @@
 <template>
   <div>
     <Card :bordered="false" class="search-info">
-      <p slot="title" class="title">search:</p>
+      <p slot="title" class="title">search: （{{total}}篇）</p>
       <p class="content">{{q}}</p>
     </Card>
     <article-item
@@ -10,12 +10,15 @@
       :key="ar.id"
     >
     </article-item>
+
+    <!-- 分页-->
     <Page
       v-if="total > pageSize "
       :total="total"
       :page-size="pageSize"
       @on-change="onPageChange"
     ></Page>
+
     <!--<div v-for="ar in articles">{{ar}}</div>-->
   </div>
 </template>
@@ -47,18 +50,18 @@
         request.searchArticle({
           client: ctx.req,
           query: {
-            kw: searchValue
+            kw: searchValue,
           }
         })
       ]).then(resp => {
         ctx.store.commit('setSearch', searchValue)
         // console.log("get data:", resp)
         // categories
-        let cates = resp[0].data || []
+        let cates = resp[0].data.cate_list || []
         ctx.store.commit('setCates', cates)
 
         // articles
-        let articles = resp[1].data.articles || []
+        let articles = resp[1].data.post_list || []
         ctx.store.commit('setArticles', articles)
 
         let total = resp[1].data.total || 0
@@ -82,9 +85,9 @@
             page: page,
           }
         }).then(resp => {
-          if (resp.code === 0) {
+          if (resp.result.code === 0) {
             // articles
-            let articles = resp.data.articles || []
+            let articles = resp.data.post_list || []
             this.$store.commit('setArticles', articles)
             this.articles = articles
 
@@ -95,7 +98,7 @@
             this.$Message.error({
               duration: 3,
               closable: true,
-              content: resp.message || resp.msg,
+              content: resp.result.message || resp.result.msg,
             })
           }
         }).catch(err => {

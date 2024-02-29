@@ -42,12 +42,12 @@
         // console.log("get data:", resp)
 
         // categories
-        let cates = resp[0].data || []
-        // console.log("cates:", cates)
+        let cates = resp[0].data.cate_list || []
+        // console.log("home cates:", cates)
         ctx.store.commit('setCates', cates)
 
         // articles
-        let articles = resp[1].data.articles || []
+        let articles = resp[1].data.post_list || []
         // console.log("articles:", articles)
         ctx.store.commit('setArticles', articles)
 
@@ -71,9 +71,9 @@
             page: page,
           }
         }).then(resp => {
-          if (resp.code === 0) {
+          if (resp.result.code === 0) {
             // articles
-            let articles = resp.data.articles || []
+            let articles = resp.data.post_list || []
             // console.log("articles", articles)
             this.$store.commit('setArticles', articles)
             this.articles = articles
@@ -85,7 +85,7 @@
             this.$Message.error({
               duration: 3,
               closable: true,
-              content: resp.message || resp.msg,
+              content: resp.message || resp.result.msg,
             })
           }
         }).catch(err => {

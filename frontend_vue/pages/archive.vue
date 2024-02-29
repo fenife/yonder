@@ -27,7 +27,7 @@
         // console.log("get data:", resp)
 
         // categories
-        let artListByYear = resp[0].data || {}
+        let artListByYear = resp[0].data.list || {}
         return {
           artListByYear: artListByYear,
         }

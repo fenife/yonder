@@ -22,11 +22,11 @@
           client: ctx.req
         })
       ]).then(resp => {
-        // console.log("get data:", resp)
+        console.log("get data:", resp)
 
         // categories
-        let cates = resp[0].data || []
-        // console.log("cates", cates)
+        let cates = resp[0].data.cate_list || []
+        console.log("cates", cates)
         // ctx.store.commit('setCates', cates)
 
         return {

@@ -3,7 +3,7 @@
     <Card>
       <p slot="title" class="card-title">{{artOfTheYear.year}} 年（{{artOfTheYear.count}} 篇）</p>
       <Timeline>
-        <TimelineItem v-for="art in artOfTheYear.art_list" :key="art.id" class="time-item">
+        <TimelineItem v-for="art in artOfTheYear.post_list" :key="art.id" class="time-item">
           <span class="time">{{art.created_at}}</span>
           <a class="content" @click="toArticle(art.id)">{{art.title}}</a>
         </TimelineItem>

@@ -41,13 +41,13 @@
     </Card>
 
     <!-- 添加文章目录 -->
-    <div v-if="toc" class="catalogue">
-      <Card dis-hover>
-        <div class="article-toc">
-          <div v-html="toc"></div>
-        </div>
-      </Card>
-    </div>
+<!--    <div v-if="toc" class="catalogue">-->
+<!--      <Card dis-hover>-->
+<!--        <div class="article-toc">-->
+<!--          <div v-html="toc"></div>-->
+<!--        </div>-->
+<!--      </Card>-->
+<!--    </div>-->
 
     <Back-top></Back-top>
 
@@ -77,26 +77,26 @@
       return Promise.all([
         request.getArticleDetail({
           client: ctx.req,
-          params: {
-            id: ctx.params.id
-          },
+          // params: {
+          //   id: ctx.params.id
+          // },
           query: {
-            aid: ctx.params.id,
+            post_id: ctx.params.id,
             ct: "html"
           }
         })
       ]).then(resp => {
-        // console.log("get data:", resp)
-        if (resp[0].code !== 0) {
+        console.log("get data:", resp)
+        if (resp[0].result.code !== 0) {
           ctx.error({ message: "not found", statusCode: 404 })
         }
 
-        let result = resp[0].data
-        let article = result.article || {}
-        let toc = result.toc
-        let pre = result.pre
-        let next = result.next
-
+        let respData = resp[0].data
+        let article = respData.post || {}
+        let toc = respData.toc || ""
+        let pre = respData.pre
+        let next = respData.next
+        resp = {}
         return {
           article: article,
           toc: toc,

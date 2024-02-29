@@ -44,7 +44,7 @@
 
         <cate-item
           v-for="cate in cates"
-          v-if="cate.article_count > 0"
+          v-if="cate.post_count > 0"
           :cate="cate"
           :key="cate.id"
         >

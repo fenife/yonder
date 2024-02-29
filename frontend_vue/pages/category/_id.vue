@@ -60,7 +60,7 @@
       ]).then(resp => {
         // console.log("get data:", resp)
         // categories
-        let cates = resp[0].data || []
+        let cates = resp[0].data.cate_list || []
         ctx.store.commit('setCates', cates)
 
         // 取出当前所属分类的详细信息
@@ -74,7 +74,7 @@
         ctx.store.commit('setCate', cate)
 
         // articles
-        let articles = resp[1].data.articles || []
+        let articles = resp[1].data.post_list || []
         ctx.store.commit('setArticles', articles)
 
         let total = resp[1].data.total || 0
@@ -95,7 +95,7 @@
         }).then(resp => {
           if (resp.code === 0) {
             // articles
-            let articles = resp.data.articles || []
+            let articles = resp.data.post_list || []
             this.$store.commit('setArticles', articles)
             this.articles = articles
 

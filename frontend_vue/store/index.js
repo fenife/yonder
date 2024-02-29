@@ -63,27 +63,29 @@ export const mutations = {
 
 export const actions = {
   nuxtServerInit( { commit }, { req } ) {
+    let user = {}
+    commit("setUser", user)
     // console.log(commit)
     // console.log('nuxtServerInit', req.headers)
-    Promise.all([
-      request.getUserInfo({ client: req }),
-    ]).then( (resp) => {
-      // console.log('nuxtServerInit, resp', resp)
-      let user = resp[0].data
-
-      // 如果是空对象{}，要转化为null，否则后面vue判断user是否存在时会出错，eg:
-      // Header.vue, v-if="user"
-      // 判断user是否为空对象{}；如果是{}，则肯定不存在属性id
-      // 也有其他的判断方法，具体可google
-      // if (!user.id) {
-      //   user = null
-      // }
-      // console.log('nuxtServerInit, user:', user)
-      commit("setUser", user)
-      // next()
-    }).catch( (err) => {
-      console.log(err)
-    })
+    // Promise.all([
+    //   request.getUserInfo({ client: req }),
+    // ]).then( (resp) => {
+    //   // console.log('nuxtServerInit, resp', resp)
+    //   let user = resp[0].data
+    //
+    //   // 如果是空对象{}，要转化为null，否则后面vue判断user是否存在时会出错，eg:
+    //   // Header.vue, v-if="user"
+    //   // 判断user是否为空对象{}；如果是{}，则肯定不存在属性id
+    //   // 也有其他的判断方法，具体可google
+    //   // if (!user.id) {
+    //   //   user = null
+    //   // }
+    //   // console.log('nuxtServerInit, user:', user)
+    //   commit("setUser", user)
+    //   // next()
+    // }).catch( (err) => {
+    //   console.log(err)
+    // })
   }
 }
 

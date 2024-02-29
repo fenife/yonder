@@ -4,7 +4,7 @@
       <div slot="title">
         <h1 class="article-title">{{article.title}}</h1>
         <div class="article-info">
-          <span>{{article.user.name}}</span>
+          <span>{{article.user.name }}</span>
           <span>{{article.created_at}}</span>
         </div>
       </div>
@@ -17,13 +17,13 @@
       </div>
     </Card>
     <!-- 添加文章目录 -->
-    <div v-if="toc" class="catalogue">
-      <Card dis-hover>
-        <div class="article-toc">
-          <div v-html="toc"></div>
-        </div>
-      </Card>
-    </div>
+<!--    <div v-if="toc" class="catalogue">-->
+<!--      <Card dis-hover>-->
+<!--        <div class="article-toc">-->
+<!--          <div v-html="toc"></div>-->
+<!--        </div>-->
+<!--      </Card>-->
+<!--    </div>-->
 
     <Back-top></Back-top>
 
@@ -51,20 +51,20 @@
         })
       ]).then(resp => {
         // console.log("get data:", resp)
-        if (resp[0].code !== 0) {
+        if (resp[0].result.code !== 0) {
           ctx.error({ message: "not found", statusCode: 404 })
         }
 
-        let result = resp[0].data
-        let article = result.article || {}
-        let toc = result.toc
+        let respData = resp[0].data
+        let article = respData.post || {}
+        let toc = respData.toc || ""
         return {
           article: article,
           toc: toc,
         }
       }).catch(err => {
-        // console.log("catch error:", err)
-        ctx.error({ message: "not found", statusCode: 404 })
+        console.log("catch error:", err)
+        ctx.error({ message: "detail not found", statusCode: 404 })
       })
     },
     components: {

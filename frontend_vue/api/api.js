@@ -1,23 +1,26 @@
 // let config = require('~/config')
 import config from '~/config'
 
-let baseUrl = config.baseUrl
-// let gourl = config.gourl
+// let baseUrl = config.baseUrl
+let apiV1 = config.goServer + "/api/v1"
+let baseUrl = apiV1
 
 if (typeof window === 'undefined') {
-  baseUrl = config.pyurl
+  // baseUrl = config.pyurl
   // gourl = config.gourl
+  apiV1 = config.goServer + "/api/v1"
+  baseUrl = apiV1
 }
 
 const apiList = {
   // 获取文章列表
   getArticles: {
-    url: baseUrl + "/article/list",
+    url: apiV1 + "/post/list",
     method: "GET"
   },
   // 获取文章详情
   getArticleDetail: {
-    url: baseUrl + "/article/detail",
+    url: baseUrl + "/post/detail",
     method: "GET"
   },
 
@@ -42,7 +45,7 @@ const apiList = {
 
   // 分类列表
   getCates: {
-    url: baseUrl + "/category/list",
+    url: apiV1 + "/category/list",
     method: "GET"
   },
   // 分类详情
@@ -86,7 +89,7 @@ const apiList = {
 
   // 搜索
   searchArticle: {
-    url: baseUrl + "/search",
+    url: baseUrl + "/post/search",
     // url: baseUrl + "/v2/search",
     // url: baseUrl + "/v3/search",
     method: "GET"
@@ -94,13 +97,13 @@ const apiList = {
 
   // 归档页面
   getArchive: {
-    url: baseUrl + "/archive",
+    url: apiV1 + "/post/archive",
     method: "GET"
   },
 
   // 关于页面
   getAbout: {
-    url: baseUrl + '/about',
+    url: apiV1 + '/post/about',
     method: "GET"
   },
 }
