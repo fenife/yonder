@@ -41,21 +41,21 @@ services:
       - yonder-net
 
   # 只启动基本运行环境，不启动具体应用程序，后面再exec进入容器内启动
-  server_py:
-    image: yonder-server-py:dev
-    container_name: yonder-server-py-dev
-    restart: always
-    ports:
-      - "8010:8010"
-    volumes:
-      - /var/yonder/logs:/var/yonder/logs
-      - ..:/yonder
-    command: /bin/bash -c "while true;do sleep 600;done"
-    networks:
-      - yonder-net
-    depends_on:
-      mysql:
-        condition: service_healthy
+  # server_py:
+  #   image: yonder-server-py:dev
+  #   container_name: yonder-server-py-dev
+  #   restart: always
+  #   ports:
+  #     - "8010:8010"
+  #   volumes:
+  #     - /var/yonder/logs:/var/yonder/logs
+  #     - ..:/yonder
+  #   command: /bin/bash -c "while true;do sleep 600;done"
+  #   networks:
+  #     - yonder-net
+  #   depends_on:
+  #     mysql:
+  #       condition: service_healthy
 
   # server_go:
   #   image: yonder-server-go:dev
@@ -83,7 +83,7 @@ services:
       - ../frontend_vue:/yonder/frontend_vue
       # 缓存packages
       - node_modules:/yonder/frontend_vue/node_modules
-    command: ./start-dev.sh 
+    command: /bin/bash -c "tail -f /dev/null"
     environment:
       NODE_ENV: 'development'
     networks:
