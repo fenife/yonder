@@ -57,10 +57,10 @@ format:
 	find . -name "*.sh" | xargs dos2unix
 
 # all
-run: format bu bf build-py 
+run: format bu bf build-py build-go
 	docker compose -f dockerbuild/docker-compose.yml up
 
-rund: format bu bf build-py
+rund: format bu bf build-py build-go
 	find . -name "*.sh" | xargs dos2unix
 	docker compose -f dockerbuild/docker-compose.yml up -d
 

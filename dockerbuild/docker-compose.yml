@@ -37,12 +37,28 @@ services:
     networks:
       - yonder-net
 
+  # server:
+  #   image: yonder-server-py:latest
+  #   container_name: yonder-server-py
+  #   restart: always
+  #   ports:
+  #     - "8010:8010"
+  #   volumes:
+  #     - /var/yonder/logs:/var/yonder/logs
+  #   networks:
+  #     - yonder-net
+  #   depends_on:
+  #     mysql:
+  #       condition: service_healthy
+  #     # redis
+  #     #   condition: service_completed_successfully
+    
   server:
-    image: yonder-server-py:latest
-    container_name: yonder-server-py
+    image: yonder-server-go:latest
+    container_name: yonder-server-go
     restart: always
     ports:
-      - "8010:8010"
+      - "8020:8020"
     volumes:
       - /var/yonder/logs:/var/yonder/logs
     networks:
@@ -50,8 +66,6 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-      # redis
-      #   condition: service_completed_successfully
 
   frontend:
     image: yonder-frontend:latest
