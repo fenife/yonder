@@ -40,10 +40,20 @@ func LogContext() gin.HandlerFunc {
 			"method", c.Request.Method,
 			"url", c.Request.RequestURI,
 			"path", path,
-			"body", string(bodyData),
+			//"body", string(bodyData),
 			"internal", time.Since(t).Milliseconds(), // 毫秒
 			"status", c.Writer.Status(),
 		}
+
+		// 记录解析后的 request body，方便日志查看，会有性能损耗
+		var bodyLen = len(bodyData)
+		var reqBody interface{} = string(bodyData)
+		if bodyLen != 0 {
+			if err := json.Unmarshal(bodyData, &reqBody); err != nil {
+				logx.Ctx(c).With("error", err).Errorf("unmarshal request body failed")
+			}
+		}
+		withArgs = append(withArgs, "body", reqBody, "body_len", bodyLen)
 
 		if needToLogResponse(path) {
 			// 再解析一次，方便日志查看，会有性能损耗
