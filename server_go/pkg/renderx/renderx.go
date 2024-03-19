@@ -3,7 +3,6 @@ package renderx
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"server-go/internal/gctx"
 )
 
 type Result struct {
@@ -52,17 +51,7 @@ var (
 	RespFailed = NewRender(http.StatusInternalServerError, ErrCodeFailed, "failed")
 )
 
-// 响应头中返回 request id
-func setRespHeaderReqId(c *gin.Context) {
-	reqId := gctx.GetReqId(c)
-	if reqId != "" {
-		c.Writer.Header().Set(gctx.HeaderKeyReqId, reqId)
-	}
-}
-
 func ErrOutput(c *gin.Context, err interface{}) {
-	setRespHeaderReqId(c)
-
 	r, ok := err.(*Render)
 	if ok {
 		c.JSON(r.StatusCode, r.Response)
@@ -81,8 +70,6 @@ func ErrOutput(c *gin.Context, err interface{}) {
 }
 
 func SuccOutput(c *gin.Context, data ...interface{}) {
-	setRespHeaderReqId(c)
-
 	if len(data) == 0 {
 		c.JSON(RespOK.StatusCode, RespOK.Response)
 		return

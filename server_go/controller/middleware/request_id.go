@@ -6,13 +6,19 @@ import (
 	"server-go/internal/gctx"
 )
 
-func RequestIdMiddleware() gin.HandlerFunc {
+const HeaderKeyReqId = "X-Request-Id"
+
+func AddRequestId() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		reqId := c.GetHeader(gctx.HeaderKeyReqId)
+		reqId := c.GetHeader(HeaderKeyReqId)
 		if reqId == "" {
 			reqId = uuid.New().String()
 		}
 		gctx.SetReqId(c, reqId)
+
+		// 在响应头中也返回 request id
+		c.Writer.Header().Set(HeaderKeyReqId, reqId)
+
 		c.Next()
 	}
 }
