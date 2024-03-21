@@ -1,8 +1,11 @@
 package entity
 
 import (
+	"context"
+	"fmt"
 	"github.com/google/uuid"
 	"server-go/domain/do"
+	"server-go/pkg/logx"
 	"server-go/pkg/utils"
 	"strconv"
 	"time"
@@ -21,9 +24,16 @@ func (u *User) GenPasswordHash(password string) string {
 	return utils.Md5(password)
 }
 
-func (u *User) VerifyPassword(password string) bool {
+// 检查密码是否有效
+func (u *User) VerifyPassword(ctx context.Context, password string) error {
 	// 这里的password还是明文密码
-	return u.GenPasswordHash(password) == u.PasswordHash
+	pwHash := u.GenPasswordHash(password)
+	if pwHash == u.PasswordHash {
+		return nil
+	}
+	err := fmt.Errorf("password is not valid")
+	logx.Ctx(ctx).With("error", err).Errorf("invalid (%s) != expect (%s)", pwHash, u.PasswordHash)
+	return err
 }
 
 func (u *User) GenUserToken() string {
