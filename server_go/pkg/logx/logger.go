@@ -48,6 +48,11 @@ func (l *InnerLogger) With(keyAndValues ...interface{}) Loggerx {
 	return l
 }
 
+func (l *InnerLogger) WithError(err error) Loggerx {
+	l.fields = append(l.fields, "error", err)
+	return l
+}
+
 func (l *InnerLogger) buildFields() []interface{} {
 	if l.ctx != nil {
 		if val := l.ctx.Value(ctxKeyReqId); val != nil {

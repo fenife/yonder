@@ -5,6 +5,7 @@ import "context"
 type Loggerx interface {
 	Ctx(ctx context.Context) Loggerx
 	With(keyAndValues ...interface{}) Loggerx
+	WithError(err error) Loggerx
 	Debugf(msg string, args ...interface{})
 	Infof(msg string, args ...interface{})
 	Warnf(msg string, args ...interface{})
@@ -25,6 +26,14 @@ func Ctx(ctx context.Context) Loggerx {
 		fields:    make([]interface{}, 0),
 	}
 	return l
+}
+
+func With(keyAndValues ...interface{}) Loggerx {
+	return Ctx(context.Background()).With(keyAndValues...)
+}
+
+func WithError(err error) Loggerx {
+	return Ctx(context.Background()).WithError(err)
 }
 
 func Debugf(msg string, args ...interface{}) {
