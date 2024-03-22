@@ -2,14 +2,47 @@
     "swagger": "2.0",
     "info": {
         "description": "yonder博客的后端API服务",
-        "title": "yonder blog api aservice",
+        "title": "yonder blog api service",
         "termsOfService": "https://github.com/swaggo/swag",
         "contact": {},
         "version": "1.0"
     },
-    "host": "localhost:8030",
+    "host": "localhost:8020",
     "basePath": "/",
     "paths": {
+        "/api/v1/category": {
+            "post": {
+                "description": "创建新分类",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "category"
+                ],
+                "summary": "创建分类",
+                "parameters": [
+                    {
+                        "description": "参数",
+                        "name": "object",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/req.CreateCategoryReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/renderx.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/category/list": {
             "get": {
                 "description": "获取文章分类列表，包含了该分类下文章的统计数目",
@@ -27,7 +60,19 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/resp.CategoryListResp"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/renderx.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/resp.CategoryListResp"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -489,6 +534,18 @@
                     "type": "integer"
                 },
                 "msg": {
+                    "type": "string"
+                }
+            }
+        },
+        "req.CreateCategoryReq": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "description": "分类名称",
                     "type": "string"
                 }
             }

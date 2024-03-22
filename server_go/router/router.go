@@ -43,6 +43,7 @@ func AddRouter(engine *gin.Engine) {
 		cate := apiV1.Group("category")
 		{
 			cate.GET("/list", hdr.CategoryHandler.GetCategoryList)
+			cate.POST("", hdr.CategoryHandler.CreateCategory)
 		}
 
 		post := apiV1.Group("post")

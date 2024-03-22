@@ -106,6 +106,14 @@ definitions:
       msg:
         type: string
     type: object
+  req.CreateCategoryReq:
+    properties:
+      name:
+        description: 分类名称
+        type: string
+    required:
+    - name
+    type: object
   req.SignInReq:
     properties:
       name:
@@ -176,14 +184,35 @@ definitions:
       username:
         type: string
     type: object
-host: localhost:8030
+host: localhost:8020
 info:
   contact: {}
   description: yonder博客的后端API服务
   termsOfService: https://github.com/swaggo/swag
-  title: yonder blog api aservice
+  title: yonder blog api service
   version: "1.0"
 paths:
+  /api/v1/category:
+    post:
+      consumes:
+      - application/json
+      description: 创建新分类
+      parameters:
+      - description: 参数
+        in: body
+        name: object
+        schema:
+          $ref: '#/definitions/req.CreateCategoryReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/renderx.Response'
+      summary: 创建分类
+      tags:
+      - category
   /api/v1/category/list:
     get:
       consumes:
@@ -195,7 +224,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/resp.CategoryListResp'
+            allOf:
+            - $ref: '#/definitions/renderx.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/resp.CategoryListResp'
+              type: object
       summary: 分类列表
       tags:
       - category

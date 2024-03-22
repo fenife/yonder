@@ -3,6 +3,7 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	"server-go/application/aservice"
+	"server-go/controller/req"
 	"server-go/controller/resp"
 	"server-go/internal/errorx"
 	"server-go/pkg/logx"
@@ -25,7 +26,7 @@ func NewCategoryHandler(cateApp aservice.ICategoryApp) *CategoryHandler {
 // @Tags         category
 // @Accept       json
 // @Produce      json
-// @Success      200  {object}  resp.CategoryListResp
+// @Success      200  {object}  renderx.Response{data=resp.CategoryListResp}
 // @Router       /api/v1/category/list [get]
 func (ctrl *CategoryHandler) GetCategoryList(c *gin.Context) {
 	// 暂时不分页返回全部分类
@@ -45,4 +46,23 @@ func (ctrl *CategoryHandler) GetCategoryList(c *gin.Context) {
 	}
 
 	renderx.SuccOutput(c, result)
+}
+
+// CreateCategory godoc
+// @Summary      创建分类
+// @Description	 创建新分类
+// @Tags         category
+// @Accept       json
+// @Produce      json
+// @Param        object body  req.CreateCategoryReq		false "参数"
+// @Success      200  {object}  renderx.Response
+// @Router       /api/v1/category	[post]
+func (ctrl *CategoryHandler) CreateCategory(c *gin.Context) {
+	var cateReq req.CreateCategoryReq
+	if err := c.ShouldBindJSON(&cateReq); err != nil {
+		logx.Ctx(c).With("error", err).Errorf("param error")
+		renderx.ErrOutput(c, errorx.ParamInvalid)
+		return
+	}
+	renderx.SuccOutput(c)
 }

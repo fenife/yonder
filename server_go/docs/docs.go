@@ -16,6 +16,39 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/category": {
+            "post": {
+                "description": "创建新分类",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "category"
+                ],
+                "summary": "创建分类",
+                "parameters": [
+                    {
+                        "description": "参数",
+                        "name": "object",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/req.CreateCategoryReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/renderx.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/category/list": {
             "get": {
                 "description": "获取文章分类列表，包含了该分类下文章的统计数目",
@@ -33,7 +66,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/resp.CategoryListResp"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/renderx.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/resp.CategoryListResp"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -499,6 +544,18 @@ const docTemplate = `{
                 }
             }
         },
+        "req.CreateCategoryReq": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "description": "分类名称",
+                    "type": "string"
+                }
+            }
+        },
         "req.SignInReq": {
             "type": "object",
             "required": [
@@ -608,10 +665,10 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8030",
+	Host:             "localhost:8020",
 	BasePath:         "/",
 	Schemes:          []string{},
-	Title:            "yonder blog api aservice",
+	Title:            "yonder blog api service",
 	Description:      "yonder博客的后端API服务",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

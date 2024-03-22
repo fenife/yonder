@@ -10,18 +10,18 @@ import (
 	_ "server-go/docs" // 导入swag生成的接口文档
 )
 
-// @title yonder blog api aservice
+// @title yonder blog api service
 // @version 1.0
 // @description yonder博客的后端API服务
 // @termsOfService https://github.com/swaggo/swag
-// @host localhost:8030
+// @host localhost:8020
 // @BasePath /
 func main() {
 	engine := gin.New()
 	//gin.SetMode(gin.ReleaseMode)
 
 	engine.Use(
-		mw.RequestIdMiddleware(),
+		mw.AddRequestId(),
 		mw.LogContext(),
 		gin.Recovery(),
 	)
