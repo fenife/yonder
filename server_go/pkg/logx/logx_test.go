@@ -17,6 +17,7 @@ func TestLog(t *testing.T) {
 
 	ctx = context.WithValue(ctx, ctxKeyReqId, "reqId-123")
 	Ctx(ctx).With("c", 3).Errorf("error msg")
+	WithCtx(ctx).With("a", 1).Debugf("debug with ctx")
 
 	With("a", 1).Infof("test with")
 	WithError(fmt.Errorf("test err")).With("b", 2, "c", 3).Errorf("error msg")

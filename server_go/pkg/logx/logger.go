@@ -43,6 +43,10 @@ func (l *InnerLogger) Ctx(ctx context.Context) Loggerx {
 	return l
 }
 
+func (l *InnerLogger) WithCtx(ctx context.Context) Loggerx {
+	return l.Ctx(ctx)
+}
+
 func (l *InnerLogger) With(keyAndValues ...interface{}) Loggerx {
 	l.fields = append(l.fields, keyAndValues...)
 	return l
