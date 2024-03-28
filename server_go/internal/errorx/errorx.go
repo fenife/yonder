@@ -32,6 +32,7 @@ const (
 	// 文章分类 13-xx-xx
 	errCodeCategoryNotFound  = 151101
 	errCodeGetCateListFailed = 131102
+	errCodeCategoryExisted   = 131103
 
 	// 文章 15-xx-xx
 	errCodePostNotFound      = 151101
@@ -64,6 +65,7 @@ var (
 	// 文章分类
 	CategoryNotFound = renderx.NewRender(http.StatusOK, errCodeCategoryNotFound, "category not found")
 	CateListFailed   = renderx.NewRender(http.StatusOK, errCodeGetCateListFailed, "get category list failed")
+	CateListExisted  = renderx.NewRender(http.StatusOK, errCodeCategoryExisted, "category existed")
 
 	// 文章
 	PostNotFound   = renderx.NewRender(http.StatusOK, errCodePostNotFound, "post not found")
