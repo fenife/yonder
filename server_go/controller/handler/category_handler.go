@@ -60,8 +60,13 @@ func (ctrl *CategoryHandler) GetCategoryList(c *gin.Context) {
 func (ctrl *CategoryHandler) CreateCategory(c *gin.Context) {
 	var cateReq req.CreateCategoryReq
 	if err := c.ShouldBindJSON(&cateReq); err != nil {
-		logx.Ctx(c).With("error", err).Errorf("param error")
+		logx.WithCtx(c).WithError(err).Errorf("param error")
 		renderx.ErrOutput(c, errorx.ParamInvalid)
+		return
+	}
+	if err := ctrl.cateApp.CreateCategory(c, cateReq.Name); err != nil {
+		logx.WithCtx(c).WithError(err).Errorf("create category failed")
+		renderx.ErrOutput(c, err)
 		return
 	}
 	renderx.SuccOutput(c)

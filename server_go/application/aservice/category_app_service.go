@@ -11,6 +11,7 @@ import (
 
 type ICategoryApp interface {
 	GetCategoryList(ctx context.Context) ([]dto.CategoryListItem, error)
+	CreateCategory(ctx context.Context, name string) error
 }
 
 type CategoryApp struct {
@@ -64,4 +65,8 @@ func (app *CategoryApp) GetCategoryList(ctx context.Context) ([]dto.CategoryList
 	})
 
 	return res, nil
+}
+
+func (app *CategoryApp) CreateCategory(ctx context.Context, name string) error {
+	return app.categoryDomain.CreateCategory(ctx, name)
 }
