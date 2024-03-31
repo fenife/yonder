@@ -48,3 +48,7 @@ func (r *CategoryRepo) FindByName(ctx context.Context, name string) (*entity.Cat
 func (r *CategoryRepo) Create(ctx context.Context, cate *entity.Category) error {
 	return r.db.WithContext(ctx).Create(cate).Error
 }
+
+func (r *CategoryRepo) Update(ctx context.Context, cateId uint64, fields map[string]interface{}) error {
+	return r.db.WithContext(ctx).Model(&entity.Category{}).Where("id = ?", cateId).Updates(fields).Error
+}
