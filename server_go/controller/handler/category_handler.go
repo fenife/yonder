@@ -71,3 +71,27 @@ func (ctrl *CategoryHandler) CreateCategory(c *gin.Context) {
 	}
 	renderx.SuccOutput(c)
 }
+
+// UpdateCategory godoc
+// @Summary      更新分类
+// @Description	 更新新分类
+// @Tags         category
+// @Accept       json
+// @Produce      json
+// @Param        object body  req.UpdateCategoryReq		false "参数"
+// @Success      200  {object}  renderx.Response
+// @Router       /api/v1/category	[post]
+func (ctrl *CategoryHandler) UpdateCategory(c *gin.Context) {
+	var cateReq req.UpdateCategoryReq
+	if err := c.ShouldBindJSON(&cateReq); err != nil {
+		logx.WithCtx(c).WithError(err).Errorf("param error")
+		renderx.ErrOutput(c, errorx.ParamInvalid)
+		return
+	}
+	if err := ctrl.cateApp.UpdateCategory(c, cateReq.Id, cateReq.Name); err != nil {
+		logx.WithCtx(c).WithError(err).Errorf("update category failed")
+		renderx.ErrOutput(c, err)
+		return
+	}
+	renderx.SuccOutput(c)
+}

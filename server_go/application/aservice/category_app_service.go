@@ -12,6 +12,7 @@ import (
 type ICategoryApp interface {
 	GetCategoryList(ctx context.Context) ([]dto.CategoryListItem, error)
 	CreateCategory(ctx context.Context, name string) error
+	UpdateCategory(ctx context.Context, cateId uint64, name string) error
 }
 
 type CategoryApp struct {
@@ -69,4 +70,8 @@ func (app *CategoryApp) GetCategoryList(ctx context.Context) ([]dto.CategoryList
 
 func (app *CategoryApp) CreateCategory(ctx context.Context, name string) error {
 	return app.categoryDomain.CreateCategory(ctx, name)
+}
+
+func (app *CategoryApp) UpdateCategory(ctx context.Context, cateId uint64, name string) error {
+	return app.categoryDomain.UpdateCategory(ctx, cateId, name)
 }

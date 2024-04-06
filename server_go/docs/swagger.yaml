@@ -142,6 +142,18 @@ definitions:
     - name
     - password
     type: object
+  req.UpdateCategoryReq:
+    properties:
+      id:
+        description: 分类id
+        type: integer
+      name:
+        description: 分类名称
+        type: string
+    required:
+    - id
+    - name
+    type: object
   resp.CategoryListResp:
     properties:
       cate_list:
@@ -196,13 +208,13 @@ paths:
     post:
       consumes:
       - application/json
-      description: 创建新分类
+      description: 更新新分类
       parameters:
       - description: 参数
         in: body
         name: object
         schema:
-          $ref: '#/definitions/req.CreateCategoryReq'
+          $ref: '#/definitions/req.UpdateCategoryReq'
       produces:
       - application/json
       responses:
@@ -210,7 +222,7 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/renderx.Response'
-      summary: 创建分类
+      summary: 更新分类
       tags:
       - category
   /api/v1/category/list:

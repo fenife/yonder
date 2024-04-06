@@ -18,7 +18,7 @@ const docTemplate = `{
     "paths": {
         "/api/v1/category": {
             "post": {
-                "description": "创建新分类",
+                "description": "更新新分类",
                 "consumes": [
                     "application/json"
                 ],
@@ -28,14 +28,14 @@ const docTemplate = `{
                 "tags": [
                     "category"
                 ],
-                "summary": "创建分类",
+                "summary": "更新分类",
                 "parameters": [
                     {
                         "description": "参数",
                         "name": "object",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/req.CreateCategoryReq"
+                            "$ref": "#/definitions/req.UpdateCategoryReq"
                         }
                     }
                 ],
@@ -591,6 +591,23 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 32,
                     "minLength": 3
+                }
+            }
+        },
+        "req.UpdateCategoryReq": {
+            "type": "object",
+            "required": [
+                "id",
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "description": "分类id",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "分类名称",
+                    "type": "string"
                 }
             }
         },

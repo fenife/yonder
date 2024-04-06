@@ -11,6 +11,7 @@ type ICategoryDomain interface {
 	GetCategoryList(ctx context.Context) ([]entity.Category, error)
 	GetCategoryById(ctx context.Context, cateId uint64) (*entity.Category, error)
 	CreateCategory(ctx context.Context, name string) error
+	UpdateCategory(ctx context.Context, cateId uint64, name string) error
 }
 
 type CategoryDomain struct {
@@ -49,7 +50,7 @@ func (ds *CategoryDomain) CreateCategory(ctx context.Context, name string) error
 		return err
 	}
 	if cate.IsValid() {
-		return errorx.CateListExisted
+		return errorx.CategoryExisted
 	}
 
 	// 创建
@@ -57,4 +58,22 @@ func (ds *CategoryDomain) CreateCategory(ctx context.Context, name string) error
 		Name: name,
 	}
 	return ds.cateRepo.Create(ctx, &newCate)
+}
+
+// 更新分类
+func (ds *CategoryDomain) UpdateCategory(ctx context.Context, cateId uint64, name string) error {
+	// 是否存在
+	cate, err := ds.cateRepo.FindById(ctx, cateId)
+	if err != nil {
+		return err
+	}
+	if !cate.IsValid() {
+		return errorx.CategoryNotFound
+	}
+
+	// 更新
+	fields := map[string]interface{}{
+		"name": name,
+	}
+	return ds.cateRepo.Update(ctx, cateId, fields)
 }

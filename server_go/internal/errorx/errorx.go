@@ -65,7 +65,7 @@ var (
 	// 文章分类
 	CategoryNotFound = renderx.NewRender(http.StatusOK, errCodeCategoryNotFound, "category not found")
 	CateListFailed   = renderx.NewRender(http.StatusOK, errCodeGetCateListFailed, "get category list failed")
-	CateListExisted  = renderx.NewRender(http.StatusOK, errCodeCategoryExisted, "category existed")
+	CategoryExisted  = renderx.NewRender(http.StatusOK, errCodeCategoryExisted, "category existed")
 
 	// 文章
 	PostNotFound   = renderx.NewRender(http.StatusOK, errCodePostNotFound, "post not found")
