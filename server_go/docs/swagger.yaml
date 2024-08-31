@@ -184,6 +184,21 @@ info:
   title: yonder blog api aservice
   version: "1.0"
 paths:
+  /api/v1/category:
+    post:
+      consumes:
+      - application/json
+      description: 新增分类
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/renderx.Response'
+      summary: 新增分类
+      tags:
+      - category
   /api/v1/category/list:
     get:
       consumes:

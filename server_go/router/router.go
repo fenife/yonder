@@ -1,9 +1,6 @@
 package router
 
 import (
-	"github.com/gin-gonic/gin"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 	"server-go/application/aservice"
 	"server-go/config"
 	"server-go/controller/handler"
@@ -11,6 +8,10 @@ import (
 	"server-go/domain/dservice"
 	"server-go/infra/cache/redisc"
 	"server-go/infra/persistence"
+
+	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func AddRouter(engine *gin.Engine) {
@@ -43,6 +44,7 @@ func AddRouter(engine *gin.Engine) {
 		cate := apiV1.Group("category")
 		{
 			cate.GET("/list", hdr.CategoryHandler.GetCategoryList)
+			cate.POST("", hdr.CategoryHandler.CreateCategory)
 		}
 
 		post := apiV1.Group("post")

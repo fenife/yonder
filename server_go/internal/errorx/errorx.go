@@ -32,6 +32,9 @@ const (
 	// 文章分类 13-xx-xx
 	errCodeCategoryNotFound  = 151101
 	errCodeGetCateListFailed = 131102
+	errCodeCreateCateFailed  = 131103
+	errCodeCategoryExisted   = 131104
+	errCodeCateUpdateFailed  = 131105
 
 	// 文章 15-xx-xx
 	errCodePostNotFound      = 151101
@@ -62,8 +65,10 @@ var (
 	//PermitDeny = renderx.NewRender(http.StatusOK, ErrCodePermitDeny, "user permission deny")
 
 	// 文章分类
-	CategoryNotFound = renderx.NewRender(http.StatusOK, errCodeCategoryNotFound, "category not found")
-	CateListFailed   = renderx.NewRender(http.StatusOK, errCodeGetCateListFailed, "get category list failed")
+	CategoryNotFound     = renderx.NewRender(http.StatusOK, errCodeCategoryNotFound, "category not found")
+	CateListFailed       = renderx.NewRender(http.StatusOK, errCodeGetCateListFailed, "get category list failed")
+	CreateCategoryFailed = renderx.NewRender(http.StatusOK, errCodeCreateCateFailed, "create category failed")
+	CategoryExisted      = renderx.NewRender(http.StatusOK, errCodeCategoryExisted, "category existed")
 
 	// 文章
 	PostNotFound   = renderx.NewRender(http.StatusOK, errCodePostNotFound, "post not found")

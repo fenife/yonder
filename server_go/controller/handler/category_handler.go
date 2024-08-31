@@ -1,12 +1,14 @@
 package handler
 
 import (
-	"github.com/gin-gonic/gin"
 	"server-go/application/aservice"
+	"server-go/controller/req"
 	"server-go/controller/resp"
 	"server-go/internal/errorx"
 	"server-go/pkg/logx"
 	"server-go/pkg/renderx"
+
+	"github.com/gin-gonic/gin"
 )
 
 type CategoryHandler struct {
@@ -45,4 +47,32 @@ func (ctrl *CategoryHandler) GetCategoryList(c *gin.Context) {
 	}
 
 	renderx.SuccOutput(c, result)
+}
+
+// CreateCategory godoc
+// @Summary      新增分类
+// @Description	 新增分类
+// @Tags         category
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  renderx.Response
+// @Router       /api/v1/category [post]
+func (ctrl *CategoryHandler) CreateCategory(c *gin.Context) {
+	var cateReq req.CreateCategoryReq
+	if err := c.ShouldBindJSON(&cateReq); err != nil {
+		logx.Ctx(c).With("error", err).Errorf("param error")
+		renderx.ErrOutput(c, errorx.ParamInvalid)
+		return
+	}
+
+	_, err := ctrl.cateApp.CreateCategory(c, cateReq.Name)
+	if err != nil {
+		if _, ok := err.(*renderx.Render); !ok {
+			logx.Ctx(c).With("error", err).Errorf("create category failed")
+			err = errorx.CreateCategoryFailed
+		}
+		renderx.ErrOutput(c, err)
+		return
+	}
+	renderx.SuccOutput(c)
 }

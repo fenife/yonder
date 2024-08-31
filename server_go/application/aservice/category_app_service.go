@@ -5,12 +5,14 @@ import (
 	"server-go/application/dto"
 	"server-go/domain/do"
 	"server-go/domain/dservice"
+	"server-go/domain/entity"
 	"sort"
 	"strings"
 )
 
 type ICategoryApp interface {
 	GetCategoryList(ctx context.Context) ([]dto.CategoryListItem, error)
+	CreateCategory(ctx context.Context, name string) (*entity.Category, error)
 }
 
 type CategoryApp struct {
@@ -64,4 +66,12 @@ func (app *CategoryApp) GetCategoryList(ctx context.Context) ([]dto.CategoryList
 	})
 
 	return res, nil
+}
+
+// 新增分类
+func (app *CategoryApp) CreateCategory(ctx context.Context, name string) (*entity.Category, error) {
+	cate := entity.Category{
+		Name: name,
+	}
+	return app.categoryDomain.CreateCategory(ctx, &cate)
 }

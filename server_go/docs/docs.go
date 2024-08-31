@@ -16,6 +16,29 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/category": {
+            "post": {
+                "description": "新增分类",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "category"
+                ],
+                "summary": "新增分类",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/renderx.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/category/list": {
             "get": {
                 "description": "获取文章分类列表，包含了该分类下文章的统计数目",
