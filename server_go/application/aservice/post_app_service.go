@@ -3,6 +3,7 @@ package aservice
 import (
 	"context"
 	"server-go/application/dto"
+	"server-go/controller/req"
 	"server-go/domain/do"
 	"server-go/domain/dservice"
 	"server-go/domain/entity"
@@ -22,6 +23,7 @@ type IPostApp interface {
 	GetPostArchiveList(ctx context.Context) ([]*dto.PostArchiveItem, error)
 	GetPostAbout(ctx context.Context, contentType string) (*dto.PostDetailWithPreNext, error)
 	SearchPostByTitle(ctx context.Context, kw string, page, limit int) (posts []*do.PostDetail, total int, err error)
+	CreatePost(ctx context.Context, req *req.CreatePostReq) (*entity.Post, error)
 }
 
 type PostApp struct {
@@ -162,4 +164,15 @@ func (app *PostApp) SearchPostByTitle(ctx context.Context, kw string, page, limi
 		posts = append(posts, p.ToDetail())
 	}
 	return
+}
+
+func (app *PostApp) CreatePost(ctx context.Context, req *req.CreatePostReq) (*entity.Post, error) {
+	post := entity.Post{
+		UserId:  req.UserId,
+		CateId:  req.CateId,
+		Title:   req.Title,
+		TitleEn: req.TitleEn,
+		Content: req.Content,
+	}
+	return app.postDomain.CreatePost(ctx, &post)
 }

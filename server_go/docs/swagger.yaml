@@ -106,6 +106,36 @@ definitions:
       msg:
         type: string
     type: object
+  req.CreateCategoryReq:
+    properties:
+      name:
+        maxLength: 20
+        minLength: 1
+        type: string
+    required:
+    - name
+    type: object
+  req.CreatePostReq:
+    properties:
+      cate_id:
+        minimum: 1
+        type: integer
+      content:
+        type: string
+      title:
+        type: string
+      title_en:
+        type: string
+      user_id:
+        minimum: 1
+        type: integer
+    required:
+    - cate_id
+    - content
+    - title
+    - title_en
+    - user_id
+    type: object
   req.SignInReq:
     properties:
       name:
@@ -189,6 +219,12 @@ paths:
       consumes:
       - application/json
       description: 新增分类
+      parameters:
+      - description: 参数
+        in: body
+        name: object
+        schema:
+          $ref: '#/definitions/req.CreateCategoryReq'
       produces:
       - application/json
       responses:
@@ -214,6 +250,27 @@ paths:
       summary: 分类列表
       tags:
       - category
+  /api/v1/post:
+    post:
+      consumes:
+      - application/json
+      description: 新增文章
+      parameters:
+      - description: 参数
+        in: body
+        name: object
+        schema:
+          $ref: '#/definitions/req.CreatePostReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/renderx.Response'
+      summary: 新增文章
+      tags:
+      - post
   /api/v1/post/about:
     get:
       consumes:

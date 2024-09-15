@@ -16,4 +16,5 @@ type IPostRepo interface {
 	GetPrePost(ctx context.Context, postId uint64) (*entity.Post, error)
 	GetNextPost(ctx context.Context, postId uint64) (*entity.Post, error)
 	GetPostTotal(ctx context.Context, cateId uint64) (total int, err error)
+	CreatePost(ctx context.Context, post *entity.Post) (*entity.Post, error)
 }

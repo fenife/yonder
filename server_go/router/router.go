@@ -54,6 +54,7 @@ func AddRouter(engine *gin.Engine) {
 			post.GET("/archive", hdr.PostHandler.GetPostArchive)
 			post.GET("/about", mw.ApiCacheMiddleware(caches.ApiCache), hdr.PostHandler.GetPostAbout)
 			post.GET("/search", mw.ApiCacheMiddleware(caches.ApiCache), hdr.PostHandler.SearchPostByTitle)
+			post.POST("", hdr.PostHandler.CreatePost)
 		}
 	}
 }

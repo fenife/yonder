@@ -3,10 +3,11 @@ package persistence
 import (
 	"context"
 	"errors"
-	"gorm.io/gorm"
 	"server-go/domain/do"
 	"server-go/domain/entity"
 	"server-go/domain/repo"
+
+	"gorm.io/gorm"
 )
 
 type PostRepo struct {
@@ -112,4 +113,9 @@ func (r *PostRepo) GetPostTotal(ctx context.Context, cateId uint64) (total int, 
 	}
 	err = tx.Model(&entity.Post{}).Select("count(1) as total").Scan(&total).Error
 	return
+}
+
+func (r *PostRepo) CreatePost(ctx context.Context, post *entity.Post) (*entity.Post, error) {
+	err := r.db.WithContext(ctx).Create(&post).Error
+	return post, err
 }

@@ -23,3 +23,11 @@ type SearchPostReq struct {
 	Page    int    `form:"page" binding:"omitempty,gte=1"`
 	Limit   int    `form:"limit" binding:"omitempty,gte=1"`
 }
+
+type CreatePostReq struct {
+	UserId  uint64 `json:"user_id" binding:"required,gte=1"`
+	CateId  uint64 `json:"cate_id" binding:"required,gte=1"`
+	Title   string `json:"title" binding:"required"`
+	TitleEn string `json:"title_en" binding:"required"`
+	Content string `json:"content" binding:"required"`
+}

@@ -55,6 +55,7 @@ func (ctrl *CategoryHandler) GetCategoryList(c *gin.Context) {
 // @Tags         category
 // @Accept       json
 // @Produce      json
+// @Param        object body  req.CreateCategoryReq	false "参数"
 // @Success      200  {object}  renderx.Response
 // @Router       /api/v1/category [post]
 func (ctrl *CategoryHandler) CreateCategory(c *gin.Context) {

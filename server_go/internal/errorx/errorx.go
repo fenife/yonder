@@ -39,6 +39,8 @@ const (
 	// 文章 15-xx-xx
 	errCodePostNotFound      = 151101
 	errCodeGetPostListFailed = 151102
+	errCodeCreatePostFailed  = 151103
+	errCodePostExisted       = 151104
 )
 
 var (
@@ -71,6 +73,8 @@ var (
 	CategoryExisted      = renderx.NewRender(http.StatusOK, errCodeCategoryExisted, "category existed")
 
 	// 文章
-	PostNotFound   = renderx.NewRender(http.StatusOK, errCodePostNotFound, "post not found")
-	PostListFailed = renderx.NewRender(http.StatusOK, errCodeGetPostListFailed, "get post list failed")
+	PostNotFound     = renderx.NewRender(http.StatusOK, errCodePostNotFound, "post not found")
+	PostListFailed   = renderx.NewRender(http.StatusOK, errCodeGetPostListFailed, "get post list failed")
+	CreatePostFailed = renderx.NewRender(http.StatusOK, errCodeCreatePostFailed, "create post failed")
+	PostExisted      = renderx.NewRender(http.StatusOK, errCodePostExisted, "post existed")
 )

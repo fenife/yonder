@@ -17,6 +17,7 @@ type IPostDomain interface {
 	SearchByTitle(ctx context.Context, kw string, page, limit int) (posts []*entity.Post, total int, err error)
 	GetPrePost(ctx context.Context, postId uint64) (*entity.Post, error)
 	GetNextPost(ctx context.Context, postId uint64) (*entity.Post, error)
+	CreatePost(ctx context.Context, post *entity.Post) (*entity.Post, error)
 }
 
 type PostDomain struct {
@@ -115,4 +116,18 @@ func (ds *PostDomain) GetNextPost(ctx context.Context, postId uint64) (*entity.P
 		return nil, errorx.PostNotFound
 	}
 	return post, nil
+}
+
+func (ds *PostDomain) CreatePost(ctx context.Context, post *entity.Post) (*entity.Post, error) {
+	// 查找文章
+	old_post, err := ds.postRepo.FindByTitle(ctx, post.Title)
+	if err != nil {
+		return nil, err
+	}
+	// 检查是否已存在
+	if old_post.IsValid() {
+		return nil, errorx.PostExisted
+	}
+
+	return ds.postRepo.CreatePost(ctx, post)
 }

@@ -29,6 +29,16 @@ const docTemplate = `{
                     "category"
                 ],
                 "summary": "新增分类",
+                "parameters": [
+                    {
+                        "description": "参数",
+                        "name": "object",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/req.CreateCategoryReq"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -57,6 +67,39 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/resp.CategoryListResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/post": {
+            "post": {
+                "description": "新增文章",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "post"
+                ],
+                "summary": "新增文章",
+                "parameters": [
+                    {
+                        "description": "参数",
+                        "name": "object",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/req.CreatePostReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/renderx.Response"
                         }
                     }
                 }
@@ -519,6 +562,48 @@ const docTemplate = `{
                 },
                 "msg": {
                     "type": "string"
+                }
+            }
+        },
+        "req.CreateCategoryReq": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 1
+                }
+            }
+        },
+        "req.CreatePostReq": {
+            "type": "object",
+            "required": [
+                "cate_id",
+                "content",
+                "title",
+                "title_en",
+                "user_id"
+            ],
+            "properties": {
+                "cate_id": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "content": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "title_en": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer",
+                    "minimum": 1
                 }
             }
         },

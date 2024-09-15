@@ -1,13 +1,14 @@
 package handler
 
 import (
-	"github.com/gin-gonic/gin"
 	"server-go/application/aservice"
 	"server-go/controller/req"
 	"server-go/controller/resp"
 	"server-go/internal/errorx"
 	"server-go/pkg/logx"
 	"server-go/pkg/renderx"
+
+	"github.com/gin-gonic/gin"
 )
 
 type PostHandler struct {
@@ -162,4 +163,33 @@ func (ctrl *PostHandler) SearchPostByTitle(c *gin.Context) {
 		PostList: postDetails,
 	}
 	renderx.SuccOutput(c, result)
+}
+
+// CreatePost godoc
+// @Summary      新增文章
+// @Description	 新增文章
+// @Tags         post
+// @Accept       json
+// @Produce      json
+// @Param        object body  req.CreatePostReq	false "参数"
+// @Success      200  {object}  renderx.Response
+// @Router       /api/v1/post [post]
+func (ctrl *PostHandler) CreatePost(c *gin.Context) {
+	var postReq req.CreatePostReq
+	if err := c.ShouldBindJSON(&postReq); err != nil {
+		logx.Ctx(c).With("error", err).Errorf("param error")
+		renderx.ErrOutput(c, errorx.ParamInvalid)
+		return
+	}
+
+	_, err := ctrl.postApp.CreatePost(c, &postReq)
+	if err != nil {
+		if _, ok := err.(*renderx.Render); !ok {
+			logx.Ctx(c).With("error", err).Errorf("create post failed")
+			err = errorx.CreatePostFailed
+		}
+		renderx.ErrOutput(c, err)
+		return
+	}
+	renderx.SuccOutput(c)
 }
